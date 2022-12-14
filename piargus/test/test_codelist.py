@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from pyargus import CodeList
+from piargus import CodeList
 
 
 class TestCodeList(TestCase):

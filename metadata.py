@@ -16,19 +16,19 @@ class MetaData:
         self._columns[key] = value
         self._columns[key].name = key
 
-    def to_rdb(self, file):
+    def to_rda(self, file):
         if not hasattr(file, 'write'):
             with open(file, 'w') as file:
-                return self.to_rdb(file)
+                return self.to_rda(file)
 
         file.write(f'    <SEPARATOR> {self.separator}\n')
         file.writelines(str(column) + '\n' for column in self._columns.values())
 
 
 class Column:
-    def __init__(self, name=None, width=None, missing=None):
+    def __init__(self, name=None, length=None, missing=None):
         self.name = name
-        self.width = width
+        self.width = length
         self.missing = missing
         self.body = dict()
 
@@ -45,7 +45,7 @@ class Column:
                 pass
             elif value is True:
                 out.append(f"    <{key}>")
-            elif isinstance(value, (str, int)):
+            else:
                 out.append(f"    <{key}> {value}")
 
         return "\n".join(out)

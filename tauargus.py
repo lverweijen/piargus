@@ -11,13 +11,17 @@ class TauArgus:
     def __init__(self, program='TauArgus'):
         self.program = program
 
-    def run(self, batch_or_job, *args, **kwargs):
+    def run(self, batch_or_job, check=True, *args, **kwargs):
         if hasattr(batch_or_job, 'setup'):
             returncode, logbook = self._run_job(batch_or_job, *args, **kwargs)
         else:
             returncode, logbook = self._run_batch(batch_or_job, *args, **kwargs)
 
-        return TauArgusResult(returncode, logbook)
+        result = TauArgusResult(returncode, logbook)
+        if check:
+            result.check()
+
+        return result
 
     def _run_batch(self, batch_file, logbook=None, tmpdir=None):
         cmd = [self.program, str(Path(batch_file).absolute())]

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pandas.core.dtypes.common import is_numeric_dtype, is_categorical_dtype, is_string_dtype, is_float_dtype
 
 from .codelist import CodeList
@@ -24,8 +26,9 @@ class MicroData:
         self.codelists = codelists
         self.safety_rules = safety_rules
         self.column_lengths = column_lengths
+        self.filepath = None
 
-    def metadata(self, hierarchies_paths=None, codelists_paths=None) -> MetaData:
+    def metadata(self) -> MetaData:
         self.resolve_column_lengths()
 
         metadata = MetaData()
@@ -41,11 +44,11 @@ class MicroData:
 
             if col in self.hierarchies:
                 metacol['HIERARCHICAL'] = True
-                metacol['HIERCODELIST'] = hierarchies_paths[col]
+                metacol['HIERCODELIST'] = self.hierarchies[col].filepath
                 metacol['HIERLEADSTRING'] = HIERARCHY_LEADSTRING
 
             if col in self.codelists:
-                metacol['CODELIST'] = codelists_paths[col]
+                metacol['CODELIST'] = self.codelists[col].filepath
 
         return metadata
 
@@ -62,8 +65,11 @@ class MicroData:
 
                 self.column_lengths[col] = max(column_length, MIN_COLUMN_LENGTH)
 
-    def to_csv(self, file, na_rep=NA_REP):
-        self.dataset.to_csv(file, index=False, header=False, na_rep=na_rep)
+    def to_csv(self, file=None, na_rep=NA_REP):
+        result = self.dataset.to_csv(file, index=False, header=False, na_rep=na_rep)
+        if isinstance(file, (str, Path)):
+            self.filepath = file
+        return result
 
     @property
     def hierarchies(self):

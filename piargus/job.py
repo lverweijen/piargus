@@ -5,7 +5,7 @@ from .batchwriter import BatchWriter
 
 
 class Job:
-    def __init__(self, input_data, tables, safety_rules=None,
+    def __init__(self, input_data, tables, metadata=None, safety_rules=None,
                  suppress_method='GH', suppress_method_args=None,
                  directory=None, name=None, logbook=True):
 
@@ -22,6 +22,7 @@ class Job:
 
         self.input_data = input_data
         self.tables = tables
+        self.metadata = metadata
         self.suppress_method = suppress_method
         self.suppress_method_args = suppress_method_args
         self.safety_rules = safety_rules
@@ -30,8 +31,6 @@ class Job:
         self.logbook = logbook
 
         self._setup = False
-        self._hierarchies_filepaths = dict()
-        self._codelists_filepaths = dict()
 
     def __str__(self):
         return self.name
@@ -39,14 +38,6 @@ class Job:
     @property
     def batch_filepath(self):
         return self.directory / f'{self.name}.arb'
-
-    @property
-    def microdata_filepath(self):
-        return (self.directory / 'input' / self.input_data.name).with_suffix('.csv')
-
-    @property
-    def metadata_filepath(self):
-        return (self.directory / 'input' / self.input_data.name).with_suffix('.rda')
 
     @property
     def logbook_filepath(self):
@@ -76,7 +67,7 @@ class Job:
         """Generate all files required for TauArgus to run."""
         if reset or not self._setup:
             self._setup_directories()
-            self._setup_microdata()
+            self._setup_input_data()
             self._setup_hierarchies()
             self._setup_codelists()
             self._setup_metadata()
@@ -90,33 +81,37 @@ class Job:
         input_directory.mkdir(exist_ok=True)
         output_directory.mkdir(exist_ok=True)
 
-    def _setup_microdata(self):
-        self.input_data.to_csv(self.microdata_filepath)
+    def _setup_input_data(self):
+        default = self.directory / 'input' / f"{self.input_data.name}.csv"
+        if not self.input_data.filepath:
+            self.input_data.to_csv(default)
 
     def _setup_metadata(self):
-        metadata = self.input_data.metadata(hierarchies_paths=self._hierarchies_filepaths,
-                                            codelists_paths=self._codelists_filepaths)
+        if not self.metadata:
+            self.metadata = self.input_data.metadata()
 
-        # Make sure that all the tables we want to use are recodable
-        for table in self.tables:
-            for col in table.explanatory:
-                metadata[col]['RECODABLE'] = True
+            # Make sure that all the tables we want to use are recodable
+            for table in self.tables:
+                for col in table.explanatory:
+                    self.metadata[col]['RECODABLE'] = True
 
-        metadata.to_rda(self.metadata_filepath)
+        default = self.directory / 'input' / f"{self.input_data.name}.rda"
+        if not self.metadata.filepath:
+            self.metadata.to_rda(default)
 
     def _setup_hierarchies(self):
         self.input_data.resolve_column_lengths()
         for col, hierarchy in self.input_data.hierarchies.items():
-            filepath = self.directory / 'input' / f'hierarchy_{col}.hrc'
-            hierarchy.to_hrc(filepath, length=self.input_data.column_lengths[col])
-            self._hierarchies_filepaths[col] = filepath
+            if not hierarchy.filepath:
+                default = self.directory / 'input' / f'hierarchy_{col}.hrc'
+                hierarchy.to_hrc(default, length=self.input_data.column_lengths[col])
 
     def _setup_codelists(self):
         self.input_data.resolve_column_lengths()
         for col, codelist in self.input_data.codelists.items():
-            filepath = self.directory / 'input' / f'codelist_{col}.cdl'
-            codelist.to_cdl(filepath, length=self.input_data.column_lengths[col])
-            self._codelists_filepaths[col] = filepath
+            if not codelist.filepath:
+                default = self.directory / 'input' / f'codelist_{col}.cdl'
+                codelist.to_cdl(default, length=self.input_data.column_lengths[col])
 
     def _setup_tables(self):
         for table in self.tables:
@@ -130,8 +125,8 @@ class Job:
             if self.logbook:
                 writer.logbook(self.logbook_filepath)
 
-            writer.open_microdata(str(self.microdata_filepath))
-            writer.open_metadata(str(self.metadata_filepath))
+            writer.open_microdata(str(self.input_data.filepath))
+            writer.open_metadata(str(self.metadata.filepath))
 
             for table in self.tables:
                 t_safety_rules = self.safety_rules | self.input_data.safety_rules | table.safety_rules
@@ -149,8 +144,9 @@ class Job:
 
 
 METHOD_DEFAULTS = {
-    'OPT': (5,),
     'GH': (0, 1),
+    'MOD': (5, 1, 1, 1),
+    'OPT': (5,),
     'NET': (),
     'RND': (0, 10, 0, 3),
     'CTA': (),

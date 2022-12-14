@@ -1,3 +1,7 @@
+import io
+from pathlib import Path
+
+
 class MetaData:
     def __init__(self, columns=None, separator=','):
         if columns is None:
@@ -5,6 +9,12 @@ class MetaData:
 
         self._columns = columns
         self.separator = separator
+        self.filepath = None
+
+    def __str__(self):
+        buffer = io.StringIO()
+        self.to_rda(buffer)
+        return buffer.getvalue()
 
     def __getitem__(self, key):
         return self._columns[key]
@@ -15,8 +25,12 @@ class MetaData:
 
     def to_rda(self, file):
         if not hasattr(file, 'write'):
+            filepath = Path(file)
             with open(file, 'w') as file:
-                return self.to_rda(file)
+                result = self.to_rda(file)
+
+            self.filepath = filepath
+            return result
 
         file.write(f'    <SEPARATOR> {self.separator}\n')
         file.writelines(str(column) + '\n' for column in self._columns.values())

@@ -3,6 +3,7 @@ import os
 
 
 class Hierarchy:
+    """Describe a hierarchy for use with TauArgus"""
     def __init__(self, data):
         self._data = {}
         if hasattr(data, 'keys'):

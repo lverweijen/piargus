@@ -1,6 +1,3 @@
-from pathlib import Path
-
-
 class MetaData:
     def __init__(self, columns=None, separator=','):
         if columns is None:

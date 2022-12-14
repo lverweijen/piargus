@@ -1,4 +1,5 @@
 class BatchWriter:
+    """Helper to write a batch file for use with TauArgus"""
     def __init__(self, file):
         self._file = file
         self._commands = list()
@@ -11,7 +12,7 @@ class BatchWriter:
         return command, arg
 
     def logbook(self, log_file):
-        self.write_command('LOGBOOK', format_path(log_file))
+        self.write_command('LOGBOOK', _format_string(log_file))
 
     def open_microdata(self, microdata, sep=','):
         if hasattr(microdata, 'to_csv'):
@@ -20,24 +21,24 @@ class BatchWriter:
         else:
             microdata_file = microdata
 
-        return self.write_command("OPENMICRODATA", format_path(microdata_file))
+        return self.write_command("OPENMICRODATA", _format_string(microdata_file))
 
     def open_tabledata(self, tabledata):
-        return self.write_command("OPENTABLEDATA", format_path(tabledata))
+        return self.write_command("OPENTABLEDATA", _format_string(tabledata))
 
     def open_metadata(self, metadata):
-        return self.write_command("OPENMETADATA", format_path(metadata))
+        return self.write_command("OPENMETADATA", _format_string(metadata))
 
     def specify_table(self, explanatory, response, shadow=None, cost=None, labda=None):
-        explanatory_str = "".join([format_string(v) for v in explanatory])
+        explanatory_str = "".join([_format_string(v) for v in explanatory])
         if shadow is None:
             shadow = response
         if cost is None:
             cost = response
 
-        response_str = format_string(response)
-        shadow_str = format_string(shadow)
-        cost_str = format_string(cost)
+        response_str = _format_string(response)
+        shadow_str = _format_string(shadow)
+        cost_str = _format_string(cost)
         options = f'{explanatory_str}|{response_str}|{shadow_str}|{cost_str}'
         if labda:
             options += f"|{labda}"
@@ -56,20 +57,16 @@ class BatchWriter:
         args = ",".join(map(str, [table, *method_args]))
         return self.write_command('SUPPRESS', f"{method}({args})")
 
-    def write_table(self, table, format, options, filename):
+    def write_table(self, table, kind, options, filename):
         if hasattr(options, 'items'):
             options = "".join([k + {True: "+", False: "-"}[v] for k, v in options.items()])
 
-        result = f"({table}, {format}, {options}, {format_path(filename)})"
+        result = f"({table}, {kind}, {options}, {_format_string(filename)})"
         return self.write_command('WRITETABLE', result)
 
     def version_info(self, filename):
-        return self.write_command("VERSIONINFO", format_path(filename))
+        return self.write_command("VERSIONINFO", _format_string(filename))
 
 
-def format_path(path):
+def _format_string(path):
     return f'"{path!s}"'
-
-
-def format_string(string):
-    return f'"{string!s}"'

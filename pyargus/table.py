@@ -40,11 +40,11 @@ class Table:
 
         self._safety_rules = value
 
-    def load_data(self, strip=False):
+    def load_data(self, strip=False) -> pd.DataFrame:
         df = pd.read_csv(self.filepath)
 
         if strip:
-            strip_whitespace(df, self.explanatory)
+            _strip_whitespace(df, self.explanatory)
 
         df = df.set_index(self.explanatory)
         safe = self.response
@@ -62,7 +62,7 @@ class Table:
         return df
 
 
-def strip_whitespace(df, explanatories):
+def _strip_whitespace(df, explanatories):
     for col in explanatories:
         if is_string_dtype(df[col].dtype):
             df[col] = df[col].map(str.strip)

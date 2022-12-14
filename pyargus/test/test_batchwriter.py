@@ -1,7 +1,7 @@
 import io
 from unittest import TestCase
 
-from batchwriter import BatchWriter
+from pyargus import BatchWriter
 
 
 class TestBatchWriter(TestCase):

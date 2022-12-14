@@ -1,8 +1,8 @@
 from pandas.core.dtypes.common import is_numeric_dtype, is_categorical_dtype, is_string_dtype, is_float_dtype
 
-from codelist import CodeList
-from hierarchy import Hierarchy
-from metadata import MetaData, Column
+from .codelist import CodeList
+from .hierarchy import Hierarchy
+from .metadata import MetaData, Column
 
 NA_REP = "<NA>"
 HIERARCHY_LEADSTRING = '@'

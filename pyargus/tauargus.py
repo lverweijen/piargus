@@ -3,15 +3,16 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from batchwriter import BatchWriter
-from result import TauArgusResult
+from .batchwriter import BatchWriter
+from .result import TauArgusResult
 
 
 class TauArgus:
     def __init__(self, program='TauArgus'):
         self.program = program
 
-    def run(self, batch_or_job, check=True, *args, **kwargs):
+    def run(self, batch_or_job, check=True, *args, **kwargs) -> TauArgusResult:
+        """Run either a batch file or a job."""
         if hasattr(batch_or_job, 'setup'):
             returncode, logbook = self._run_job(batch_or_job, *args, **kwargs)
         else:
@@ -41,7 +42,7 @@ class TauArgus:
             logbook = job.logbook_filepath
         return returncode, logbook
 
-    def version_info(self):
+    def version_info(self) -> dict:
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as versioninfo:
             pass
 

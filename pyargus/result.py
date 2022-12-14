@@ -35,18 +35,18 @@ class TauArgusResult:
             raise TauArgusException(self)
 
     @property
-    def status(self):
+    def status(self) -> str:
         if self.is_succesful:
             return "success"
         else:
             return "failed"
 
     @property
-    def is_succesful(self):
+    def is_succesful(self) -> bool:
         return self.returncode == 0
 
     @property
-    def is_failed(self):
+    def is_failed(self) -> bool:
         return self.returncode != 0
 
     def __str__(self):

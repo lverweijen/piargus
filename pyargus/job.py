@@ -1,7 +1,7 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from batchwriter import BatchWriter
+from .batchwriter import BatchWriter
 
 
 class Job:
@@ -73,6 +73,7 @@ class Job:
         self._safety_rules = value
 
     def setup(self, reset=False):
+        """Generate all files required for TauArgus to run."""
         if reset or not self._setup:
             self._setup_directories()
             self._setup_microdata()

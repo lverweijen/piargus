@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from hierarchy import Hierarchy
+from pyargus import Hierarchy
 
 
 class TestHierarchy(TestCase):

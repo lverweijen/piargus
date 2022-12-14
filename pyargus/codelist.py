@@ -2,9 +2,10 @@ import pandas as pd
 
 
 class CodeList:
+    """Describe a codelist for use with TauArgus"""
     def __init__(self, lst):
         self._codes = pd.Series(lst)
-        self._codes.index = self._codes.astype(str)
+        self._codes.index = self._codes.index.astype(str)
 
     def codes(self):
         for code in self._codes.index:

@@ -4,7 +4,7 @@ import tempfile
 from pathlib import Path
 
 from .batchwriter import BatchWriter
-from .result import TauArgusResult
+from .tauargusresult import TauArgusResult
 
 
 class TauArgus:

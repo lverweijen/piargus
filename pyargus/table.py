@@ -1,5 +1,6 @@
 import pandas as pd
-from pandas.core.dtypes.common import is_string_dtype
+
+from .tableresult import TableResult
 
 STATUS_CODES = {
     'S': [1, 2],  # Safe
@@ -40,29 +41,6 @@ class Table:
 
         self._safety_rules = value
 
-    def load_data(self, strip=False) -> pd.DataFrame:
-        df = pd.read_csv(self.filepath)
-
-        if strip:
-            _strip_whitespace(df, self.explanatory)
-
-        df = df.set_index(self.explanatory)
-        safe = self.response
-        unsafe = self.response + '_unsafe'
-        status_num = 'status_num'
-        status_code = 'status_code'
-
-        df.rename(columns={'Status': status_num}, inplace=True)
-        df[status_code] = '?'
-        for code, nums in STATUS_CODES.items():
-            df.loc[df[status_num].isin(nums), status_code] = code
-
-        df[unsafe] = df[safe]
-        df.loc[~df[status_code].isin(['S', 'P', 'Z']), safe] = 'x'
-        return df
-
-
-def _strip_whitespace(df, explanatories):
-    for col in explanatories:
-        if is_string_dtype(df[col].dtype):
-            df[col] = df[col].map(str.strip)
+    def load_result(self) -> TableResult:
+        df = pd.read_csv(self.filepath, index_col=self.explanatory)
+        return TableResult(df, self.response)

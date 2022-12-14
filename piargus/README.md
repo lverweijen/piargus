@@ -20,7 +20,7 @@ This package takes care of generating the required metadata and uses the TauArgu
 
 ```python
 import pandas as pd
-import pyargus as pa
+import piargus as pa
 
 tau = pa.TauArgus(r'C:\Users\User\Programs\TauArgus4.2.0b5\TauArgus')
 input_df = pd.read_csv('example/data/example.csv')

@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from pandas.core.dtypes.common import is_numeric_dtype, is_categorical_dtype, is_string_dtype, is_float_dtype
+from pandas.core.dtypes.common import is_numeric_dtype, is_categorical_dtype, is_string_dtype, is_float_dtype, \
+    is_bool_dtype
 
 from .codelist import CodeList
 from .hierarchy import Hierarchy
@@ -66,7 +67,12 @@ class MicroData:
                 self.column_lengths[col] = max(column_length, MIN_COLUMN_LENGTH)
 
     def to_csv(self, file=None, na_rep=NA_REP):
-        result = self.dataset.to_csv(file, index=False, header=False, na_rep=na_rep)
+        dataset = self.dataset.copy(deep=False)
+        for col in self.dataset.columns:
+            if is_bool_dtype(col):
+                dataset[col] = dataset[col].astype(int)
+
+        result = dataset.to_csv(file, index=False, header=False, na_rep=na_rep)
         if isinstance(file, (str, Path)):
             self.filepath = file
         return result

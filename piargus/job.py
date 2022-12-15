@@ -88,7 +88,7 @@ class Job:
 
     def _setup_metadata(self):
         if not self.metadata:
-            self.metadata = self.input_data.metadata()
+            self.metadata = self.input_data.generate_metadata()
 
             # Make sure that all the tables we want to use are recodable
             for table in self.tables:

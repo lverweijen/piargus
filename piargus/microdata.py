@@ -29,7 +29,7 @@ class MicroData:
         self.column_lengths = column_lengths
         self.filepath = None
 
-    def metadata(self) -> MetaData:
+    def generate_metadata(self) -> MetaData:
         self.resolve_column_lengths()
 
         metadata = MetaData()
@@ -44,11 +44,13 @@ class MicroData:
                 metacol['DECIMALS'] = 10
 
             if col in self.hierarchies:
+                metacol['RECODABLE'] = True
                 metacol['HIERARCHICAL'] = True
                 metacol['HIERCODELIST'] = self.hierarchies[col].filepath
                 metacol['HIERLEADSTRING'] = HIERARCHY_LEADSTRING
 
             if col in self.codelists:
+                metacol['RECODABLE'] = True
                 metacol['CODELIST'] = self.codelists[col].filepath
 
         return metadata

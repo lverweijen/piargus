@@ -1,4 +1,4 @@
-# PyArgus
+# PiArgus
 
 This package provides a python wrapper around [τ-ARGUS](https://research.cbs.nl/casc/tau.htm).
 This is a program that can be used to protect statistical tables.

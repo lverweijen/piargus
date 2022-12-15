@@ -59,7 +59,7 @@ class Hierarchy:
     def codes(self):
         for key in self.keys():
             yield key
-            yield from self[key].codes
+            yield from self[key].codes()
 
     def __getitem__(self, key):
         return self._data[key]

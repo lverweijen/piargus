@@ -1,12 +1,51 @@
 import io
+import re
+import shlex
 from pathlib import Path
 from typing import Optional
 
 from .codelist import CodeList
 from .hierarchy import Hierarchy
 
+PROPERTY_PATTERN = re.compile(r"\<(.*)\>")
+
 
 class MetaData:
+    @classmethod
+    def from_rda(cls, file):
+        if not hasattr(file, 'read'):
+            with open(file) as reader:
+                metadata = cls.from_rda(reader)
+                metadata.filepath = Path(file)
+                return metadata
+
+        column = None
+        metadata = MetaData()
+        for line in file:
+            arguments = shlex.split(line, posix=False)
+            head = arguments.pop(0)
+
+            match = PROPERTY_PATTERN.match(head)
+            if match:
+                variable = match.group(1)
+
+                if arguments:
+                    [value] = arguments
+                else:
+                    value = True
+
+                if column:
+                    column[variable] = value
+                elif variable == 'SEPARATOR':
+                    metadata.separator = value
+                else:
+                    raise ValueError(f"Unknown global property: {variable}")
+            else:
+                column = Column(head, *arguments)
+                metadata[head] = column
+
+        return metadata
+
     def __init__(self, columns=None, separator=','):
         if columns is None:
             columns = dict()

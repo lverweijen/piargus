@@ -8,7 +8,6 @@ from .hierarchy import Hierarchy
 from .metadata import MetaData, Column
 
 NA_REP = "<NA>"
-HIERARCHY_LEADSTRING = '@'
 DEFAULT_COLUMN_LENGTH = 20
 MIN_COLUMN_LENGTH = 5
 
@@ -38,20 +37,17 @@ class MicroData:
 
             col_dtype = self.dataset[col].dtype
             metacol['NUMERIC'] = is_numeric_dtype(col_dtype)
-            metacol['RECODABLE'] = (is_categorical_dtype(col_dtype)
-                                    or is_string_dtype(col_dtype))
+            metacol['RECODABLE'] = is_categorical_dtype(col_dtype) or is_string_dtype(col_dtype)
             if is_float_dtype(col_dtype):
                 metacol['DECIMALS'] = 10
 
             if col in self.hierarchies:
                 metacol['RECODABLE'] = True
-                metacol['HIERARCHICAL'] = True
-                metacol['HIERCODELIST'] = self.hierarchies[col].filepath
-                metacol['HIERLEADSTRING'] = HIERARCHY_LEADSTRING
+                metacol.set_hierarchy(self.hierarchies[col])
 
             if col in self.codelists:
                 metacol['RECODABLE'] = True
-                metacol['CODELIST'] = self.codelists[col].filepath
+                metacol.set_codelist(self.codelists[col])
 
         return metadata
 

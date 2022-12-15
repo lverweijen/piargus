@@ -1,5 +1,9 @@
 import io
 from pathlib import Path
+from typing import Optional
+
+from .codelist import CodeList
+from .hierarchy import Hierarchy
 
 
 class MetaData:
@@ -41,17 +45,17 @@ class Column:
         self.name = name
         self.width = length
         self.missing = missing
-        self.body = dict()
+        self._data = dict()
 
     def __getitem__(self, key):
-        return self.body[key]
+        return self._data.get(key)
 
     def __setitem__(self, key, value):
-        self.body[key] = value
+        self._data[key] = value
 
     def __str__(self):
         out = [f"{self.name} {self.width} {self.missing}"]
-        for key, value in self.body.items():
+        for key, value in self._data.items():
             if value is None or value is False:
                 pass
             elif value is True:
@@ -60,3 +64,37 @@ class Column:
                 out.append(f"    <{key}> {value}")
 
         return "\n".join(out)
+
+    def set_hierarchy(self, hierarchy: Optional[Hierarchy], indent='@'):
+        if hierarchy is not None:
+            if hierarchy.filepath is None:
+                raise TypeError("hierarchy.to_hrc needs to be called first.")
+
+            self['HIERARCHICAL'] = True
+            self['HIERCODELIST'] = hierarchy.filepath
+            self['HIERLEADSTRING'] = indent
+        else:
+            self['HIERARCHICAL'] = False
+            self['HIERCODELIST'] = None
+            self['HIERLEADSTRING'] = None
+
+    def get_hierarchy(self) -> Optional[Hierarchy]:
+        if self["HIERCODELIST"]:
+            return Hierarchy.from_hrc(self["HIERCODELIST"], self["HIERLEADSTRING"])
+        else:
+            return None
+
+    def set_codelist(self, codelist: Optional[CodeList]):
+        if codelist:
+            if codelist.filepath is None:
+                raise TypeError("codelist.to_cdl needs to be called first.")
+
+            self['CODELIST'] = codelist.filepath
+        else:
+            self['CODELIST'] = None
+
+    def get_codelist(self) -> Optional[CodeList]:
+        if self["CODELIST"]:
+            return CodeList.from_cdl(self["CODELIST"])
+        else:
+            return None

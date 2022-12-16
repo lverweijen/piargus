@@ -39,18 +39,21 @@ class MetaData:
                 elif variable == 'SEPARATOR':
                     metadata.separator = value
                 else:
-                    raise ValueError(f"Unknown global property: {variable}")
+                    metadata.status_markers[variable] = value
             else:
                 column = Column(head, *arguments)
                 metadata[head] = column
 
         return metadata
 
-    def __init__(self, columns=None, separator=','):
+    def __init__(self, columns=None, separator=',', status_markers=None):
         if columns is None:
             columns = dict()
+        if status_markers is None:
+            status_markers = dict()
 
         self._columns = columns
+        self.status_markers = status_markers
         self.separator = separator
         self.filepath = None
 

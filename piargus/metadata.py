@@ -55,9 +55,7 @@ class MetaData:
         self.filepath = None
 
     def __str__(self):
-        buffer = io.StringIO()
-        self.to_rda(buffer)
-        return buffer.getvalue()
+        return self.to_rda()
 
     def __getitem__(self, key):
         return self._columns[key]
@@ -66,17 +64,21 @@ class MetaData:
         self._columns[key] = value
         self._columns[key].name = key
 
-    def to_rda(self, file):
-        if not hasattr(file, 'write'):
+    def to_rda(self, file=None):
+        if file is None:
+            buffer = io.StringIO()
+            self.to_rda(buffer)
+            return buffer.getvalue()
+        elif not hasattr(file, 'write'):
             filepath = Path(file)
             with open(file, 'w') as file:
                 result = self.to_rda(file)
 
             self.filepath = filepath
             return result
-
-        file.write(f'    <SEPARATOR> {self.separator}\n')
-        file.writelines(str(column) + '\n' for column in self._columns.values())
+        else:
+            file.write(f'    <SEPARATOR> {self.separator}\n')
+            file.writelines(str(column) + '\n' for column in self._columns.values())
 
 
 class Column:

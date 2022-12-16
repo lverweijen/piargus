@@ -78,11 +78,16 @@ class MetaData:
             return result
         else:
             file.write(f'    <SEPARATOR> {self.separator}\n')
+            for status, marker in self.status_markers.items():
+                file.write(f'    <{status}> {marker}\n')
             file.writelines(str(column) + '\n' for column in self._columns.values())
 
 
 class Column:
     def __init__(self, name=None, length=None, missing=None):
+        if missing is None:
+            missing = set()
+
         self.name = name
         self.width = length
         self.missing = missing
@@ -95,7 +100,12 @@ class Column:
         self._data[key] = value
 
     def __str__(self):
-        out = [f"{self.name} {self.width} {self.missing}"]
+        if self.missing:
+            missing_str = ' '.join(map(str, self.missing))
+            out = [f"{self.name} {self.width} {missing_str}"]
+        else:
+            out = [f"{self.name} {self.width}"]
+
         for key, value in self._data.items():
             if value is None or value is False:
                 pass

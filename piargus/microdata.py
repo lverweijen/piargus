@@ -7,13 +7,12 @@ from .codelist import CodeList
 from .hierarchy import Hierarchy
 from .metadata import MetaData, Column
 
-NA_REP = "<NA>"
 DEFAULT_COLUMN_LENGTH = 20
-MIN_COLUMN_LENGTH = 5
 
 
 class MicroData:
-    def __init__(self, dataset, name=None, column_lengths=None, hierarchies=None, codelists=None, safety_rules=None):
+    def __init__(self, dataset, name=None, hierarchies=None, codelists=None, safety_rules=None,
+                 column_lengths=None):
         if name is None:
             name = f'data_{id(self)}'
 
@@ -33,7 +32,7 @@ class MicroData:
 
         metadata = MetaData()
         for col in self.dataset.columns:
-            metacol = metadata[col] = Column(col, length=self.column_lengths[col], missing=NA_REP)
+            metacol = metadata[col] = Column(col, length=self.column_lengths[col])
 
             col_dtype = self.dataset[col].dtype
             metacol['NUMERIC'] = is_numeric_dtype(col_dtype)
@@ -62,9 +61,9 @@ class MicroData:
                 else:
                     column_length = default
 
-                self.column_lengths[col] = max(column_length, MIN_COLUMN_LENGTH)
+                self.column_lengths[col] = column_length
 
-    def to_csv(self, file=None, na_rep=NA_REP):
+    def to_csv(self, file=None, na_rep=""):
         dataset = self.dataset.copy(deep=False)
         for col in self.dataset.columns:
             if is_bool_dtype(col):

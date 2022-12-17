@@ -10,14 +10,26 @@ class Job:
     def __init__(self, input_data: InputData, tables=None, metadata=None, safety_rules=None,
                  suppress_method='GH', suppress_method_args=None,
                  directory=None, name=None, logbook=True):
+        """A job to protect a data source.
+
+        This class takes care of generating all input/meta files that TauArgus needs.
+        If a directory is supplied, the necessary files will be created in that directory.
+        Otherwise, a temporary directory is created, but it's better to always supply one.
+        Existing files won't always be written to `directory`.
+        For example, metadata created by MetaData.from_rda("otherdir/metadata.rda") will use the existing file.
+
+        When generating from microdata:
+        - input_data needs to be MicroData
+        - tables needs to be a list of tables
+
+        When generating from tabular data:
+        - input_data needs to be TableData
+        """
 
         if directory is None:
-            # Prevent the directory from being garbage-collected
+            # Prevent the directory from being garbage-collected as long as this job exists
             self._tmp_directory = TemporaryDirectory(prefix='pyargus_')
-            self.directory = Path(self._tmp_directory.name)
-        else:
-            self.directory = Path(directory)
-            self.directory.mkdir(parents=True, exist_ok=True)
+            directory = Path(self._tmp_directory.name)
 
         if name is None:
             name = f'job_{id(self)}'
@@ -31,7 +43,9 @@ class Job:
             else:
                 raise ValueError("No outputs specified")
 
-        self.input_data: InputData = input_data
+        self.directory = Path(directory)
+        self.directory.mkdir(parents=True, exist_ok=True)
+        self.input_data = input_data
         self.tables = tables
         self.metadata = metadata
         self.suppress_method = suppress_method
@@ -140,7 +154,7 @@ class Job:
 
             for table in self.tables:
                 t_safety_rules = self.safety_rules | self.input_data.safety_rules | table.safety_rules
-                writer.specify_table(table.explanatory, table.response)
+                writer.specify_table(table.explanatory, table.response, table.shadow, table.cost)
                 writer.safety_rule(t_safety_rules)
 
             if isinstance(self.input_data, Table):

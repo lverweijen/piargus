@@ -15,7 +15,13 @@ class TableData(InputData, Table):
     def __init__(self, dataset, explanatory, response, shadow=None, cost=None,
                  total_codes='Total', frequency=None, top_contributors=None,
                  lower_protection_level=None, upper_protection_level=None,
-                 status_marker=None, status_markers=None, **kwargs):
+                 status_indicator=None, status_markers=None, **kwargs):
+        """
+        A TableData instance contains data which has already been aggregated.
+
+        It can be used for tables that are unprotected or partially protected.
+        If it's already partially protected, this can be indicated by `status_indicator`.
+        """
 
         Table.__init__(self, explanatory=explanatory, response=response, shadow=shadow, cost=cost)
         InputData.__init__(self, dataset, **kwargs)
@@ -35,7 +41,7 @@ class TableData(InputData, Table):
         self.upper_protection_level = upper_protection_level
         self.frequency = frequency
         self.top_contributors = top_contributors
-        self.status_marker = status_marker
+        self.status_indicator = status_indicator
         self.status_markers = status_markers
 
     def generate_metadata(self) -> MetaData:
@@ -66,7 +72,7 @@ class TableData(InputData, Table):
                 metacol['UPPERPL'] = True
             elif col == self.frequency:
                 metacol['FREQUENCY'] = True
-            elif col == self.status_marker:
+            elif col == self.status_indicator:
                 metacol['STATUS'] = True
                 metadata.status_markers = self.status_markers
 

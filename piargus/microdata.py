@@ -7,6 +7,12 @@ from .inputdata import InputData
 
 
 class MicroData(InputData):
+    """
+    A MicroData instance contains the data at an individual level.
+
+    From such microdata, tabular aggregates can be constructed.
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

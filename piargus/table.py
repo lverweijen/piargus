@@ -14,14 +14,19 @@ STATUS_CODES = {
 class Table:
     def __init__(self, explanatory, response='<frequency>', shadow=None, cost=None, name=None, filepath=None,
                  safety_rules=None, suppress_method=None, suppress_method_args=None):
+        """
+        A Tabel instance describes the output of the table.
+
+        A simple table can be created from MicroData.
+        """
 
         if name is None:
             name = f'table_{id(self)}'
 
         self.explanatory = explanatory
         self.response = response
-        self.shadow = shadow or response
-        self.cost = cost or response
+        self.shadow = shadow
+        self.cost = cost
         self.name = name
         self.filepath_out = filepath
         self.safety_rules = safety_rules

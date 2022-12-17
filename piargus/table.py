@@ -12,7 +12,7 @@ STATUS_CODES = {
 
 
 class Table:
-    def __init__(self, explanatory, response='<frequency>', name=None, filepath=None,
+    def __init__(self, explanatory, response='<frequency>', shadow=None, cost=None, name=None, filepath=None,
                  safety_rules=None, suppress_method=None, suppress_method_args=None):
 
         if name is None:
@@ -20,8 +20,10 @@ class Table:
 
         self.explanatory = explanatory
         self.response = response
+        self.shadow = shadow or response
+        self.cost = cost or response
         self.name = name
-        self.filepath = filepath
+        self.filepath_out = filepath
         self.safety_rules = safety_rules
         self.suppress_method = suppress_method
         self.suppress_method_args = suppress_method_args
@@ -42,5 +44,5 @@ class Table:
         self._safety_rules = value
 
     def load_result(self) -> TableResult:
-        df = pd.read_csv(self.filepath, index_col=self.explanatory)
+        df = pd.read_csv(self.filepath_out, index_col=self.explanatory)
         return TableResult(df, self.response)

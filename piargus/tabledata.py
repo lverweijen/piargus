@@ -81,5 +81,5 @@ class TableData(InputData, Table):
     def to_csv(self, file=None, na_rep=""):
         result = self.dataset.to_csv(file, index=False, header=False, na_rep=na_rep)
         if isinstance(file, (str, Path)):
-            self.filepath = file
+            self.filepath = Path(file)
         return result

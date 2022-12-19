@@ -42,5 +42,5 @@ class MicroData(InputData):
 
         result = dataset.to_csv(file, index=False, header=False, na_rep=na_rep)
         if isinstance(file, (str, Path)):
-            self.filepath = file
+            self.filepath = Path(file)
         return result

@@ -6,14 +6,14 @@ This package takes care of generating the required metadata and uses the TauArgu
 
 ## Features
 
-- Generating tables from microdata
+- Generating tables from microdata (recommended)
+- Generating tables from tabledata (experimental)
 - Metadata
 - Hierarchies
 - Codelists
 
 ## Wishlist
 
-- Generating tables from tabledata
 - Apriori files
 
 ## Example

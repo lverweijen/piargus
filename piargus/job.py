@@ -2,24 +2,49 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from .batchwriter import BatchWriter
+from .inputdata import InputData
+from .table import Table
 
 
 class Job:
-    def __init__(self, input_data, tables, metadata=None, safety_rules=None,
+    def __init__(self, input_data: InputData, tables=None, metadata=None, safety_rules=None,
                  suppress_method='GH', suppress_method_args=None,
                  directory=None, name=None, logbook=True):
+        """A job to protect a data source.
+
+        This class takes care of generating all input/meta files that TauArgus needs.
+        If a directory is supplied, the necessary files will be created in that directory.
+        Otherwise, a temporary directory is created, but it's better to always supply one.
+        Existing files won't always be written to `directory`.
+        For example, metadata created by MetaData.from_rda("otherdir/metadata.rda") will use the existing file.
+
+        When generating from microdata:
+        - input_data needs to be MicroData
+        - tables needs to be a list of tables
+
+        When generating from tabular data:
+        - input_data needs to be TableData
+        """
 
         if directory is None:
-            # Prevent the directory from being garbage-collected
+            # Prevent the directory from being garbage-collected as long as this job exists
             self._tmp_directory = TemporaryDirectory(prefix='pyargus_')
-            self.directory = Path(self._tmp_directory.name)
-        else:
-            self.directory = Path(directory)
-            self.directory.mkdir(parents=True, exist_ok=True)
+            directory = Path(self._tmp_directory.name)
 
         if name is None:
             name = f'job_{id(self)}'
 
+        if not isinstance(input_data, InputData):
+            raise TypeError("Input needs to be MicroData or TableData")
+
+        if tables is None:
+            if isinstance(input_data, Table):
+                tables = [input_data]
+            else:
+                raise ValueError("No outputs specified")
+
+        self.directory = Path(directory)
+        self.directory.mkdir(parents=True, exist_ok=True)
         self.input_data = input_data
         self.tables = tables
         self.metadata = metadata
@@ -90,11 +115,6 @@ class Job:
         if not self.metadata:
             self.metadata = self.input_data.generate_metadata()
 
-            # Make sure that all the tables we want to use are recodable
-            for table in self.tables:
-                for col in table.explanatory:
-                    self.metadata[col]['RECODABLE'] = True
-
         default = self.directory / 'input' / f"{self.input_data.name}.rda"
         if not self.metadata.filepath:
             self.metadata.to_rda(default)
@@ -115,8 +135,8 @@ class Job:
 
     def _setup_tables(self):
         for table in self.tables:
-            if table.filepath is None:
-                table.filepath = Path(self.directory / 'output' / table.name).with_suffix('.csv')
+            if table.filepath_out is None:
+                table.filepath_out = Path(self.directory / 'output' / table.name).with_suffix('.csv')
 
     def _setup_batch(self):
         with open(self.batch_filepath, 'w') as batch:
@@ -125,22 +145,29 @@ class Job:
             if self.logbook:
                 writer.logbook(self.logbook_filepath)
 
-            writer.open_microdata(str(self.input_data.filepath))
+            if isinstance(self.input_data, Table):
+                writer.open_tabledata(str(self.input_data.filepath))
+            else:
+                writer.open_microdata(str(self.input_data.filepath))
+
             writer.open_metadata(str(self.metadata.filepath))
 
             for table in self.tables:
                 t_safety_rules = self.safety_rules | self.input_data.safety_rules | table.safety_rules
-                writer.specify_table(table.explanatory, table.response)
+                writer.specify_table(table.explanatory, table.response, table.shadow, table.cost)
                 writer.safety_rule(t_safety_rules)
 
-            writer.read_microdata()
+            if isinstance(self.input_data, Table):
+                writer.read_table()
+            else:
+                writer.read_microdata()
 
             for i, table in enumerate(self.tables, 1):
                 t_method = table.suppress_method or self.suppress_method
                 if t_method:
                     t_method_args = table.suppress_method_args or self.suppress_method_args or METHOD_DEFAULTS[t_method]
                     writer.suppress(t_method, i, *t_method_args)
-                writer.write_table(i, 2, {"AS": True}, str(table.filepath))
+                writer.write_table(i, 2, {"AS": True}, str(table.filepath_out))
 
 
 METHOD_DEFAULTS = {

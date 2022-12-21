@@ -47,8 +47,8 @@ class BatchWriter:
     def read_microdata(self):
         return self.write_command("READMICRODATA")
 
-    def read_tabledata(self):
-        return self.write_command("READTABLEDATA")
+    def read_table(self):
+        return self.write_command("READTABLE")
 
     def safety_rule(self, rules):
         return self.write_command('SAFETYRULE', "|".join(rules))

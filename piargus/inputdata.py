@@ -1,6 +1,8 @@
 import abc
 from abc import ABC
 
+from pandas.core.dtypes.common import is_string_dtype, is_categorical_dtype, is_bool_dtype
+
 from .codelist import CodeList
 from .hierarchy import Hierarchy
 from .metadata import MetaData, Column
@@ -26,9 +28,8 @@ class InputData(ABC):
         - FREQ(minfreq, safety_range)
         - REQ(proc1, proc2, safety_margin)
         See the Tau-Argus manual for details on those rules.
-        :param column_lengths: For each column the length. If not given, a length will be derived from the data.
-        For strings, it will look at hierarchies and codelists.
-        For numbers, it will default to 20.
+        :param column_lengths: For each column the length.
+        The lengths can also be derived by calling resolve_column_lengths.
         """
 
         if name is None:
@@ -57,13 +58,29 @@ class InputData(ABC):
         return metadata
 
     def resolve_column_lengths(self, default=DEFAULT_COLUMN_LENGTH):
-        """Make sure each column has a length."""
-        for col in self.dataset.columns:
+        """Make sure each column has a length.
+
+        For strings, it will look at hierarchies and codelists or max string.
+        For categorical, it will look at the longest label.
+        For booleans 1/0 is used with code length of 1.
+        For numbers, it will default to 20.
+
+        :param default: The length to use for numbers and other datatypes.
+        """
+        dataset = self.dataset  # type: pd.DataFrame
+
+        for col in dataset.columns:
             if col not in self.column_lengths:
                 if col in self.codelists:
                     column_length = max(map(len, self.codelists[col].codes()))
                 elif col in self.hierarchies:
                     column_length = max(map(len, self.hierarchies[col].codes()))
+                elif is_categorical_dtype(dataset[col].dtype):
+                    column_length = dataset[col].cat.categories.str.len().max()
+                elif is_string_dtype(dataset[col].dtype):
+                    column_length = dataset[col].str.len().max()
+                elif is_bool_dtype(dataset[col].dtype):
+                    column_length = 1
                 else:
                     column_length = default
 

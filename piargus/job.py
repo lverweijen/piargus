@@ -54,6 +54,7 @@ class Job:
         self.directory = Path(directory).absolute()
         self.name = name
         self.logbook = logbook
+        self.interactive = interactive
 
         self._setup = False
 
@@ -154,7 +155,7 @@ class Job:
 
             for table in self.tables:
                 t_safety_rules = self.safety_rules | self.input_data.safety_rules | table.safety_rules
-                writer.specify_table(table.explanatory, table.response, table.shadow, table.cost)
+                writer.specify_table(table.explanatory, table.response, table.shadow, table.cost, table.labda)
                 writer.safety_rule(t_safety_rules)
 
             if isinstance(self.input_data, Table):
@@ -168,6 +169,9 @@ class Job:
                     t_method_args = table.suppress_method_args or self.suppress_method_args or METHOD_DEFAULTS[t_method]
                     writer.suppress(t_method, i, *t_method_args)
                 writer.write_table(i, 2, {"AS": True}, str(table.filepath_out))
+
+            if self.interactive:
+                writer.go_interactive()
 
 
 METHOD_DEFAULTS = {

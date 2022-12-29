@@ -27,8 +27,9 @@ class Table:
         self.response = response
         self.shadow = shadow
         self.cost = cost
+        self.labda = labda
         self.name = name
-        self.filepath_out = filepath
+        self.filepath_out = filepath_out
         self.safety_rules = safety_rules
         self.suppress_method = suppress_method
         self.suppress_method_args = suppress_method_args

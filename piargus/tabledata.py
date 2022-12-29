@@ -12,7 +12,7 @@ DEFAULT_STATUS_MARKERS = {
 
 
 class TableData(InputData, Table):
-    def __init__(self, dataset, explanatory, response, shadow=None, cost=None,
+    def __init__(self, dataset, explanatory, response, shadow=None, cost=None, labda=None,
                  total_codes='Total', frequency=None, top_contributors=None,
                  lower_protection_level=None, upper_protection_level=None,
                  status_indicator=None, status_markers=None, **kwargs):
@@ -23,7 +23,7 @@ class TableData(InputData, Table):
         If it's already partially protected, this can be indicated by `status_indicator`.
         """
 
-        Table.__init__(self, explanatory=explanatory, response=response, shadow=shadow, cost=cost)
+        Table.__init__(self, explanatory=explanatory, response=response, shadow=shadow, cost=cost, labda=labda)
         InputData.__init__(self, dataset, **kwargs)
 
         if isinstance(total_codes, str):

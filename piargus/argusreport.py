@@ -5,7 +5,7 @@ SEP_MARKER = '--------------------'
 END_MARKER = "End of TauArgus run"
 
 
-class TauArgusResult:
+class ArgusReport:
     def __init__(self, returncode=None, logbook_file=None):
         self.returncode = returncode
         self.logbook_file = logbook_file
@@ -22,9 +22,8 @@ class TauArgusResult:
                         if SEP_MARKER in line or is_end:
                             self.logbook.clear()
                             is_end = False
-                        else:
-                            if END_MARKER in line:
-                                is_end = True
+                        elif END_MARKER in line:
+                            is_end = True
             except FileNotFoundError:
                 self.logbook = None
 

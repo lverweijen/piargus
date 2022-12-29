@@ -4,21 +4,25 @@ import tempfile
 from pathlib import Path
 
 from .batchwriter import BatchWriter
-from .tauargusresult import TauArgusResult
+from .argusreport import ArgusReport
 
 
 class TauArgus:
+    DEFAULT_LOGBOOK = Path(tempfile.gettempdir()) / 'TauLogbook.txt'
+
     def __init__(self, program='TauArgus'):
         self.program = program
 
-    def run(self, batch_or_job, check=True, *args, **kwargs) -> TauArgusResult:
+    def run(self, batch_or_job=None, check=True, *args, **kwargs) -> ArgusReport:
         """Run either a batch file or a job."""
-        if hasattr(batch_or_job, 'setup'):
+        if batch_or_job is None:
+            returncode, logbook = self._run_interactively()
+        elif hasattr(batch_or_job, 'setup'):
             returncode, logbook = self._run_job(batch_or_job, *args, **kwargs)
         else:
             returncode, logbook = self._run_batch(batch_or_job, *args, **kwargs)
 
-        result = TauArgusResult(returncode, logbook)
+        result = ArgusReport(returncode, logbook)
         if check:
             result.check()
 
@@ -33,6 +37,8 @@ class TauArgus:
             cmd.append(str(Path(tmpdir).absolute()))
 
         subprocess_result = subprocess.run(cmd)
+        if logbook is None:
+            logbook = self.DEFAULT_LOGBOOK
         return subprocess_result.returncode, logbook
 
     def _run_job(self, job, *args, **kwargs):
@@ -41,6 +47,10 @@ class TauArgus:
         if job.logbook:
             logbook = job.logbook_filepath
         return returncode, logbook
+
+    def _run_interactively(self):
+        subprocess_result = subprocess.run([self.program])
+        return subprocess_result.returncode, self.DEFAULT_LOGBOOK
 
     def version_info(self) -> dict:
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as versioninfo:

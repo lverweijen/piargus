@@ -67,6 +67,12 @@ class BatchWriter:
     def version_info(self, filename):
         return self.write_command("VERSIONINFO", _format_string(filename))
 
+    def go_interactive(self):
+        return self.write_command("GOINTERACTIVE")
+
+    def clear(self):
+        return self.write_command("CLEAR")
+
 
 def _format_string(path):
     return f'"{path!s}"'

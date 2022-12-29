@@ -17,6 +17,7 @@ class MicroData(InputData):
         super().__init__(*args, **kwargs)
 
     def generate_metadata(self) -> MetaData:
+        """Generates a metadata file for free format micro data."""
         metadata = super().generate_metadata()
         for col in self.dataset.columns:
             metacol = metadata[col]

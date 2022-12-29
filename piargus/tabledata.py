@@ -21,6 +21,26 @@ class TableData(InputData, Table):
 
         It can be used for tables that are unprotected or partially protected.
         If it's already partially protected, this can be indicated by `status_indicator`.
+        Most of the parameters are already explained either in InputData or in Table.
+
+        :param dataset: See InputData
+        :param explanatory: See Table
+        :param response: See Table
+        :param shadow: See Table
+        :param cost: See Table
+        :param labda: See Table
+        :param total_codes: Codes within explanatory that are used for the totals.
+        :param frequency: See Table
+        :param top_contributors: The columns containing top contributions for dominance rule.
+        The columns should be in the same order as they appear in the dataset.
+        The first of the these columns should describe the highest contribution,
+        the second column the second highest contribution.
+        :param lower_protection_level: Column that denotes the level below which values are unsafe.
+        :param upper_protection_level: Column that denotes the level above which values are unsafe.
+        :param status_indicator: Column indicating the status of cells.
+        :param status_markers: The meaning of each status.
+        Should be dictionary mapping "SAFE", "UNSAFE" and "STATUS" to a code indicating status.
+        :param kwargs: See InputData
         """
 
         Table.__init__(self, explanatory=explanatory, response=response, shadow=shadow, cost=cost, labda=labda)
@@ -45,6 +65,7 @@ class TableData(InputData, Table):
         self.status_markers = status_markers
 
     def generate_metadata(self) -> MetaData:
+        """Generates a metadata file for tabular data."""
         metadata = super().generate_metadata()
         for col in self.dataset.columns:
             metacol = metadata[col]

@@ -12,12 +12,43 @@ STATUS_CODES = {
 
 
 class Table:
-    def __init__(self, explanatory, response='<frequency>', shadow=None, cost=None, name=None, filepath=None,
+    def __init__(self, explanatory, response='<frequency>', shadow=None, cost=None, labda=None, name=None, filepath_out=None,
                  safety_rules=None, suppress_method=None, suppress_method_args=None):
         """
         A Tabel instance describes the output of the table.
 
         A simple table can be created from MicroData.
+
+        Parameters:
+        :param explanatory: List of background variables that explain the response. Will be set as a Dataframe-index.
+        :param response: The column that needs to be explained.
+        :param shadow: The column that is used for the safety rules. Default: response.
+        :param cost: The column that contains the cost of suppressing a cell.
+        Set to 1 to minimise the number of cells suppressed (although this might suppress totals).
+        Default: response.
+        :param labda: If set to a value > 0, a box-cox transformation is applied on the cost variable.
+        If set to 0, a log transformation is applied on the cost.
+        Default: 1.
+        :param safety_rules: A set of safety rules.
+        Options are:
+        - P(p, n) - For p-rule
+        - NK(n, k) - Dominance rule
+        - ZERO(safety_range)
+        - FREQ(minfreq, safety_range)
+        - REQ(proc1, proc2, safety_margin)
+        See the Tau-Argus manual for details on those rules.
+        :param name: Name to use for generated files
+        :param filepath_out: Where the file will be located (by default determined from name)
+        :param suppress_method: Method to use for secondary suppression.
+        Options are:
+        - GH: Hypercube
+        - MOD: Modular
+        - OPT: Optimal
+        - NET: Network
+        - RND: Controlled rounding
+        - CTA: Controlled Tabular Adjustment
+        See the Tau-Argus manual for details on those rules.
+        :param suppress_method_args: Parameters to pass to suppress_method method.
         """
 
         if name is None:

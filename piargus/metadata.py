@@ -11,6 +11,15 @@ PROPERTY_PATTERN = re.compile(r"\<(.*)\>")
 
 
 class MetaData:
+    """
+    Metadata describing InputData.
+
+    Usually it's not required for a user to create a MetaData themselves, because one can be generated from inputdata.
+    However, this class can be used when a user has an existing rda file that they are completely content with.
+    In that case MetaData.from_rda can be used.
+    In rare cases, some needs that are not available by the microdata or tabledata classes can be supplied by creating
+    a metafile directly or modifying one generated from input_data.generate_metadata().
+    """
     @classmethod
     def from_rda(cls, file):
         if not hasattr(file, 'read'):

@@ -9,21 +9,27 @@ from .table import Table
 class Job:
     def __init__(self, input_data: InputData, tables=None, metadata=None, safety_rules=None,
                  suppress_method='GH', suppress_method_args=None,
-                 directory=None, name=None, logbook=True):
+                 directory=None, name=None, logbook=True, interactive=False):
         """A job to protect a data source.
 
         This class takes care of generating all input/meta files that TauArgus needs.
         If a directory is supplied, the necessary files will be created in that directory.
         Otherwise, a temporary directory is created, but it's better to always supply one.
-        Existing files won't always be written to `directory`.
-        For example, metadata created by MetaData.from_rda("otherdir/metadata.rda") will use the existing file.
+        Existing files won't be written to `directory`.
+        For example, metadata created from MetaData.from_rda("otherdir/metadata.rda") will use the existing file.
 
-        When generating from microdata:
-        - input_data needs to be MicroData
-        - tables needs to be a list of tables
-
-        When generating from tabular data:
-        - input_data needs to be TableData
+        :param input_data: The source from which to generate tables. Needs to be either MicroData or TableData.
+        :param tables: The tables to be generated. Can be omitted if input_data is TableData.
+        :param metadata: The metadata of input_data. If omitted, it will be derived from input_data.
+        :param safety_rules: Rules for primary suppression. (See Table for details)
+        :param suppress_method: The default method to use for secondary suppression if none is specified on table.
+        If None and no suppress_method is specificed on the table, no secondary suppression is done.
+        See the Tau-Argus manual for details.
+        :param suppress_method_args: Parameters for suppress_method
+        :param directory: Where to write tau-argus files
+        :param name: Name from which to derive the name of some temporary files
+        :param logbook: Whether this job should create its own logging file
+        :param interactive: Whether the gui should be opened
         """
 
         if directory is None:

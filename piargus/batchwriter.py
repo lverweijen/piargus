@@ -1,5 +1,9 @@
 class BatchWriter:
-    """Helper to write a batch file for use with TauArgus"""
+    """Helper to write a batch file for use with TauArgus.
+
+    Usually the heavy work can be done by creating a Job.
+    However, this class can still be used for direct low-level control.
+    """
     def __init__(self, file):
         self._file = file
         self._commands = list()

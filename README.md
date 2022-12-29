@@ -1,20 +1,20 @@
 # PiArgus
 
-This package provides a python wrapper around [τ-ARGUS](https://research.cbs.nl/casc/tau.htm).
-This is a program that can be used to protect statistical tables.
-This package takes care of generating the required metadata and uses the TauArgus to protect its data.
+This package provides a python wrapper around [τ-ARGUS](https://research.cbs.nl/casc/tau.htm), a program that is commonly used to protect statistical tables.
+This package takes care of generating all the required metadata and runs the TauArgus program in the background to do the heavy work.
 
 ## Features
 
-- Generating tables from microdata (recommended)
-- Generating tables from tabledata (experimental)
-- Metadata
-- Hierarchies
-- Codelists
+- Generate tables from microdata or tabledata.
+- Automatically generate metadata from inputdata or load an existing one using `Metadata.from_rda('data.rda')`.
+- Codelists and hierarchies.
+
+Not all features have been extensively tested yet. [Feedback](https://github.com/lverweijen/piargus/issues) is welcome.
+For now generating tables from microdata (over tabledata) is recommended.
 
 ## Wishlist
 
-- Apriori files
+Other TauArgus features not yet supported but useful to someone.
 
 ## Example
 
@@ -23,20 +23,21 @@ import pandas as pd
 import piargus as pa
 
 tau = pa.TauArgus(r'C:\Users\User\Programs\TauArgus4.2.0b5\TauArgus')
-input_df = pd.read_csv('example/data/example.csv')
+input_df = pd.read_csv('data/microdata.csv')
 input_data = pa.MicroData(input_df, name='example')
-input_data.safety_rules = {'NK(3,70)', 'FREQ(3,20)', 'ZERO(20)'}
-tables = [pa.Table(['sbi', 'regio'], 'income', name='T2')]
+tables = [pa.Table(['sbi', 'regio'], 'income', name='T1',
+                   safety_rules={'NK(3,70)', 'FREQ(3,20)', 'ZERO(20)'},
+                   suppress_method='OPT')]
 
-job = pa.Job(input_data, tables, directory='example/tau', name='example')
-tau_result = tau.run(job)
+job = pa.Job(input_data, tables, directory='tau', name='example')
+report = tau.run(job)
 table_result = tables[0].load_result()
 
-print(tau_result)
+print(report)
 print(table_result)
 ```
 
-Codelists and hierarchies can optionally be supplied to the constructor of MicroData.
+See [Examples](examples) for more examples.
 
 ## See also
 

@@ -24,9 +24,9 @@ class InputData(ABC):
         Options are:
         - P(p, n) - For p-rule
         - NK(n, k) - Dominance rule
-        - ZERO(safety_range)
-        - FREQ(minfreq, safety_range)
-        - REQ(proc1, proc2, safety_margin)
+        - ZERO(safety_range) - Zero rule
+        - FREQ(minfreq, safety_range) - Frequency rule
+        - REQ(percentage_1, percentage_2, safety_margin) - Request rule
         See the Tau-Argus manual for details on those rules.
         :param column_lengths: For each column the length.
         The lengths can also be derived by calling resolve_column_lengths.

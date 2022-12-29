@@ -23,7 +23,7 @@ class TableData(InputData, Table):
         If it's already partially protected, this can be indicated by `status_indicator`.
         Most of the parameters are already explained either in InputData or in Table.
 
-        :param dataset: See InputData
+        :param dataset: The dataset containing the table. This dataset should include totals.
         :param explanatory: See Table
         :param response: See Table
         :param shadow: See Table

@@ -13,8 +13,24 @@ class MicroData(InputData):
     From such microdata, tabular aggregates can be constructed.
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, dataset, weight=None, request=None, request_values=("1", "2"), holding=None, *args, **kwargs):
+        """
+
+        :param dataset: The dataset (pd.DataFrame) containing the microdata.
+        :param weight: Column that contains the sampling weight of this record.
+        :param request: Column that indicates if a respondent asks for protection.
+        :param request_values: Parameters that indicate if request is asked.
+        Two different request values can be specified for two different levels in the REQ-safety rule.
+        :param holding: Column containing the group identifier.
+        :param args: See InputData
+        :param kwargs: See InputData
+        See the Tau-Argus documentation for more details on these parameters.
+        """
+        super().__init__(dataset, *args, **kwargs)
+        self.weight = weight
+        self.request = request
+        self.request_values = request_values
+        self.holding = holding
 
     def generate_metadata(self) -> MetaData:
         """Generates a metadata file for free format micro data."""
@@ -32,6 +48,15 @@ class MicroData(InputData):
 
             if col in self.codelists:
                 metacol.set_codelist(self.codelists[col])
+
+        if self.weight is not None:
+            metadata[self.weight]["WEIGHT"] = True
+
+        if self.request is not None:
+            metadata[self.request]["REQUEST"] = ' '.join([f'"{v}"' for v in self.request_values])
+
+        if self.holding is not None:
+            metadata[self.holding]["HOLDING"] = True
 
         return metadata
 

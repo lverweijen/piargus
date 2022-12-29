@@ -15,10 +15,25 @@ class TableResult:
         self._df = df
         self._response = response
 
-    def unsafe(self):
+    def unsafe(self) -> pd.Series:
+        """Return the unsafe original response.
+
+        :returns: The raw unprotected totals as a series.
+        """
         return self._df[self._response]
 
-    def status(self, recode=True):
+    def status(self, recode=True) -> pd.Series:
+        """Return the status of each response.
+
+        :param recode: If True, readable codes will be returned.
+        S - safe
+        P - protected
+        U - primary unsafe
+        M - secondary unsafe
+        Z - empty
+        Otherwise raw status codes from Tau-Argus are returned. See the documentation of Tau-Argus.
+        :returns: Status for each combination.
+        """
         status_num = self._df['Status']
 
         if recode:
@@ -29,7 +44,12 @@ class TableResult:
         else:
             return status_num
 
-    def safe(self, unsafe_marker='x'):
+    def safe(self, unsafe_marker='x') -> pd.Series:
+        """Return the (safe) totals of the response.
+
+        :param unsafe_marker: The marker to shield unsafe values
+        :returns: The totals of the response as a Series
+        """
         safe = self._df[self._response].copy()
         status = self._df['Status']
         suppress = status.isin(STATUS_CODES['U']) | status.isin(STATUS_CODES['M'])
@@ -39,7 +59,8 @@ class TableResult:
     def __str__(self):
         return f"Response: {self._response}\n{self.dataframe()}"
 
-    def dataframe(self):
+    def dataframe(self) -> pd.DataFrame:
+        """Combines safe, status and unsafe in a dataframe."""
         return pd.DataFrame({
             'safe': self.safe(),
             'status': self.status(),

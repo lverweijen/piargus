@@ -15,6 +15,7 @@ class TestBatchWriter(TestCase):
         writer.open_metadata('metadata.rda')
         writer.specify_table(["sbi", "gk"], "income")
         writer.safety_rule({"NK(3, 70)"})
+        writer.apriori("apriori.hst", 55, ignore_error=True, expand_trivial=False)
         writer.read_microdata()
         writer.read_table()
         writer.suppress("GH", 1)
@@ -30,6 +31,7 @@ class TestBatchWriter(TestCase):
             '<OPENMETADATA>\t"metadata.rda"\n',
             '<SPECIFYTABLE>\t"sbi""gk"|"income"|"income"|"income"\n',
             '<SAFETYRULE>\tNK(3, 70)\n',
+            '<APRIORI>\t"apriori.hst", 55, ",", 1, 0\n',
             '<READMICRODATA>\n',
             '<READTABLE>\n',
             '<SUPPRESS>\tGH(1)\n',

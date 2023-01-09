@@ -57,6 +57,14 @@ class BatchWriter:
         else:
             return self.write_command("READTABLE", int(compute_totals))
 
+    def apriori(self, filename, table, separator=',', ignore_error=False, expand_trivial=True):
+        ignore_error = int(ignore_error)
+        expand_trivial = int(expand_trivial)
+        filename = _format_string(filename)
+        separator = _format_string(separator)
+        arg = f"{filename}, {table}, {separator}, {ignore_error}, {expand_trivial}"
+        return self.write_command("APRIORI", arg)
+
     def safety_rule(self, rules):
         return self.write_command('SAFETYRULE', "|".join(rules))
 

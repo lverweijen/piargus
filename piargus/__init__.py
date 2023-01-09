@@ -7,4 +7,5 @@ from piargus.tabledata import TableData
 from piargus.metadata import MetaData
 from piargus.hierarchy import Hierarchy
 from piargus.codelist import CodeList
+from piargus.apriori import Apriori
 from piargus.table import Table

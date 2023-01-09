@@ -103,6 +103,7 @@ class Job:
             self._setup_hierarchies()
             self._setup_codelists()
             self._setup_metadata()
+            self._setup_apriories()
             self._setup_tables()
             self._setup_batch()
             self._setup = True
@@ -140,6 +141,12 @@ class Job:
                 default = self.directory / 'input' / f'codelist_{col}.cdl'
                 codelist.to_cdl(default, length=self.input_data.column_lengths[col])
 
+    def _setup_apriories(self):
+        for table in self.tables:
+            if table.apriori is not None and table.apriori.filepath is None:
+                default = self.directory / 'input' / f'apriori_{table.name}.hst'
+                table.apriori.to_hst(default)
+
     def _setup_tables(self):
         for table in self.tables:
             if table.filepath_out is None:
@@ -169,12 +176,20 @@ class Job:
             else:
                 writer.read_microdata()
 
-            for i, table in enumerate(self.tables, 1):
+            for t_index, table in enumerate(self.tables, 1):
                 t_method = table.suppress_method or self.suppress_method
+                t_apriori = table.apriori
+
+                if t_apriori is not None:
+                    writer.apriori(t_apriori.filepath, t_index,
+                                   separator=t_apriori.separator,
+                                   ignore_error=t_apriori.ignore_error,
+                                   expand_trivial=t_apriori.expand_trivial)
+
                 if t_method:
                     t_method_args = table.suppress_method_args or self.suppress_method_args or METHOD_DEFAULTS[t_method]
-                    writer.suppress(t_method, i, *t_method_args)
-                writer.write_table(i, 2, {"AS": True}, str(table.filepath_out))
+                    writer.suppress(t_method, t_index, *t_method_args)
+                writer.write_table(t_index, 2, {"AS": True}, str(table.filepath_out))
 
             if self.interactive:
                 writer.go_interactive()

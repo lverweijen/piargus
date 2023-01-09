@@ -15,7 +15,7 @@ class TableData(InputData, Table):
     def __init__(self, dataset, explanatory, response, shadow=None, cost=None, labda=None,
                  total_codes='Total', frequency=None, top_contributors=None,
                  lower_protection_level=None, upper_protection_level=None,
-                 status_indicator=None, status_markers=None,
+                 status_indicator=None, status_markers=None, apriori=None,
                  suppress_method=None, **kwargs):
         """
         A TableData instance contains data which has already been aggregated.
@@ -45,7 +45,7 @@ class TableData(InputData, Table):
         """
 
         Table.__init__(self, explanatory=explanatory, suppress_method=suppress_method,
-                       response=response, shadow=shadow, cost=cost, labda=labda)
+                       response=response, shadow=shadow, cost=cost, labda=labda, apriori=apriori)
         InputData.__init__(self, dataset, **kwargs)
 
         if isinstance(total_codes, str):

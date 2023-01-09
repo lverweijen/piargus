@@ -16,7 +16,7 @@ class TestBatchWriter(TestCase):
         writer.specify_table(["sbi", "gk"], "income")
         writer.safety_rule({"NK(3, 70)"})
         writer.read_microdata()
-        writer.read_tabledata()
+        writer.read_table()
         writer.suppress("GH", 1)
         writer.write_table(1, 2, {"AS": True}, "table_clean.csv")
         file.seek(0)
@@ -31,7 +31,7 @@ class TestBatchWriter(TestCase):
             '<SPECIFYTABLE>\t"sbi""gk"|"income"|"income"|"income"\n',
             '<SAFETYRULE>\tNK(3, 70)\n',
             '<READMICRODATA>\n',
-            '<READTABLEDATA>\n',
+            '<READTABLE>\n',
             '<SUPPRESS>\tGH(1)\n',
             '<WRITETABLE>\t(1, 2, AS+, "table_clean.csv")\n',
         ]

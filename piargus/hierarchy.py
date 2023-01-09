@@ -101,10 +101,11 @@ class Hierarchy:
     def keys(self):
         return self._data.keys()
 
-    def codes(self):
+    def codes(self, totals=True):
         for key in self.keys():
-            yield key
-            yield from self[key].codes()
+            if totals or not self[key].keys():
+                yield key
+            yield from self[key].codes(totals=totals)
 
     def to_dict(self):
         return {key: value.to_dict() for key, value in self._data.items()}

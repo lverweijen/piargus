@@ -67,3 +67,15 @@ class TestHierarchy(TestCase):
         ])
 
         self.assertEqual(expected.to_dict('rows'), dataframe.to_dict('rows'))
+
+    def test_codes(self):
+        hierarchy = Hierarchy({
+            "Zuid-Holland": ["Rotterdam", "Den Haag"],
+            "Noord-Holland": ["Haarlem"]})
+
+        result1 = list(hierarchy.codes(totals=False))
+        result2 = list(hierarchy.codes(totals=True))
+        expected1 = ['Rotterdam', 'Den Haag', 'Haarlem']
+        expected2 = ['Zuid-Holland', 'Rotterdam', 'Den Haag', 'Noord-Holland', 'Haarlem']
+        self.assertEqual(expected1, result1)
+        self.assertEqual(expected2, result2)

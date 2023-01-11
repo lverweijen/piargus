@@ -13,7 +13,8 @@ class MicroData(InputData):
     From such microdata, tabular aggregates can be constructed.
     """
 
-    def __init__(self, dataset, weight=None, request=None, request_values=("1", "2"), holding=None, *args, **kwargs):
+    def __init__(self, dataset, weight=None, request=None, request_values=("1", "2"), holding=None,
+                 *args, **kwargs):
         """
 
         :param dataset: The dataset (pd.DataFrame) containing the microdata.

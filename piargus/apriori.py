@@ -28,7 +28,7 @@ class Apriori:
 
         return apriori
 
-    def __init__(self, changes=[], separator=',', ignore_error=False, expand_trivial=True):
+    def __init__(self, changes=(), separator=',', ignore_error=False, expand_trivial=True):
         self.changes = list()
         self.separator = separator
         self.ignore_error = ignore_error
@@ -36,7 +36,7 @@ class Apriori:
         self.filepath = None
 
         for change in changes:
-            if isinstance(change, Apriori):
+            if isinstance(change, AprioriChange):
                 self._add_change(change)
             else:
                 self._add_change(*change)

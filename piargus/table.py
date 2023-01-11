@@ -1,5 +1,6 @@
 import pandas as pd
 
+from .apriori import Apriori
 from .tableresult import TableResult
 
 STATUS_CODES = {
@@ -12,8 +13,18 @@ STATUS_CODES = {
 
 
 class Table:
-    def __init__(self, explanatory, response='<frequency>', shadow=None, cost=None, labda=None, name=None, filepath_out=None,
-                 safety_rules=None, apriori=None, suppress_method=None, suppress_method_args=None):
+    def __init__(self,
+                 explanatory,
+                 response='<frequency>',
+                 shadow=None,
+                 cost=None,
+                 labda=None,
+                 name=None,
+                 filepath_out=None,
+                 safety_rules=None,
+                 apriori=None,
+                 suppress_method=None,
+                 suppress_method_args=None):
         """
         A Tabel instance describes the output of the table.
 
@@ -54,6 +65,9 @@ class Table:
 
         if name is None:
             name = f'table_{id(self)}'
+
+        if not isinstance(apriori, Apriori):
+            apriori = Apriori(apriori)
 
         self.explanatory = explanatory
         self.response = response

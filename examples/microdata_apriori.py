@@ -8,8 +8,8 @@ def main():
     input_data = pa.MicroData(input_df, name='example')
 
     apriori = pa.Apriori(expand_trivial=True)
-    apriori.change_status(['A', 'ExampleDam'], 'S')
-    apriori.change_status(['A', 'ExampleCity'], 'S')
+    apriori.change_status(['A', 'ExampleDam'], pa.SAFE)
+    apriori.change_status(['A', 'ExampleCity'], pa.SAFE)
     apriori.change_cost(['C', 'ExampleDam'], 10)
     apriori.change_protection_level(['C', 'ExampleCity'], 5)
 

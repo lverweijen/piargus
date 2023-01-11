@@ -3,11 +3,12 @@ from pathlib import Path
 from .inputdata import InputData
 from .metadata import MetaData
 from .table import Table
+from .constants import SAFE, UNSAFE, PROTECTED
 
 DEFAULT_STATUS_MARKERS = {
-    "SAFE": "S",
-    "UNSAFE": "U",
-    "PROTECT": "P",
+    "SAFE": SAFE,
+    "UNSAFE": UNSAFE,
+    "PROTECT": PROTECTED,
 }
 
 
@@ -72,7 +73,8 @@ class TableData(InputData, Table):
         for col in self.dataset.columns:
             metacol = metadata[col]
 
-            if col in {self.response, self.shadow, self.cost, self.lower_protection_level, self.upper_protection_level}:
+            if col in {self.response, self.shadow, self.cost,
+                       self.lower_protection_level, self.upper_protection_level}:
                 metacol['NUMERIC'] = True
             if col in self.hierarchies:
                 metacol["RECODABLE"] = True

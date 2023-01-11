@@ -1,12 +1,14 @@
 import pandas as pd
 
+from .constants import SAFE, UNSAFE, PROTECTED, SUPPRESSED, EMPTY
+
 
 STATUS_CODES = {
-    'S': [1, 2],  # Safe
-    'U': [3, 4, 5, 6, 9],  # Unsafe
-    'P': [10],  # Protected
-    'M': [11, 12],  # Secondary unsafe
-    'Z': [13, 14],  # Empty
+    SAFE: [1, 2],
+    UNSAFE: [3, 4, 5, 6, 9],
+    PROTECTED: [10],
+    SUPPRESSED: [11, 12],
+    EMPTY: [13, 14],
 }
 
 
@@ -52,7 +54,7 @@ class TableResult:
         """
         safe = self._df[self._response].copy()
         status = self._df['Status']
-        suppress = status.isin(STATUS_CODES['U']) | status.isin(STATUS_CODES['M'])
+        suppress = status.isin(STATUS_CODES[UNSAFE]) | status.isin(STATUS_CODES[SUPPRESSED])
         safe[suppress] = unsafe_marker
         return safe
 
@@ -64,4 +66,5 @@ class TableResult:
         return pd.DataFrame({
             'safe': self.safe(),
             'status': self.status(),
-            'unsafe': self.unsafe()})
+            'unsafe': self.unsafe(),
+        })

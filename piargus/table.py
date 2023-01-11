@@ -1,5 +1,6 @@
 import pandas as pd
 
+from .apriori import Apriori
 from .tableresult import TableResult
 
 STATUS_CODES = {
@@ -12,8 +13,18 @@ STATUS_CODES = {
 
 
 class Table:
-    def __init__(self, explanatory, response='<frequency>', shadow=None, cost=None, labda=None, name=None, filepath_out=None,
-                 safety_rules=None, suppress_method=None, suppress_method_args=None):
+    def __init__(self,
+                 explanatory,
+                 response='<frequency>',
+                 shadow=None,
+                 cost=None,
+                 labda=None,
+                 name=None,
+                 filepath_out=None,
+                 safety_rules=None,
+                 apriori=None,
+                 suppress_method=None,
+                 suppress_method_args=None):
         """
         A Tabel instance describes the output of the table.
 
@@ -39,6 +50,7 @@ class Table:
         See the Tau-Argus manual for details on those rules.
         :param name: Name to use for generated files
         :param filepath_out: Where the file will be located (by default determined from name)
+        :param apriori: Apriori file to change parameters
         :param suppress_method: Method to use for secondary suppression.
         Options are:
         - GH: Hypercube
@@ -54,6 +66,9 @@ class Table:
         if name is None:
             name = f'table_{id(self)}'
 
+        if not isinstance(apriori, Apriori):
+            apriori = Apriori(apriori)
+
         self.explanatory = explanatory
         self.response = response
         self.shadow = shadow
@@ -62,6 +77,7 @@ class Table:
         self.name = name
         self.filepath_out = filepath_out
         self.safety_rules = safety_rules
+        self.apriori = apriori
         self.suppress_method = suppress_method
         self.suppress_method_args = suppress_method_args
 

@@ -167,9 +167,11 @@ class Job:
             writer.open_metadata(str(self.metadata.filepath))
 
             for table in self.tables:
-                t_safety_rules = self.safety_rules | self.input_data.safety_rules | table.safety_rules
+                t_safety_rules = self.safety_rules | table.safety_rules
                 writer.specify_table(table.explanatory, table.response, table.shadow, table.cost, table.labda)
-                writer.safety_rule(t_safety_rules)
+
+                if t_safety_rules:
+                    writer.safety_rule(t_safety_rules)
 
             if isinstance(self.input_data, Table):
                 writer.read_table()

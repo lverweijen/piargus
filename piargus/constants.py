@@ -5,6 +5,11 @@ PROTECTED = "P"
 SUPPRESSED = "M"
 EMPTY = "Z"
 
+# Cell cost
+FREQUENCY = -1
+UNITY = -2
+DISTANCE = -3
+
 # Suppress method (maybe stick to string literals here)
 # GHMITER = "GH"
 # MODULAR = "MOD"

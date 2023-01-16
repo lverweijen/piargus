@@ -22,6 +22,7 @@ class Table:
                  name=None,
                  filepath_out=None,
                  safety_rules=None,
+                 safety_rules_holding=None,
                  apriori=None,
                  suppress_method=None,
                  suppress_method_args=None):
@@ -77,6 +78,7 @@ class Table:
         self.name = name
         self.filepath_out = filepath_out
         self.safety_rules = safety_rules
+        self.safety_rules_holding = safety_rules_holding
         self.apriori = apriori
         self.suppress_method = suppress_method
         self.suppress_method_args = suppress_method_args
@@ -87,14 +89,15 @@ class Table:
 
     @safety_rules.setter
     def safety_rules(self, value):
-        if value is None:
-            value = set()
-        elif isinstance(value, str):
-            value = set(value.split('|'))
-        else:
-            value = set(value)
+        self._safety_rules = _normalize_safety_rules(value)
 
-        self._safety_rules = value
+    @property
+    def safety_rules_holding(self):
+        return self._safety_rules_holding
+
+    @safety_rules_holding.setter
+    def safety_rules_holding(self, value):
+        self._safety_rules_holding = _normalize_safety_rules(value)
 
     def load_result(self) -> TableResult:
         if self.response == '<freq>':
@@ -104,3 +107,14 @@ class Table:
 
         df = pd.read_csv(self.filepath_out, index_col=self.explanatory)
         return TableResult(df, response)
+
+
+def _normalize_safety_rules(value):
+    if value is None:
+        value = set()
+    elif isinstance(value, str):
+        value = set(value.split('|'))
+    else:
+        value = set(value)
+
+    return value

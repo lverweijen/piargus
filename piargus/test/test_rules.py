@@ -17,9 +17,30 @@ class TestSafetyRule(unittest.TestCase):
         self.assertEqual("WGT(0)", rule.weight(False))
         self.assertEqual("MAN(20)", rule.manual())
 
-    def test_error(self):
+    def test_value_error(self):
         with self.assertRaises(ValueError):
             rule.dominance(n=-1, k=110)
+
+    def test_make_safety_rules(self):
+        result = rule.make_safety_rule(
+            {rule.nk(3, 75), rule.freq(5, 20)},
+            {rule.p(5), rule.freq(6, 15), rule.request(2, 2, 9)},
+        )
+        expected = [
+            'NK(3, 75)',
+            'FREQ(5, 20)',
+            'P(0, 0)',
+            'P(0, 0)',
+            'REQ(0, 0, 0)',
+            'P(5, 1)',
+            'FREQ(6, 15)',
+            'REQ(2, 2, 9)'
+        ]
+        self.assertCountEqual(expected, result)
+
+    def test_make_safety_rule_maximum(self):
+        with self.assertRaises(ValueError):
+            rule.make_safety_rule([rule.p(2), rule.p(3), rule.p(4)], [])
 
 
 if __name__ == '__main__':

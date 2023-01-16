@@ -42,11 +42,11 @@ class _P(SafetyRule):
     maximum = 2
     dummy = "P(0, 0)"
 
-    def check_parameters(self, p, n=1):
+    def check_parameters(self, percent, n=1):
         if n < 1:
             raise ValueError(f"n should be positive")
-        if not (0 <= p <= 100):
-            raise ValueError(f"p should be a percentage")
+        if not (0 <= percent <= 100):
+            raise ValueError(f"percent should be a percentage")
 
 
 class _Frequency(SafetyRule):
@@ -151,10 +151,10 @@ def make_safety_rule(rules_individual, rules_holding) -> str:
                 raise ValueError(f"Rule {rule.name} can only appear {rule.maximum} times.")
 
             if rule.dummy is not None and len(h_match) > 0:
-                n_dummies = len(i_match) - rule.maximum
+                n_dummies = rule.maximum - len(i_match)
                 dummy_rules.extend(n_dummies * [rule.dummy])
 
     safety_rules = list(rules_individual)
     safety_rules.extend(dummy_rules)
     safety_rules.extend(rules_holding)
-    return "|".join(safety_rules)
+    return safety_rules

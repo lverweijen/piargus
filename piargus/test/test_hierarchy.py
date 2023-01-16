@@ -66,7 +66,7 @@ class TestHierarchy(TestCase):
             {"province": "Zeeland"},
         ])
 
-        self.assertEqual(expected.to_dict('rows'), dataframe.to_dict('rows'))
+        self.assertEqual(expected.to_dict('records'), dataframe.to_dict('records'))
 
     def test_codes(self):
         hierarchy = Hierarchy({

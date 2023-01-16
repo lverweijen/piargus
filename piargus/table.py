@@ -41,14 +41,15 @@ class Table:
         :param labda: If set to a value > 0, a box-cox transformation is applied on the cost variable.
         If set to 0, a log transformation is applied on the cost.
         Default: 1.
-        :param safety_rules: A set of safety rules.
+        :param safety_rules: A set of safety rules on individual level.
         Options are:
         - P(p, n) - For p-rule
         - NK(n, k) - Dominance rule
-        - ZERO(safety_range)
-        - FREQ(minfreq, safety_range)
-        - REQ(proc1, proc2, safety_margin)
+        - ZERO(safety_range) - Zero rule
+        - FREQ(minfreq, safety_range) - Frequency rule
+        - REQ(percentage_1, percentage_2, safety_margin) - Request rule
         See the Tau-Argus manual for details on those rules.
+        :param safety_rules_holding: A set of safety rules which are applied on holding level.
         :param name: Name to use for generated files
         :param filepath_out: Where the file will be located (by default determined from name)
         :param apriori: Apriori file to change parameters

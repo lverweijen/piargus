@@ -15,7 +15,7 @@ STATUS_CODES = {
 class Table:
     def __init__(self,
                  explanatory,
-                 response='<frequency>',
+                 response='<freq>',
                  shadow=None,
                  cost=None,
                  labda=None,
@@ -97,5 +97,10 @@ class Table:
         self._safety_rules = value
 
     def load_result(self) -> TableResult:
+        if self.response == '<freq>':
+            response = 'Freq'
+        else:
+            response = self.response
+
         df = pd.read_csv(self.filepath_out, index_col=self.explanatory)
-        return TableResult(df, self.response)
+        return TableResult(df, response)

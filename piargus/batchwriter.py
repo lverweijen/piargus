@@ -33,13 +33,8 @@ class BatchWriter:
     def open_metadata(self, metadata):
         return self.write_command("OPENMETADATA", _format_string(metadata))
 
-    def specify_table(self, explanatory, response, shadow=None, cost=None, labda=None):
+    def specify_table(self, explanatory, response="<freq>", shadow=None, cost=None, labda=None):
         explanatory_str = "".join([_format_string(v) for v in explanatory])
-        if shadow is None:
-            shadow = response
-        if cost is None:
-            cost = response
-
         response_str = _format_string(response)
         shadow_str = _format_string(shadow)
         cost_str = _format_string(cost)
@@ -89,5 +84,8 @@ class BatchWriter:
         return self.write_command("CLEAR")
 
 
-def _format_string(path):
-    return f'"{path!s}"'
+def _format_string(text):
+    if text is None:
+        return ""
+    else:
+        return f'"{text!s}"'

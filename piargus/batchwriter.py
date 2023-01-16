@@ -61,6 +61,8 @@ class BatchWriter:
         return self.write_command("APRIORI", arg)
 
     def safety_rule(self, rules):
+        if isinstance(rules, str):
+            rules = (rules,)
         return self.write_command('SAFETYRULE', "|".join(rules))
 
     def suppress(self, method, table, *method_args):

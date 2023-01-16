@@ -35,6 +35,8 @@ class InputData(ABC):
         self.codelists = codelists
         self.column_lengths = column_lengths
 
+        self.filepath = None
+
     @abc.abstractmethod
     def generate_metadata(self) -> MetaData:
         """Generate metadata corresponding to the input data."""
@@ -45,6 +47,10 @@ class InputData(ABC):
             metadata[col] = Column(col, length=self.column_lengths[col])
 
         return metadata
+
+    @abc.abstractmethod
+    def to_csv(self, target):
+        raise NotImplementedError
 
     def resolve_column_lengths(self, default=DEFAULT_COLUMN_LENGTH):
         """Make sure each column has a length.

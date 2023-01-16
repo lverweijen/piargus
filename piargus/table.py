@@ -66,7 +66,7 @@ class Table:
         if name is None:
             name = f'table_{id(self)}'
 
-        if not isinstance(apriori, Apriori):
+        if apriori is not None and not isinstance(apriori, Apriori):
             apriori = Apriori(apriori)
 
         self.explanatory = explanatory

@@ -29,7 +29,7 @@ class TestBatchWriter(TestCase):
             '<OPENMICRODATA>\t"microdata.csv"\n',
             '<OPENTABLEDATA>\t"table.csv"\n',
             '<OPENMETADATA>\t"metadata.rda"\n',
-            '<SPECIFYTABLE>\t"sbi""gk"|"income"|"income"|"income"\n',
+            '<SPECIFYTABLE>\t"sbi""gk"|"income"||\n',
             '<SAFETYRULE>\tNK(3, 70)\n',
             '<APRIORI>\t"apriori.hst", 55, ",", 1, 0\n',
             '<READMICRODATA>\n',

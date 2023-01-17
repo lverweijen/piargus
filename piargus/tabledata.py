@@ -13,11 +13,26 @@ DEFAULT_STATUS_MARKERS = {
 
 
 class TableData(InputData, Table):
-    def __init__(self, dataset, explanatory, response, shadow=None, cost=None, labda=None,
-                 total_codes='Total', frequency=None, top_contributors=None,
-                 lower_protection_level=None, upper_protection_level=None,
-                 status_indicator=None, status_markers=None, apriori=None,
-                 suppress_method=None, **kwargs):
+    def __init__(self,
+                 dataset,
+                 explanatory,
+                 response,
+                 shadow=None,
+                 cost=None,
+                 labda=None,
+                 total_codes='Total',
+                 frequency=None,
+                 top_contributors=None,
+                 lower_protection_level=None,
+                 upper_protection_level=None,
+                 status_indicator=None,
+                 status_markers=None,
+                 safety_rules=None,
+                 safety_rules_holding=None,
+                 apriori=None,
+                 suppress_method=None,
+                 suppress_method_args=None,
+                 **kwargs):
         """
         A TableData instance contains data which has already been aggregated.
 
@@ -45,8 +60,17 @@ class TableData(InputData, Table):
         :param kwargs: See InputData
         """
 
-        Table.__init__(self, explanatory=explanatory, suppress_method=suppress_method,
-                       response=response, shadow=shadow, cost=cost, labda=labda, apriori=apriori)
+        Table.__init__(self,
+                       explanatory=explanatory,
+                       response=response,
+                       shadow=shadow,
+                       cost=cost,
+                       labda=labda,
+                       safety_rules=safety_rules,
+                       safety_rules_holding=safety_rules_holding,
+                       apriori=apriori,
+                       suppress_method=suppress_method,
+                       suppress_method_args=suppress_method_args)
         InputData.__init__(self, dataset, **kwargs)
 
         if isinstance(total_codes, str):

@@ -20,14 +20,13 @@ class Table:
                  cost=None,
                  labda=None,
                  name=None,
-                 filepath_out=None,
                  safety_rules=None,
                  safety_rules_holding=None,
                  apriori=None,
                  suppress_method=None,
                  suppress_method_args=None):
         """
-        A Tabel instance describes the output of the table.
+        A Table instance describes the output of the table.
 
         A simple table can be created from MicroData.
 
@@ -51,7 +50,6 @@ class Table:
         See the Tau-Argus manual for details on those rules.
         :param safety_rules_holding: A set of safety rules which are applied on holding level.
         :param name: Name to use for generated files
-        :param filepath_out: Where the file will be located (by default determined from name)
         :param apriori: Apriori file to change parameters
         :param suppress_method: Method to use for secondary suppression.
         Options are:
@@ -77,7 +75,7 @@ class Table:
         self.cost = cost
         self.labda = labda
         self.name = name
-        self.filepath_out = filepath_out
+        self.filepath_out = None
         self.safety_rules = safety_rules
         self.safety_rules_holding = safety_rules_holding
         self.apriori = apriori

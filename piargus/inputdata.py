@@ -11,8 +11,7 @@ DEFAULT_COLUMN_LENGTH = 20
 
 
 class InputData(ABC):
-    def __init__(self, dataset, name=None, hierarchies=None, codelists=None, safety_rules=None,
-                 column_lengths=None):
+    def __init__(self, dataset, name=None, hierarchies=None, codelists=None, column_lengths=None):
         """
         Abstract class for input data. Either initialize MicroData or TableData.
 
@@ -20,14 +19,6 @@ class InputData(ABC):
         :param name: The name to use when write the data to a file.
         :param hierarchies: The hierarchies to use for categorial data in the dataset.
         :param codelists: Codelists (dicts) for categorical data in the dataset.
-        :param safety_rules: Safety rules to apply to the data.
-        Options are:
-        - P(p, n) - For p-rule
-        - NK(n, k) - Dominance rule
-        - ZERO(safety_range) - Zero rule
-        - FREQ(minfreq, safety_range) - Frequency rule
-        - REQ(percentage_1, percentage_2, safety_margin) - Request rule
-        See the Tau-Argus manual for details on those rules.
         :param column_lengths: For each column the length.
         The lengths can also be derived by calling resolve_column_lengths.
         """
@@ -42,8 +33,8 @@ class InputData(ABC):
         self.name = name
         self.hierarchies = hierarchies
         self.codelists = codelists
-        self.safety_rules = safety_rules
         self.column_lengths = column_lengths
+
         self.filepath = None
 
     @abc.abstractmethod
@@ -56,6 +47,10 @@ class InputData(ABC):
             metadata[col] = Column(col, length=self.column_lengths[col])
 
         return metadata
+
+    @abc.abstractmethod
+    def to_csv(self, target):
+        raise NotImplementedError
 
     def resolve_column_lengths(self, default=DEFAULT_COLUMN_LENGTH):
         """Make sure each column has a length.
@@ -107,18 +102,3 @@ class InputData(ABC):
             value = dict()
         self._codelists = {col: codelist if isinstance(codelist, CodeList) else CodeList(codelist)
                            for col, codelist in value.items()}
-
-    @property
-    def safety_rules(self):
-        return self._safety_rules
-
-    @safety_rules.setter
-    def safety_rules(self, value):
-        if value is None:
-            value = set()
-        elif isinstance(value, str):
-            value = set(value.split('|'))
-        else:
-            value = set(value)
-
-        self._safety_rules = value

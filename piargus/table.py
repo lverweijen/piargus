@@ -20,13 +20,13 @@ class Table:
                  cost=None,
                  labda=None,
                  name=None,
-                 filepath_out=None,
                  safety_rules=None,
+                 safety_rules_holding=None,
                  apriori=None,
                  suppress_method=None,
                  suppress_method_args=None):
         """
-        A Tabel instance describes the output of the table.
+        A Table instance describes the output of the table.
 
         A simple table can be created from MicroData.
 
@@ -40,16 +40,16 @@ class Table:
         :param labda: If set to a value > 0, a box-cox transformation is applied on the cost variable.
         If set to 0, a log transformation is applied on the cost.
         Default: 1.
-        :param safety_rules: A set of safety rules.
+        :param safety_rules: A set of safety rules on individual level.
         Options are:
         - P(p, n) - For p-rule
         - NK(n, k) - Dominance rule
-        - ZERO(safety_range)
-        - FREQ(minfreq, safety_range)
-        - REQ(proc1, proc2, safety_margin)
+        - ZERO(safety_range) - Zero rule
+        - FREQ(minfreq, safety_range) - Frequency rule
+        - REQ(percentage_1, percentage_2, safety_margin) - Request rule
         See the Tau-Argus manual for details on those rules.
+        :param safety_rules_holding: A set of safety rules which are applied on holding level.
         :param name: Name to use for generated files
-        :param filepath_out: Where the file will be located (by default determined from name)
         :param apriori: Apriori file to change parameters
         :param suppress_method: Method to use for secondary suppression.
         Options are:
@@ -75,8 +75,9 @@ class Table:
         self.cost = cost
         self.labda = labda
         self.name = name
-        self.filepath_out = filepath_out
+        self.filepath_out = None
         self.safety_rules = safety_rules
+        self.safety_rules_holding = safety_rules_holding
         self.apriori = apriori
         self.suppress_method = suppress_method
         self.suppress_method_args = suppress_method_args
@@ -87,14 +88,15 @@ class Table:
 
     @safety_rules.setter
     def safety_rules(self, value):
-        if value is None:
-            value = set()
-        elif isinstance(value, str):
-            value = set(value.split('|'))
-        else:
-            value = set(value)
+        self._safety_rules = _normalize_safety_rules(value)
 
-        self._safety_rules = value
+    @property
+    def safety_rules_holding(self):
+        return self._safety_rules_holding
+
+    @safety_rules_holding.setter
+    def safety_rules_holding(self, value):
+        self._safety_rules_holding = _normalize_safety_rules(value)
 
     def load_result(self) -> TableResult:
         if self.response == '<freq>':
@@ -104,3 +106,14 @@ class Table:
 
         df = pd.read_csv(self.filepath_out, index_col=self.explanatory)
         return TableResult(df, response)
+
+
+def _normalize_safety_rules(value):
+    if value is None:
+        value = set()
+    elif isinstance(value, str):
+        value = set(value.split('|'))
+    else:
+        value = set(value)
+
+    return value

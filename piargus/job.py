@@ -1,16 +1,27 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import List, Optional, Tuple, Any, Union
 
 from .batchwriter import BatchWriter
 from .inputdata import InputData
+from .metadata import MetaData
+from .safetyrule import make_safety_rule
 from .table import Table
 
 
 class Job:
-    def __init__(self, input_data: InputData, tables=None, metadata=None, safety_rules=None,
-                 suppress_method='GH', suppress_method_args=None,
-                 directory=None, name=None, logbook=True, interactive=False):
-        """A job to protect a data source.
+    def __init__(self,
+                 input_data: InputData,
+                 tables: Optional[List[Table]] = None,
+                 metadata: Optional[MetaData] = None,
+                 suppress_method: str = 'GH',
+                 suppress_method_args: Optional[Tuple[Any]] = None,
+                 directory: Optional[Union[str, Path]] = None,
+                 name: Optional[str] = None,
+                 logbook: Union[bool, str] = True,
+                 interactive: bool = False):
+        """
+        A job to protect a data source.
 
         This class takes care of generating all input/meta files that TauArgus needs.
         If a directory is supplied, the necessary files will be created in that directory.
@@ -21,7 +32,6 @@ class Job:
         :param input_data: The source from which to generate tables. Needs to be either MicroData or TableData.
         :param tables: The tables to be generated. Can be omitted if input_data is TableData.
         :param metadata: The metadata of input_data. If omitted, it will be derived from input_data.
-        :param safety_rules: Rules for primary suppression. (See Table for details)
         :param suppress_method: The default method to use for secondary suppression if none is specified on table.
         If None and no suppress_method is specificed on the table, no secondary suppression is done.
         See the Tau-Argus manual for details.
@@ -56,7 +66,6 @@ class Job:
         self.metadata = metadata
         self.suppress_method = suppress_method
         self.suppress_method_args = suppress_method_args
-        self.safety_rules = safety_rules
         self.directory = Path(directory).absolute()
         self.name = name
         self.logbook = logbook
@@ -79,21 +88,6 @@ class Job:
             logbook = self.logbook
 
         return Path(logbook).absolute()
-
-    @property
-    def safety_rules(self):
-        return self._safety_rules
-
-    @safety_rules.setter
-    def safety_rules(self, value):
-        if value is None:
-            value = set()
-        elif isinstance(value, str):
-            value = set(value.split('|'))
-        else:
-            value = set(value)
-
-        self._safety_rules = value
 
     def setup(self, reset=False):
         """Generate all files required for TauArgus to run."""
@@ -167,9 +161,12 @@ class Job:
             writer.open_metadata(str(self.metadata.filepath))
 
             for table in self.tables:
-                t_safety_rules = self.safety_rules | self.input_data.safety_rules | table.safety_rules
-                writer.specify_table(table.explanatory, table.response, table.shadow, table.cost, table.labda)
-                writer.safety_rule(t_safety_rules)
+                writer.specify_table(table.explanatory, table.response, table.shadow, table.cost,
+                                     table.labda)
+
+                safety_rules = make_safety_rule(table.safety_rules, table.safety_rules_holding)
+                if safety_rules:
+                    writer.safety_rule(safety_rules)
 
             if isinstance(self.input_data, Table):
                 writer.read_table()
@@ -187,8 +184,11 @@ class Job:
                                    expand_trivial=t_apriori.expand_trivial)
 
                 if t_method:
-                    t_method_args = table.suppress_method_args or self.suppress_method_args or METHOD_DEFAULTS[t_method]
+                    t_method_args = (table.suppress_method_args
+                                     or self.suppress_method_args
+                                     or METHOD_DEFAULTS[t_method])
                     writer.suppress(t_method, t_index, *t_method_args)
+
                 writer.write_table(t_index, 2, {"AS": True}, str(table.filepath_out))
 
             if self.interactive:

@@ -1,3 +1,6 @@
+from .constants import FREQUENCY_RESPONSE
+
+
 class BatchWriter:
     """Helper to write a batch file for use with TauArgus.
 
@@ -33,7 +36,7 @@ class BatchWriter:
     def open_metadata(self, metadata):
         return self.write_command("OPENMETADATA", _format_arg(metadata))
 
-    def specify_table(self, explanatory, response="<freq>", shadow=None, cost=None, labda=None):
+    def specify_table(self, explanatory, response=FREQUENCY_RESPONSE, shadow=None, cost=None, labda=None):
         explanatory_str = "".join([_format_arg(v) for v in explanatory])
         response_str = _format_arg(response)
         shadow_str = _format_arg(shadow)

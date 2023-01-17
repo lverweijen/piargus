@@ -5,10 +5,13 @@ PROTECTED = "P"
 SUPPRESSED = "M"
 EMPTY = "Z"
 
+# Response
+FREQUENCY_RESPONSE = "<freq>"
+
 # Cell cost
-FREQUENCY = -1
-UNITY = -2
-DISTANCE = -3
+FREQUENCY_COST = -1
+UNITY_COST = -2
+DISTANCE_COST = -3
 
 # Suppress method (maybe stick to string literals here)
 GHMITER = "GH"

@@ -1,6 +1,7 @@
 import pandas as pd
 
 from .apriori import Apriori
+from .constants import FREQUENCY_RESPONSE
 from .tableresult import TableResult
 
 STATUS_CODES = {
@@ -15,7 +16,7 @@ STATUS_CODES = {
 class Table:
     def __init__(self,
                  explanatory,
-                 response='<freq>',
+                 response=FREQUENCY_RESPONSE,
                  shadow=None,
                  cost=None,
                  labda=None,
@@ -99,7 +100,7 @@ class Table:
         self._safety_rules_holding = _normalize_safety_rules(value)
 
     def load_result(self) -> TableResult:
-        if self.response == '<freq>':
+        if self.response == FREQUENCY_RESPONSE:
             response = 'Freq'
         else:
             response = self.response

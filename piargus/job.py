@@ -188,10 +188,15 @@ class Job:
                                    expand_trivial=t_apriori.expand_trivial)
 
                 if t_method:
-                    t_method_args = (table.suppress_method_args
-                                     or self.suppress_method_args
-                                     or METHOD_DEFAULTS[t_method])
-                    writer.suppress(t_method, t_index, *t_method_args)
+                    if hasattr(t_method, 'name'):
+                        t_method_name = t_method.name
+                        t_method_args = t_method.args
+                    else:
+                        t_method_name = t_method
+                        t_method_args = (table.suppress_method_args
+                                         or self.suppress_method_args
+                                         or METHOD_DEFAULTS[t_method_name])
+                    writer.suppress(t_method_name, t_index, *t_method_args)
 
                 writer.write_table(t_index, 2, {"AS": True}, str(table.filepath_out))
 

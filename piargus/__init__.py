@@ -11,6 +11,7 @@ from piargus.metadata import MetaData
 from piargus.microdata import MicroData
 from piargus.safetyrule import dominance_rule, p_rule, frequency_rule, request_rule, zero_rule, \
     missing_rule, weight_rule, manual_rule
+from piargus.suppress_method import ghmiter, modular, optimal, network, rounding, tabular_adjustment
 from piargus.table import Table
 from piargus.tabledata import TableData
 from piargus.tauargus import TauArgus

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from .constants import FREQUENCY_RESPONSE
 
 
@@ -92,6 +94,8 @@ class BatchWriter:
 def _format_arg(text):
     if text is None:
         return ""
+    elif isinstance(text, Path):
+        return f'"{text!s}"'
     elif isinstance(text, str):
         return f'"{text!s}"'
     elif isinstance(text, bool):

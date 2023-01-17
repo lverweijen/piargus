@@ -165,8 +165,7 @@ class Job:
                                      table.labda)
 
                 safety_rules = make_safety_rule(table.safety_rules, table.safety_rules_holding)
-                if safety_rules:
-                    writer.safety_rule(safety_rules)
+                writer.safety_rule(safety_rules)
 
             if isinstance(self.input_data, Table):
                 writer.read_table()

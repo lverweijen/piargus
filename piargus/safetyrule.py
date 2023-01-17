@@ -25,7 +25,7 @@ class SafetyRule:
             return f"{self.name}{values}"
 
 
-class _Dominance(SafetyRule):
+class DominanceRule(SafetyRule):
     name = "NK"
     maximum = 2
     dummy = "NK(0, 0)"
@@ -37,19 +37,19 @@ class _Dominance(SafetyRule):
             raise ValueError(f"k should be a percentage")
 
 
-class _P(SafetyRule):
+class PRule(SafetyRule):
     name = 'P'
     maximum = 2
     dummy = "P(0, 0)"
 
-    def check_parameters(self, percent, n=1):
+    def check_parameters(self, p, n=1):
         if n < 1:
             raise ValueError(f"n should be positive")
-        if not (0 <= percent <= 100):
-            raise ValueError(f"percent should be a percentage")
+        if not (0 <= p <= 100):
+            raise ValueError(f"p should be a percentage")
 
 
-class _Frequency(SafetyRule):
+class FrequencyRule(SafetyRule):
     name = "FREQ"
     maximum = 1
     dummy = "FREQ(0, 0)"
@@ -61,7 +61,7 @@ class _Frequency(SafetyRule):
             raise ValueError(f"safety_range should be a percentage")
 
 
-class _Request(SafetyRule):
+class RequestRule(SafetyRule):
     name = "REQ"
     maximum = 1
     dummy = "REQ(0, 0, 0)"
@@ -73,7 +73,7 @@ class _Request(SafetyRule):
             raise ValueError(f"percent2 should be a percentage")
 
 
-class _Zero(SafetyRule):
+class ZeroRule(SafetyRule):
     name = "ZERO"
     maximum = 1
 
@@ -81,7 +81,7 @@ class _Zero(SafetyRule):
         pass  # TODO Unclear from manual how to use safety_range and what to check
 
 
-class _Missing(SafetyRule):
+class MissingRule(SafetyRule):
     name = "MIS"
 
     def check_parameters(self, is_safe=0):
@@ -91,7 +91,7 @@ class _Missing(SafetyRule):
         return super().__call__(int(is_safe))
 
 
-class _Weight(SafetyRule):
+class WeightRule(SafetyRule):
     name = "WGT"
 
     def check_parameters(self, apply_weights=0):
@@ -101,7 +101,7 @@ class _Weight(SafetyRule):
         return super().__call__(int(apply_weights))
 
 
-class _Manual(SafetyRule):
+class ManualRule(SafetyRule):
     name = "MAN"
 
     def check_parameters(self, margin=20):
@@ -109,25 +109,25 @@ class _Manual(SafetyRule):
             raise ValueError(f"margin should be a percentage")
 
 
-dominance = nk = _Dominance()
-p = _P()
-frequency = freq = _Frequency()
-request = req = _Request()
-zero = _Zero()
-missing = mis = _Missing()
-weight = wgt = _Weight()
-manual = man = _Manual()
+dominance_rule = DominanceRule()
+p_rule = PRule()
+frequency_rule = FrequencyRule()
+request_rule = RequestRule()
+zero_rule = ZeroRule()
+missing_rule = MissingRule()
+weight_rule = WeightRule()
+manual_rule = ManualRule()
 
 
 RULES = [
-    dominance,
-    p,
-    frequency,
-    request,
-    zero,
-    missing,
-    weight,
-    manual,
+    dominance_rule,
+    p_rule,
+    frequency_rule,
+    request_rule,
+    zero_rule,
+    missing_rule,
+    weight_rule,
+    manual_rule,
 ]
 
 

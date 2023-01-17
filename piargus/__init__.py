@@ -1,4 +1,3 @@
-import piargus.safetyrule as rule
 from piargus.apriori import Apriori
 from piargus.batchwriter import BatchWriter
 from piargus.codelist import CodeList
@@ -11,3 +10,5 @@ from piargus.microdata import MicroData
 from piargus.table import Table
 from piargus.tabledata import TableData
 from piargus.tauargus import TauArgus
+from piargus.safetyrule import dominance_rule, p_rule, frequency_rule, request_rule, zero_rule, \
+    missing_rule, weight_rule, manual_rule

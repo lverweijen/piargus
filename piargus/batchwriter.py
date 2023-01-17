@@ -94,5 +94,7 @@ def _format_arg(text):
         return ""
     elif isinstance(text, str):
         return f'"{text!s}"'
+    elif isinstance(text, bool):
+        return str(int(text))
     else:
-        return repr(text)
+        return str(text)

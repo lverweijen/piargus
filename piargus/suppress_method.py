@@ -1,3 +1,6 @@
+from .constants import ROUNDING, NETWORK, OPTIMAL, MODULAR, GHMITER
+
+
 class SuppressMethod:
     def __init__(self, name, args=()):
         self.name = name
@@ -29,9 +32,9 @@ def ghmiter(bounds_percentage=0, model_size=1, apply_singleton=None):
         raise ValueError("bounds_percentage should be a percentage")
 
     if apply_singleton is None:
-        return SuppressMethod("GH", [bounds_percentage, model_size])
+        return SuppressMethod(GHMITER, [bounds_percentage, model_size])
     else:
-        return SuppressMethod("GH", [bounds_percentage, model_size, int(apply_singleton)])
+        return SuppressMethod(GHMITER, [bounds_percentage, model_size, int(apply_singleton)])
 
 
 def modular(time_per_subtable=5, single_single=True, single_multiple=True, min_freq=True):
@@ -39,8 +42,8 @@ def modular(time_per_subtable=5, single_single=True, single_multiple=True, min_f
     if time_per_subtable < 0:
         raise ValueError
 
-    return SuppressMethod("MOD", [time_per_subtable, int(single_single), int(single_multiple),
-                                  int(min_freq)])
+    return SuppressMethod(MODULAR, [time_per_subtable, int(single_single), int(single_multiple),
+                                    int(min_freq)])
 
 
 def optimal(max_time=0):
@@ -48,12 +51,12 @@ def optimal(max_time=0):
     if max_time < 0:
         raise ValueError
 
-    return SuppressMethod("OPT", [max_time])
+    return SuppressMethod(OPTIMAL, [max_time])
 
 
 def network():
     """Network suppression."""
-    return SuppressMethod("NET")
+    return SuppressMethod(NETWORK)
 
 
 def rounding(rounding_base, steps=0, max_time=10, partitions=False, stop_rule=3):
@@ -71,7 +74,7 @@ def rounding(rounding_base, steps=0, max_time=10, partitions=False, stop_rule=3)
     2 = First feasible solution,
     3 = optimal solution (3 =default)
     """
-    return SuppressMethod("RND", [rounding_base, steps, max_time, int(partitions), stop_rule])
+    return SuppressMethod(ROUNDING, [rounding_base, steps, max_time, int(partitions), stop_rule])
 
 
 def tabular_adjustment():

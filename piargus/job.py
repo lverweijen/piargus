@@ -3,9 +3,11 @@ from tempfile import TemporaryDirectory
 from typing import List, Optional, Tuple, Any, Union
 
 from .batchwriter import BatchWriter
+from .constants import OPTIMAL
 from .inputdata import InputData
 from .metadata import MetaData
 from .safetyrule import make_safety_rule
+from .suppress_method import SuppressMethod
 from .table import Table
 
 
@@ -14,7 +16,7 @@ class Job:
                  input_data: InputData,
                  tables: Optional[List[Table]] = None,
                  metadata: Optional[MetaData] = None,
-                 suppress_method: str = 'GH',
+                 suppress_method: str = OPTIMAL,
                  suppress_method_args: Optional[Tuple[Any]] = None,
                  directory: Optional[Union[str, Path]] = None,
                  name: Optional[str] = None,
@@ -62,12 +64,18 @@ class Job:
             else:
                 raise ValueError("No outputs specified")
 
+        if isinstance(suppress_method, SuppressMethod):
+            suppress_method_name = suppress_method.name
+            suppress_method_args = suppress_method_name.args
+        else:
+            suppress_method_name = suppress_method
+
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
         self.input_data = input_data
         self.tables = tables
         self.metadata = metadata
-        self.suppress_method = suppress_method
+        self.suppress_method = suppress_method_name
         self.suppress_method_args = suppress_method_args
         self.directory = Path(directory).absolute()
         self.name = name
@@ -188,15 +196,10 @@ class Job:
                                    expand_trivial=t_apriori.expand_trivial)
 
                 if t_method:
-                    if hasattr(t_method, 'name'):
-                        t_method_name = t_method.name
-                        t_method_args = t_method.args
-                    else:
-                        t_method_name = t_method
-                        t_method_args = (table.suppress_method_args
-                                         or self.suppress_method_args
-                                         or METHOD_DEFAULTS[t_method_name])
-                    writer.suppress(t_method_name, t_index, *t_method_args)
+                    t_method_args = (table.suppress_method_args
+                                     or self.suppress_method_args
+                                     or tuple())
+                    writer.suppress(t_method, t_index, *t_method_args)
 
                 writer.write_table(t_index, 2, {"AS": True}, str(table.filepath_out))
 
@@ -229,16 +232,6 @@ class Job:
 
         if problems:
             raise JobSetupError(problems)
-
-
-METHOD_DEFAULTS = {
-    'GH': (0, 1),
-    'MOD': (5, 1, 1, 1),
-    'OPT': (5,),
-    'NET': (),
-    'RND': (0, 10, 0, 3),
-    'CTA': (),
-}
 
 
 class JobSetupError(Exception):

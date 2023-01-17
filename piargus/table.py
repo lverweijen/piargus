@@ -2,6 +2,7 @@ import pandas as pd
 
 from .apriori import Apriori
 from .constants import FREQUENCY_RESPONSE
+from .suppress_method import SuppressMethod
 from .tableresult import TableResult
 
 STATUS_CODES = {
@@ -69,6 +70,9 @@ class Table:
 
         if apriori is not None and not isinstance(apriori, Apriori):
             apriori = Apriori(apriori)
+
+        if isinstance(suppress_method, SuppressMethod):
+            suppress_method, suppress_method_args = suppress_method.name, suppress_method.args
 
         self.explanatory = explanatory
         self.response = response

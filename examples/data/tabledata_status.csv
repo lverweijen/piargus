@@ -1,0 +1,13 @@
+activity,size,val,n_obs,max,status
+01,tr1,100,10,20,S
+01,tr2,50,5,15,S
+01,Total,150,15,20,S
+02,tr1,30,2,20,S
+02,tr2,20,5,10,U
+02,Total,50,7,20,S
+06,tr1,60,8,16,S
+06,tr2,40,6,38,S
+06,Total,100,14,38,S
+Total,tr1,190,20,20,S
+Total,tr2,110,16,38,S
+Total,Total,300,36,3,S

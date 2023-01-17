@@ -16,7 +16,7 @@ class BatchWriter:
         return command, arg
 
     def logbook(self, log_file):
-        self.write_command('LOGBOOK', _format_string(log_file))
+        self.write_command('LOGBOOK', _format_arg(log_file))
 
     def open_microdata(self, microdata, sep=','):
         if hasattr(microdata, 'to_csv'):
@@ -25,24 +25,19 @@ class BatchWriter:
         else:
             microdata_file = microdata
 
-        return self.write_command("OPENMICRODATA", _format_string(microdata_file))
+        return self.write_command("OPENMICRODATA", _format_arg(microdata_file))
 
     def open_tabledata(self, tabledata):
-        return self.write_command("OPENTABLEDATA", _format_string(tabledata))
+        return self.write_command("OPENTABLEDATA", _format_arg(tabledata))
 
     def open_metadata(self, metadata):
-        return self.write_command("OPENMETADATA", _format_string(metadata))
+        return self.write_command("OPENMETADATA", _format_arg(metadata))
 
-    def specify_table(self, explanatory, response, shadow=None, cost=None, labda=None):
-        explanatory_str = "".join([_format_string(v) for v in explanatory])
-        if shadow is None:
-            shadow = response
-        if cost is None:
-            cost = response
-
-        response_str = _format_string(response)
-        shadow_str = _format_string(shadow)
-        cost_str = _format_string(cost)
+    def specify_table(self, explanatory, response="<freq>", shadow=None, cost=None, labda=None):
+        explanatory_str = "".join([_format_arg(v) for v in explanatory])
+        response_str = _format_arg(response)
+        shadow_str = _format_arg(shadow)
+        cost_str = _format_arg(cost)
         options = f'{explanatory_str}|{response_str}|{shadow_str}|{cost_str}'
         if labda:
             options += f"|{labda}"
@@ -60,8 +55,8 @@ class BatchWriter:
     def apriori(self, filename, table, separator=',', ignore_error=False, expand_trivial=True):
         ignore_error = int(ignore_error)
         expand_trivial = int(expand_trivial)
-        filename = _format_string(filename)
-        separator = _format_string(separator)
+        filename = _format_arg(filename)
+        separator = _format_arg(separator)
         arg = f"{filename}, {table}, {separator}, {ignore_error}, {expand_trivial}"
         return self.write_command("APRIORI", arg)
 
@@ -76,11 +71,11 @@ class BatchWriter:
         if hasattr(options, 'items'):
             options = "".join([k + {True: "+", False: "-"}[v] for k, v in options.items()])
 
-        result = f"({table}, {kind}, {options}, {_format_string(filename)})"
+        result = f"({table}, {kind}, {options}, {_format_arg(filename)})"
         return self.write_command('WRITETABLE', result)
 
     def version_info(self, filename):
-        return self.write_command("VERSIONINFO", _format_string(filename))
+        return self.write_command("VERSIONINFO", _format_arg(filename))
 
     def go_interactive(self):
         return self.write_command("GOINTERACTIVE")
@@ -89,5 +84,10 @@ class BatchWriter:
         return self.write_command("CLEAR")
 
 
-def _format_string(path):
-    return f'"{path!s}"'
+def _format_arg(text):
+    if text is None:
+        return ""
+    elif isinstance(text, str):
+        return f'"{text!s}"'
+    else:
+        return repr(text)

@@ -24,12 +24,11 @@ import piargus as pa
 
 tau = pa.TauArgus(r'C:\Users\User\Programs\TauArgus4.2.0b5\TauArgus')
 input_df = pd.read_csv('data/microdata.csv')
-input_data = pa.MicroData(input_df, name='example')
+input_data = pa.MicroData(input_df)
 tables = [pa.Table(['sbi', 'regio'], 'income',
-                   name='T1',
                    safety_rules={pa.p_rule(15), pa.frequency_rule(3, 20)},
                    suppress_method=pa.OPTIMAL)]
-job = pa.Job(input_data, tables, directory='tau', name='example')
+job = pa.Job(input_data, tables, directory='tau')
 report = tau.run(job)
 table_result = tables[0].load_result()
 

@@ -56,8 +56,6 @@ class TauArgus:
     def _run_parallel(self, jobs, check=True):
         """Run multiple jobs at the same time (experimental)"""
         jobs = list(jobs)
-        for job in jobs:
-            job.setup()
 
         try:
             processes = []

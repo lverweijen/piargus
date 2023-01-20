@@ -89,7 +89,7 @@ class Job:
 
         return Path(logbook).absolute()
 
-    def setup(self, reset=False):
+    def setup(self, reset=False, check=True):
         """Generate all files required for TauArgus to run."""
         if reset or not self._setup:
             self._setup_directories()
@@ -101,6 +101,9 @@ class Job:
             self._setup_tables()
             self._setup_batch()
             self._setup = True
+
+            if check:
+                self.check()
 
     def _setup_directories(self):
         input_directory = self.directory / 'input'
@@ -193,6 +196,33 @@ class Job:
             if self.interactive:
                 writer.go_interactive()
 
+    def check(self):
+        problems = []
+        for table in self.tables:
+            for var in table.find_variables():
+                if var not in self.input_data.dataset.columns:
+                    problems.append(f"Variable {var} not present in input_data")
+                elif self.metadata is not None:
+                    if var not in self.metadata:
+                        problems.append(f"Variable {var} not present in metadata.")
+
+            for var in table.find_variables(categorical=True, numeric=False):
+                if var in self.metadata:
+                    if not self.metadata[var]["RECODABLE"] or self.metadata[var]["RECODEABLE"]:
+                        problems.append(f"Variable {var} not recodable")
+                else:
+                    problems.append(f"Variable {var} not in metadata")
+
+            for var in table.find_variables(categorical=False, numeric=True):
+                if var in self.metadata:
+                    if not self.metadata[var]["NUMERIC"]:
+                        problems.append(f"Variable {var} not numeric.")
+                else:
+                    problems.append(f"Variable {var} not in metadata")
+
+        if problems:
+            raise JobSetupError(problems)
+
 
 METHOD_DEFAULTS = {
     'GH': (0, 1),
@@ -202,3 +232,12 @@ METHOD_DEFAULTS = {
     'RND': (0, 10, 0, 3),
     'CTA': (),
 }
+
+
+class JobSetupError(Exception):
+    def __init__(self, problems):
+        self.problems = problems
+
+    def __str__(self):
+        problem_str = "\n".join([f"- {problem}" for problem in self.problems])
+        return f"Problems found in setup:\n{problem_str}"

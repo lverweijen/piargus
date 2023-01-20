@@ -72,6 +72,9 @@ class MetaData:
     def __getitem__(self, key):
         return self._columns[key]
 
+    def __contains__(self, item):
+        return item in self._columns
+
     def __setitem__(self, key, value):
         self._columns[key] = value
         self._columns[key].name = key

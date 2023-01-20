@@ -19,7 +19,9 @@ class Job:
                  directory: Optional[Union[str, Path]] = None,
                  name: Optional[str] = None,
                  logbook: Union[bool, str] = True,
-                 interactive: bool = False):
+                 interactive: bool = False,
+                 setup: bool = True,
+    ):
         """
         A job to protect a data source.
 
@@ -40,6 +42,7 @@ class Job:
         :param name: Name from which to derive the name of some temporary files
         :param logbook: Whether this job should create its own logging file
         :param interactive: Whether the gui should be opened
+        :param setup: Whether to set up the job inmediately. (required before run)
         """
 
         if directory is None:
@@ -71,7 +74,8 @@ class Job:
         self.logbook = logbook
         self.interactive = interactive
 
-        self._setup = False
+        if setup:
+            self.setup()
 
     def __str__(self):
         return self.name
@@ -89,18 +93,19 @@ class Job:
 
         return Path(logbook).absolute()
 
-    def setup(self, reset=False):
+    def setup(self, check=True):
         """Generate all files required for TauArgus to run."""
-        if reset or not self._setup:
-            self._setup_directories()
-            self._setup_input_data()
-            self._setup_hierarchies()
-            self._setup_codelists()
-            self._setup_metadata()
-            self._setup_apriories()
-            self._setup_tables()
-            self._setup_batch()
-            self._setup = True
+        self._setup_directories()
+        self._setup_input_data()
+        self._setup_hierarchies()
+        self._setup_codelists()
+        self._setup_metadata()
+        self._setup_apriories()
+        self._setup_tables()
+        self._setup_batch()
+
+        if check:
+            self.check()
 
     def _setup_directories(self):
         input_directory = self.directory / 'input'
@@ -193,6 +198,33 @@ class Job:
             if self.interactive:
                 writer.go_interactive()
 
+    def check(self):
+        problems = []
+        for table in self.tables:
+            for var in table.find_variables():
+                if var not in self.input_data.dataset.columns:
+                    problems.append(f"Variable {var} not present in input_data")
+                elif self.metadata is not None:
+                    if var not in self.metadata:
+                        problems.append(f"Variable {var} not present in metadata.")
+
+            for var in table.find_variables(categorical=True, numeric=False):
+                if var in self.metadata:
+                    if not self.metadata[var]["RECODABLE"] or self.metadata[var]["RECODEABLE"]:
+                        problems.append(f"Variable {var} not recodable")
+                else:
+                    problems.append(f"Variable {var} not in metadata")
+
+            for var in table.find_variables(categorical=False, numeric=True):
+                if var in self.metadata:
+                    if not self.metadata[var]["NUMERIC"]:
+                        problems.append(f"Variable {var} not numeric.")
+                else:
+                    problems.append(f"Variable {var} not in metadata")
+
+        if problems:
+            raise JobSetupError(problems)
+
 
 METHOD_DEFAULTS = {
     'GH': (0, 1),
@@ -202,3 +234,12 @@ METHOD_DEFAULTS = {
     'RND': (0, 10, 0, 3),
     'CTA': (),
 }
+
+
+class JobSetupError(Exception):
+    def __init__(self, problems):
+        self.problems = problems
+
+    def __str__(self):
+        problem_str = "\n".join([f"- {problem}" for problem in self.problems])
+        return f"Problems found in setup:\n{problem_str}"

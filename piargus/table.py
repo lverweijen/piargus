@@ -108,6 +108,18 @@ class Table:
         df = pd.read_csv(self.filepath_out, index_col=self.explanatory)
         return TableResult(df, response)
 
+    def find_variables(self, categorical=True, numeric=True):
+        if categorical:
+            yield from self.explanatory
+
+        if numeric:
+            if self.response != FREQUENCY_RESPONSE:
+                yield self.response
+            if self.shadow:
+                yield self.shadow
+            if self.cost and isinstance(self.cost, str):
+                yield self.cost
+
 
 def _normalize_safety_rules(value):
     if value is None:

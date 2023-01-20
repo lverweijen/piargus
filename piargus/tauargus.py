@@ -17,7 +17,7 @@ class TauArgus:
         """Run either a batch file or a job."""
         if batch_or_job is None:
             returncode, logbook = self._run_interactively()
-        elif hasattr(batch_or_job, 'setup'):
+        elif hasattr(batch_or_job, 'batch_filepath'):
             returncode, logbook = self._run_job(batch_or_job, *args, **kwargs)
         else:
             returncode, logbook = self._run_batch(batch_or_job, *args, **kwargs)
@@ -42,9 +42,8 @@ class TauArgus:
         return subprocess_result.returncode, logbook
 
     def _run_job(self, job, *args, **kwargs):
-        job.setup()
         returncode, logbook = self._run_batch(job.batch_filepath, *args, **kwargs)
-        if job.logbook:
+        if hasattr(job, 'logbook_filepath'):
             logbook = job.logbook_filepath
         return returncode, logbook
 

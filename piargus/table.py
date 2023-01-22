@@ -14,18 +14,20 @@ STATUS_CODES = {
 
 
 class Table:
-    def __init__(self,
-                 explanatory,
-                 response=FREQUENCY_RESPONSE,
-                 shadow=None,
-                 cost=None,
-                 labda=None,
-                 name=None,
-                 safety_rules=None,
-                 safety_rules_holding=None,
-                 apriori=None,
-                 suppress_method=None,
-                 suppress_method_args=None):
+    def __init__(
+            self,
+            explanatory,
+            response=FREQUENCY_RESPONSE,
+            shadow=None,
+            cost=None,
+            labda=None,
+            name=None,
+            safety_rules=(),
+            safety_rules_holding=(),
+            apriori=None,
+            suppress_method=None,
+            suppress_method_args=None
+    ):
         """
         A Table instance describes the output of the table.
 
@@ -43,11 +45,11 @@ class Table:
         Default: 1.
         :param safety_rules: A set of safety rules on individual level.
         Options are:
-        - P(p, n) - For p-rule
-        - NK(n, k) - Dominance rule
-        - ZERO(safety_range) - Zero rule
-        - FREQ(minfreq, safety_range) - Frequency rule
-        - REQ(percentage_1, percentage_2, safety_margin) - Request rule
+        - "P(p, n)": p% rule
+        - "NK(n, k)": (n, k)-dominance rule
+        - "ZERO(safety_range)": Zero rule
+        - "FREQ(minfreq, safety_range)": Frequency rule
+        - "REQ(percentage_1, percentage_2, safety_margin)": Request rule
         See the Tau-Argus manual for details on those rules.
         :param safety_rules_holding: A set of safety rules which are applied on holding level.
         :param name: Name to use for generated files
@@ -122,9 +124,7 @@ class Table:
 
 
 def _normalize_safety_rules(value):
-    if value is None:
-        value = set()
-    elif isinstance(value, str):
+    if isinstance(value, str):
         value = set(value.split('|'))
     else:
         value = set(value)

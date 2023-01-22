@@ -3,7 +3,7 @@ from typing import Union, Optional, Sequence, Collection
 import pandas as pd
 
 from .apriori import Apriori
-from .constants import FREQUENCY_RESPONSE
+from .constants import FREQUENCY_RESPONSE, OPTIMAL
 from .tableresult import TableResult
 
 
@@ -19,8 +19,8 @@ class Table:
             safety_rules: Union[str, Collection[str]] = (),
             safety_rules_holding: Union[str, Collection[str]] = (),
             apriori: Optional[Apriori] = None,
-            suppress_method: Optional[str] = None,
-            suppress_method_args: Optional[Sequence] = None
+            suppress_method: str = OPTIMAL,
+            suppress_method_args: Sequence = (),
     ):
         """
         A Table instance describes the output of the table.
@@ -39,19 +39,11 @@ class Table:
         Default: 1.
         :param safety_rules: A set of safety rules on individual level.
         Options are:
-<<<<<<< HEAD
         - "P(p, n)": p% rule
         - "NK(n, k)": (n, k)-dominance rule
         - "ZERO(safety_range)": Zero rule
         - "FREQ(minfreq, safety_range)": Frequency rule
         - "REQ(percentage_1, percentage_2, safety_margin)": Request rule
-=======
-        - P(p, n) - p% rule
-        - NK(n, k) - (n, k)-dominance rule
-        - ZERO(safety_range) - Zero rule
-        - FREQ(minfreq, safety_range) - Frequency rule
-        - REQ(percentage_1, percentage_2, safety_margin) - Request rule
->>>>>>> 65ca4f6 (Set OPTIMAL as default suppression method)
         See the Tau-Argus manual for details on those rules.
         :param safety_rules_holding: A set of safety rules which are applied on holding level.
         :param name: Name to use for generated files

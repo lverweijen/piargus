@@ -22,15 +22,15 @@ Other TauArgus features not yet supported but useful to someone.
 import pandas as pd
 import piargus as pa
 
-tau = pa.TauArgus(r'C:\Users\User\Programs\TauArgus4.2.0b5\TauArgus')
-
+tau = pa.TauArgus(r'C:\Users\User\Programs\TauArgus4.2.0b5\TauArgus.exe')
 input_df = pd.read_csv('data/microdata.csv')
 input_data = pa.MicroData(input_df)
-table = pa.Table(['sbi', 'regio'], 'income', safety_rules={pa.p_rule(10)})
-job = pa.Job(input_data, [table], directory='tau')
+output_table = pa.Table(['sbi', 'regio'], 'income', safety_rules={pa.p_rule(10)})
 
+job = pa.Job(input_data, [output_table], directory='tau')
 report = tau.run(job)
-table_result = table.load_result()
+table_result = output_table.load_result()
+
 print(report)
 print(table_result)
 ```

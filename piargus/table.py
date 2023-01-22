@@ -6,14 +6,6 @@ from .apriori import Apriori
 from .constants import FREQUENCY_RESPONSE
 from .tableresult import TableResult
 
-STATUS_CODES = {
-    'S': [1, 2],  # Safe
-    'U': [3, 4, 5, 6, 9],  # Unsafe
-    'P': [10],  # Protected
-    'M': [11, 12],  # Secondary unsafe
-    'Z': [13, 14],  # Empty
-}
-
 
 class Table:
     def __init__(
@@ -66,14 +58,15 @@ class Table:
         :param apriori: Apriori file to change parameters
         :param suppress_method: Method to use for secondary suppression.
         Options are:
-        - GH: Hypercube
-        - MOD: Modular
-        - OPT: Optimal
-        - NET: Network
-        - RND: Controlled rounding
-        - CTA: Controlled Tabular Adjustment
+        - `GHMITER` ("GH"): Hypercube
+        - `MODULAR` ("MOD"): Modular
+        - `OPTIMAL` ("OPT"): Optimal [default]
+        - `NETWORK` ("NET"): Network
+        - `ROUNDING` ("RND"): Controlled rounding
+        - `TABULAR_ADJUSTMENT` ("CTA"): Controlled Tabular Adjustment
+        - None: No secondary suppression is applied
         See the Tau-Argus manual for details on those rules.
-        :param suppress_method_args: Parameters to pass to suppress_method method.
+        :param suppress_method_args: Parameters to pass to suppress_method.
         """
 
         if name is None:

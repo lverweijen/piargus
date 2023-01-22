@@ -21,27 +21,6 @@ class TestSafetyRule(unittest.TestCase):
         with self.assertRaises(ValueError):
             rule.dominance_rule(n=-1, k=110)
 
-    def test_make_safety_rules(self):
-        result = rule.join_rules_with_holding(
-            {rule.dominance_rule(3, 75), rule.frequency_rule(5, 20)},
-            {rule.p_rule(5), rule.frequency_rule(6, 15), rule.request_rule(2, 2, 9)},
-        )
-        expected = [
-            'NK(3, 75)',
-            'FREQ(5, 20)',
-            'P(0, 0)',
-            'P(0, 0)',
-            'REQ(0, 0, 0)',
-            'P(5, 1)',
-            'FREQ(6, 15)',
-            'REQ(2, 2, 9)'
-        ]
-        self.assertCountEqual(expected, result)
-
-    def test_make_safety_rule_maximum(self):
-        with self.assertRaises(ValueError):
-            rule.join_rules_with_holding([rule.p_rule(2), rule.p_rule(3), rule.p_rule(4)], [])
-
 
 if __name__ == '__main__':
     unittest.main()

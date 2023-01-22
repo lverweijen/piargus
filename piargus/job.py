@@ -5,7 +5,7 @@ from typing import List, Optional, Tuple, Any, Union
 from .batchwriter import BatchWriter
 from .inputdata import InputData
 from .metadata import MetaData
-from .safetyrule import join_rules_with_holding
+from .utils import join_rules_with_holding
 from .table import Table
 
 

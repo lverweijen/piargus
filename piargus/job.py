@@ -3,6 +3,7 @@ from tempfile import TemporaryDirectory
 from typing import List, Optional, Tuple, Any, Union
 
 from .batchwriter import BatchWriter
+from .constants import OPTIMAL
 from .inputdata import InputData
 from .metadata import MetaData
 from .utils import join_rules_with_holding
@@ -10,17 +11,18 @@ from .table import Table
 
 
 class Job:
-    def __init__(self,
-                 input_data: InputData,
-                 tables: Optional[List[Table]] = None,
-                 metadata: Optional[MetaData] = None,
-                 suppress_method: str = 'GH',
-                 suppress_method_args: Optional[Tuple[Any]] = None,
-                 directory: Optional[Union[str, Path]] = None,
-                 name: Optional[str] = None,
-                 logbook: Union[bool, str] = True,
-                 interactive: bool = False,
-                 setup: bool = True,
+    def __init__(
+            self,
+            input_data: InputData,
+            tables: Optional[List[Table]] = None,
+            metadata: Optional[MetaData] = None,
+            suppress_method: str = OPTIMAL,
+            suppress_method_args: Tuple[Any] = (),
+            directory: Optional[Union[str, Path]] = None,
+            name: Optional[str] = None,
+            logbook: Union[bool, str] = True,
+            interactive: bool = False,
+            setup: bool = True,
     ):
         """
         A job to protect a data source.
@@ -188,9 +190,7 @@ class Job:
                                    expand_trivial=t_apriori.expand_trivial)
 
                 if t_method:
-                    t_method_args = (table.suppress_method_args
-                                     or self.suppress_method_args
-                                     or METHOD_DEFAULTS[t_method])
+                    t_method_args = (table.suppress_method_args or self.suppress_method_args)
                     writer.suppress(t_method, t_index, *t_method_args)
 
                 writer.write_table(t_index, 2, {"AS": True}, str(table.filepath_out))
@@ -224,16 +224,6 @@ class Job:
 
         if problems:
             raise JobSetupError(problems)
-
-
-METHOD_DEFAULTS = {
-    'GH': (0, 1),
-    'MOD': (5, 1, 1, 1),
-    'OPT': (5,),
-    'NET': (),
-    'RND': (0, 10, 0, 3),
-    'CTA': (),
-}
 
 
 class JobSetupError(Exception):

@@ -1,3 +1,5 @@
+from typing import Union, Optional, Sequence, Collection
+
 import pandas as pd
 
 from .apriori import Apriori
@@ -16,17 +18,17 @@ STATUS_CODES = {
 class Table:
     def __init__(
             self,
-            explanatory,
-            response=FREQUENCY_RESPONSE,
-            shadow=None,
-            cost=None,
-            labda=None,
-            name=None,
-            safety_rules=(),
-            safety_rules_holding=(),
-            apriori=None,
-            suppress_method=None,
-            suppress_method_args=None
+            explanatory: Sequence[str],
+            response: Union[str, int] = FREQUENCY_RESPONSE,
+            shadow: Optional[str] = None,
+            cost: Optional[Union[int, str]] = None,
+            labda: int = None,
+            name: str = None,
+            safety_rules: Union[str, Collection[str]] = (),
+            safety_rules_holding: Union[str, Collection[str]] = (),
+            apriori: Optional[Apriori] = None,
+            suppress_method: Optional[str] = None,
+            suppress_method_args: Optional[Sequence] = None
     ):
         """
         A Table instance describes the output of the table.
@@ -45,11 +47,19 @@ class Table:
         Default: 1.
         :param safety_rules: A set of safety rules on individual level.
         Options are:
+<<<<<<< HEAD
         - "P(p, n)": p% rule
         - "NK(n, k)": (n, k)-dominance rule
         - "ZERO(safety_range)": Zero rule
         - "FREQ(minfreq, safety_range)": Frequency rule
         - "REQ(percentage_1, percentage_2, safety_margin)": Request rule
+=======
+        - P(p, n) - p% rule
+        - NK(n, k) - (n, k)-dominance rule
+        - ZERO(safety_range) - Zero rule
+        - FREQ(minfreq, safety_range) - Frequency rule
+        - REQ(percentage_1, percentage_2, safety_margin) - Request rule
+>>>>>>> 65ca4f6 (Set OPTIMAL as default suppression method)
         See the Tau-Argus manual for details on those rules.
         :param safety_rules_holding: A set of safety rules which are applied on holding level.
         :param name: Name to use for generated files

@@ -22,7 +22,7 @@ class TestSafetyRule(unittest.TestCase):
             rule.dominance_rule(n=-1, k=110)
 
     def test_make_safety_rules(self):
-        result = rule.make_safety_rule(
+        result = rule.join_rules_with_holding(
             {rule.dominance_rule(3, 75), rule.frequency_rule(5, 20)},
             {rule.p_rule(5), rule.frequency_rule(6, 15), rule.request_rule(2, 2, 9)},
         )
@@ -40,7 +40,7 @@ class TestSafetyRule(unittest.TestCase):
 
     def test_make_safety_rule_maximum(self):
         with self.assertRaises(ValueError):
-            rule.make_safety_rule([rule.p_rule(2), rule.p_rule(3), rule.p_rule(4)], [])
+            rule.join_rules_with_holding([rule.p_rule(2), rule.p_rule(3), rule.p_rule(4)], [])
 
 
 if __name__ == '__main__':

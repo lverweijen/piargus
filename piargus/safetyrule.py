@@ -1,122 +1,99 @@
-import abc
+import functools
 import inspect
+from typing import Sequence
 
 
 class SafetyRule:
-    name = None
-    maximum = None
-    dummy = None
+    def __init__(self, code, check_function, maximum=None, dummy=None):
+        self.code = code
+        self.check_function = check_function
+        self.maximum = maximum
+        self.dummy = dummy
 
-    @abc.abstractmethod
-    def check_parameters(self, *args, **kwargs):
-        raise NotImplementedError
+    def __repr__(self):
+        return f"<SafetyRule: {self}>"
+
+    def __str__(self):
+        sig = inspect.signature(self.check_function)
+        param_str = ", ".join(sig.parameters)
+        return f"{self.__name__}({param_str})"
 
     def __call__(self, *args, **kwargs):
-        sig = inspect.signature(self.check_parameters)
+        sig = inspect.signature(self.check_function)
         ba = sig.bind(*args, **kwargs)
         ba.apply_defaults()
-        self.check_parameters(*ba.args, **ba.kwargs)
-        values = tuple(v for k, v in ba.arguments.items())
 
+        values = self.check_function(*ba.args, **ba.kwargs)
+        if values is None:
+            values = tuple(ba.arguments.values())
+            
         if len(values) == 1:
             (value,) = values
-            return f"{self.name}({value})"
+            return f"{self.code}({value})"
         else:
-            return f"{self.name}{values}"
+            return f"{self.code}{values}"
 
 
-class DominanceRule(SafetyRule):
-    name = "NK"
-    maximum = 2
-    dummy = "NK(0, 0)"
+def safety_rule(code, maximum=None, dummy=None):
+    def accept_function(check_function):
+        rule = SafetyRule(code, check_function, maximum, dummy)
+        functools.update_wrapper(rule, check_function)
+        return rule
 
-    def check_parameters(self, n=3, k=75):
-        if n < 1:
-            raise ValueError(f"n should be positive")
-        if not (0 <= k <= 100):
-            raise ValueError(f"k should be a percentage")
+    return accept_function
 
 
-class PRule(SafetyRule):
-    name = 'P'
-    maximum = 2
-    dummy = "P(0, 0)"
-
-    def check_parameters(self, p, n=1):
-        if n < 1:
-            raise ValueError(f"n should be positive")
-        if not (0 <= p <= 100):
-            raise ValueError(f"p should be a percentage")
+@safety_rule("NK", maximum=2, dummy="NK(0, 0)")
+def dominance_rule(n=3, k=75):
+    if n < 1:
+        raise ValueError("n should be positive")
+    if not (0 <= k <= 100):
+        raise ValueError("k should be a percentage")
 
 
-class FrequencyRule(SafetyRule):
-    name = "FREQ"
-    maximum = 1
-    dummy = "FREQ(0, 0)"
-
-    def check_parameters(self, n, safety_range):
-        if n < 1:
-            raise ValueError(f"n should be positive")
-        if not (0 <= safety_range <= 100):
-            raise ValueError(f"safety_range should be a percentage")
+@safety_rule("P", maximum=2, dummy="P(0, 0)")
+def p_rule(p, n=1):
+    if n < 1:
+        raise ValueError("n should be positive")
+    if not (0 <= p <= 100):
+        raise ValueError("p should be a percentage")
 
 
-class RequestRule(SafetyRule):
-    name = "REQ"
-    maximum = 1
-    dummy = "REQ(0, 0, 0)"
-
-    def check_parameters(self, percent1, percent2, safety_margin):
-        if not (0 <= percent1 <= 100):
-            raise ValueError(f"percent1 should be a percentage")
-        if not (0 <= percent2 <= 100):
-            raise ValueError(f"percent2 should be a percentage")
+@safety_rule("FREQ", maximum=1, dummy="FREQ(0, 0)")
+def frequency_rule(n, safety_range):
+    if n < 1:
+        raise ValueError("n should be positive")
+    if not (0 <= safety_range <= 100):
+        raise ValueError("safety_range should be a percentage")
 
 
-class ZeroRule(SafetyRule):
-    name = "ZERO"
-    maximum = 1
-
-    def check_parameters(self, safety_range):
-        pass  # TODO Unclear from manual how to use safety_range and what to check
-
-
-class MissingRule(SafetyRule):
-    name = "MIS"
-
-    def check_parameters(self, is_safe=0):
-        pass
-
-    def __call__(self, is_safe=False):
-        return super().__call__(int(is_safe))
+@safety_rule("REQ", maximum=1, dummy="REQ(0, 0, 0)")
+def request_rule(percent1, percent2, safety_margin):
+    if not (0 <= percent1 <= 100):
+        raise ValueError("percent1 should be a percentage")
+    if not (0 <= percent2 <= 100):
+        raise ValueError("percent2 should be a percentage")
 
 
-class WeightRule(SafetyRule):
-    name = "WGT"
-
-    def check_parameters(self, apply_weights=0):
-        pass
-
-    def __call__(self, apply_weights=False):
-        return super().__call__(int(apply_weights))
+@safety_rule("ZERO", maximum=1)
+def zero_rule(safety_range):
+    pass  # TODO Unclear from manual how to use safety_range and what to check
 
 
-class ManualRule(SafetyRule):
-    name = "MAN"
-
-    def check_parameters(self, margin=20):
-        if not (0 <= margin <= 100):
-            raise ValueError(f"margin should be a percentage")
+@safety_rule("MIS")
+def missing_rule(is_safe=False):
+    return int(is_safe),
 
 
-dominance_rule = DominanceRule()
-p_rule = PRule()
-frequency_rule = FrequencyRule()
-request_rule = RequestRule()
-zero_rule = ZeroRule()
-missing_rule = MissingRule()
-weight_rule = WeightRule()
-manual_rule = ManualRule()
+@safety_rule("WGT")
+def weight_rule(apply_weights=False):
+    return int(apply_weights),
+
+
+@safety_rule("MAN")
+def manual_rule(margin=20):
+    if not (0 <= margin <= 100):
+        raise ValueError("margin should be a percentage")
 
 
 RULES = [
@@ -131,7 +108,7 @@ RULES = [
 ]
 
 
-def make_safety_rule(rules_individual, rules_holding) -> str:
+def join_rules_with_holding(rules_individual, rules_holding) -> Sequence[str]:
     """
     Join rules on individual level and holding level.
 
@@ -140,15 +117,15 @@ def make_safety_rule(rules_individual, rules_holding) -> str:
     dummy_rules = []  # Boundary between individual and holding rules
     for rule in RULES:
         i_match = [i_rule for i_rule in rules_individual
-                   if i_rule.startswith(rule.name)]
+                   if i_rule.startswith(rule.code)]
         h_match = [h_rule for h_rule in rules_holding
-                   if h_rule.startswith(rule.name)]
+                   if h_rule.startswith(rule.code)]
 
         if rule.maximum is not None:
             if len(i_match) > rule.maximum:
-                raise ValueError(f"Rule {rule.name} can only appear {rule.maximum} times.")
+                raise ValueError(f"Rule {rule.code} can only appear {rule.maximum} times.")
             if len(h_match) > rule.maximum:
-                raise ValueError(f"Rule {rule.name} can only appear {rule.maximum} times.")
+                raise ValueError(f"Rule {rule.code} can only appear {rule.maximum} times.")
 
             if rule.dummy is not None and len(h_match) > 0:
                 n_dummies = rule.maximum - len(i_match)

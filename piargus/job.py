@@ -5,7 +5,7 @@ from typing import List, Optional, Tuple, Any, Union
 from .batchwriter import BatchWriter
 from .inputdata import InputData
 from .metadata import MetaData
-from .safetyrule import make_safety_rule
+from .safetyrule import join_rules_with_holding
 from .table import Table
 
 
@@ -169,7 +169,7 @@ class Job:
                 writer.specify_table(table.explanatory, table.response, table.shadow, table.cost,
                                      table.labda)
 
-                safety_rules = make_safety_rule(table.safety_rules, table.safety_rules_holding)
+                safety_rules = join_rules_with_holding(table.safety_rules, table.safety_rules_holding)
                 writer.safety_rule(safety_rules)
 
             if isinstance(self.input_data, Table):

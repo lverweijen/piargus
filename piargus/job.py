@@ -87,6 +87,10 @@ class Job:
 
         return Path(logbook).absolute()
 
+    @property
+    def workdir(self):
+        return self.directory / "work" / self.name
+
     def setup(self, check=True):
         """Generate all files required for TauArgus to run."""
         self._setup_directories()
@@ -106,6 +110,7 @@ class Job:
         output_directory = self.directory / 'output'
         input_directory.mkdir(exist_ok=True)
         output_directory.mkdir(exist_ok=True)
+        self.workdir.mkdir(parents=True, exist_ok=True)
 
     def _setup_input_data(self):
         default = self.directory / 'input' / f"{self.input_data.name}.csv"
@@ -148,9 +153,6 @@ class Job:
     def _setup_batch(self):
         with open(self.batch_filepath, 'w') as batch:
             writer = BatchWriter(batch)
-
-            if self.logbook:
-                writer.logbook(self.logbook_filepath)
 
             if isinstance(self.input_data, Table):
                 writer.open_tabledata(str(self.input_data.filepath))

@@ -19,6 +19,8 @@ class TauArgus:
             returncode, logbook = self._run_interactively()
         elif hasattr(batch_or_job, 'batch_filepath'):
             returncode, logbook = self._run_job(batch_or_job, *args, **kwargs)
+        elif hasattr(batch_or_job, '__iter__'):
+            return self._run_parallel(batch_or_job, check, *args, **kwargs)
         else:
             returncode, logbook = self._run_batch(batch_or_job, *args, **kwargs)
 
@@ -27,6 +29,10 @@ class TauArgus:
             result.check()
 
         return result
+
+    def _run_interactively(self):
+        subprocess_result = subprocess.run([self.program])
+        return subprocess_result.returncode, self.DEFAULT_LOGBOOK
 
     def _run_batch(self, batch_file, logbook=None, tmpdir=None):
         cmd = [self.program, str(Path(batch_file).absolute())]
@@ -41,15 +47,40 @@ class TauArgus:
             logbook = self.DEFAULT_LOGBOOK
         return subprocess_result.returncode, logbook
 
-    def _run_job(self, job, *args, **kwargs):
-        returncode, logbook = self._run_batch(job.batch_filepath, *args, **kwargs)
-        if hasattr(job, 'logbook_filepath'):
-            logbook = job.logbook_filepath
+    def _run_job(self, job, logbook=None):
+        returncode, logbook = self._run_batch(
+            job.batch_filepath,
+            logbook or job.logbook_filepath,
+            job.workdir)
         return returncode, logbook
 
-    def _run_interactively(self):
-        subprocess_result = subprocess.run([self.program])
-        return subprocess_result.returncode, self.DEFAULT_LOGBOOK
+    def _run_parallel(self, jobs, check=True, timeout=None):
+        """Run multiple jobs at the same time (experimental)"""
+        jobs = list(jobs)
+
+        try:
+            processes = []
+            for job in jobs:
+                batch_file = str(job.batch_filepath.absolute())
+                log_file = str(job.logbook_filepath.absolute())
+                job.workdir.mkdir(parents=True, exist_ok=True)
+                process = subprocess.Popen([self.program, batch_file, log_file, job.workdir])
+                processes.append(process)
+
+            results = []
+            for process in processes:
+                result = ArgusReport(process.wait(timeout), Path(process.args[2]))
+                results.append(result)
+        finally:
+            for process in processes:
+                if process.poll() is None:
+                    process.kill()
+
+        if check:
+            for result in results:
+                result.check()
+
+        return results
 
     def version_info(self) -> dict:
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as versioninfo:

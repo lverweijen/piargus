@@ -3,6 +3,7 @@ from tempfile import TemporaryDirectory
 from typing import List, Optional, Tuple, Any, Union
 
 from .batchwriter import BatchWriter
+from .constants import OPTIMAL
 from .inputdata import InputData
 from .metadata import MetaData
 from .utils import join_rules_with_holding
@@ -10,17 +11,16 @@ from .table import Table
 
 
 class Job:
-    def __init__(self,
-                 input_data: InputData,
-                 tables: Optional[List[Table]] = None,
-                 metadata: Optional[MetaData] = None,
-                 suppress_method: str = 'GH',
-                 suppress_method_args: Optional[Tuple[Any]] = None,
-                 directory: Optional[Union[str, Path]] = None,
-                 name: Optional[str] = None,
-                 logbook: Union[bool, str] = True,
-                 interactive: bool = False,
-                 setup: bool = True,
+    def __init__(
+            self,
+            input_data: InputData,
+            tables: Optional[List[Table]] = None,
+            metadata: Optional[MetaData] = None,
+            directory: Optional[Union[str, Path]] = None,
+            name: Optional[str] = None,
+            logbook: Union[bool, str] = True,
+            interactive: bool = False,
+            setup: bool = True,
     ):
         """
         A job to protect a data source.
@@ -34,10 +34,6 @@ class Job:
         :param input_data: The source from which to generate tables. Needs to be either MicroData or TableData.
         :param tables: The tables to be generated. Can be omitted if input_data is TableData.
         :param metadata: The metadata of input_data. If omitted, it will be derived from input_data.
-        :param suppress_method: The default method to use for secondary suppression if none is specified on table.
-        If None and no suppress_method is specificed on the table, no secondary suppression is done.
-        See the Tau-Argus manual for details.
-        :param suppress_method_args: Parameters for suppress_method
         :param directory: Where to write tau-argus files
         :param name: Name from which to derive the name of some temporary files
         :param logbook: Whether this job should create its own logging file
@@ -67,8 +63,6 @@ class Job:
         self.input_data = input_data
         self.tables = tables
         self.metadata = metadata
-        self.suppress_method = suppress_method
-        self.suppress_method_args = suppress_method_args
         self.directory = Path(directory).absolute()
         self.name = name
         self.logbook = logbook
@@ -178,20 +172,14 @@ class Job:
                 writer.read_microdata()
 
             for t_index, table in enumerate(self.tables, 1):
-                t_method = table.suppress_method or self.suppress_method
-                t_apriori = table.apriori
+                if table.apriori is not None:
+                    writer.apriori(table.apriori.filepath, t_index,
+                                   separator=table.apriori.separator,
+                                   ignore_error=table.apriori.ignore_error,
+                                   expand_trivial=table.apriori.expand_trivial)
 
-                if t_apriori is not None:
-                    writer.apriori(t_apriori.filepath, t_index,
-                                   separator=t_apriori.separator,
-                                   ignore_error=t_apriori.ignore_error,
-                                   expand_trivial=t_apriori.expand_trivial)
-
-                if t_method:
-                    t_method_args = (table.suppress_method_args
-                                     or self.suppress_method_args
-                                     or METHOD_DEFAULTS[t_method])
-                    writer.suppress(t_method, t_index, *t_method_args)
+                if table.suppress_method:
+                    writer.suppress(table.suppress_method, t_index, *table.suppress_method_args)
 
                 writer.write_table(t_index, 2, {"AS": True}, str(table.filepath_out))
 
@@ -224,16 +212,6 @@ class Job:
 
         if problems:
             raise JobSetupError(problems)
-
-
-METHOD_DEFAULTS = {
-    'GH': (0, 1),
-    'MOD': (5, 1, 1, 1),
-    'OPT': (5,),
-    'NET': (),
-    'RND': (0, 10, 0, 3),
-    'CTA': (),
-}
 
 
 class JobSetupError(Exception):

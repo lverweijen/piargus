@@ -1,32 +1,26 @@
+from typing import Union, Optional, Sequence, Collection
+
 import pandas as pd
 
 from .apriori import Apriori
-from .constants import FREQUENCY_RESPONSE
+from .constants import FREQUENCY_RESPONSE, OPTIMAL
 from .tableresult import TableResult
-
-STATUS_CODES = {
-    'S': [1, 2],  # Safe
-    'U': [3, 4, 5, 6, 9],  # Unsafe
-    'P': [10],  # Protected
-    'M': [11, 12],  # Secondary unsafe
-    'Z': [13, 14],  # Empty
-}
 
 
 class Table:
     def __init__(
             self,
-            explanatory,
-            response=FREQUENCY_RESPONSE,
-            shadow=None,
-            cost=None,
-            labda=None,
-            name=None,
-            safety_rules=(),
-            safety_rules_holding=(),
-            apriori=None,
-            suppress_method=None,
-            suppress_method_args=None
+            explanatory: Sequence[str],
+            response: Union[str, int] = FREQUENCY_RESPONSE,
+            shadow: Optional[str] = None,
+            cost: Optional[Union[int, str]] = None,
+            labda: int = None,
+            name: str = None,
+            safety_rules: Union[str, Collection[str]] = (),
+            safety_rules_holding: Union[str, Collection[str]] = (),
+            apriori: Optional[Apriori] = None,
+            suppress_method: str = OPTIMAL,
+            suppress_method_args: Sequence = (),
     ):
         """
         A Table instance describes the output of the table.
@@ -56,14 +50,15 @@ class Table:
         :param apriori: Apriori file to change parameters
         :param suppress_method: Method to use for secondary suppression.
         Options are:
-        - GH: Hypercube
-        - MOD: Modular
-        - OPT: Optimal
-        - NET: Network
-        - RND: Controlled rounding
-        - CTA: Controlled Tabular Adjustment
+        - `GHMITER` ("GH"): Hypercube
+        - `MODULAR` ("MOD"): Modular
+        - `OPTIMAL` ("OPT"): Optimal [default]
+        - `NETWORK` ("NET"): Network
+        - `ROUNDING` ("RND"): Controlled rounding
+        - `TABULAR_ADJUSTMENT` ("CTA"): Controlled Tabular Adjustment
+        - None: No secondary suppression is applied
         See the Tau-Argus manual for details on those rules.
-        :param suppress_method_args: Parameters to pass to suppress_method method.
+        :param suppress_method_args: Parameters to pass to suppress_method.
         """
 
         if name is None:

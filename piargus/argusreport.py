@@ -1,17 +1,30 @@
 import textwrap
-
+from typing import Sequence
 
 SEP_MARKER = '--------------------'
 END_MARKER = "End of TauArgus run"
 
 
 class ArgusReport:
-    def __init__(self, returncode=None, logbook_file=None):
+    def __init__(self, returncode: int, batch_file=None, logbook_file=None, workdir=None):
         self.returncode = returncode
-        self.logbook_file = logbook_file
+        self.batch_file = str(batch_file)
+        self.logbook_file = str(logbook_file)
+        self.workdir = str(workdir)
+        self.batch = None
         self.logbook = None
 
-    def read_log(self):
+    def read_batch(self) -> Sequence[str]:
+        """Read batchfile and return lines."""
+        if self.batch_file and self.batch is None:
+            self.batch = []
+            with open(self.batch_file) as reader:
+                self.batch = reader.readlines()
+
+        return self.batch
+
+    def read_log(self) -> Sequence[str]:
+        """Read logfile and return lines."""
         if self.logbook_file and self.logbook is None:
             self.logbook = []
             try:
@@ -30,11 +43,13 @@ class ArgusReport:
         return self.logbook
 
     def check(self):
+        """Raise an exception if the run failed."""
         if self.is_failed:
             raise TauArgusException(self)
 
     @property
     def status(self) -> str:
+        """Return whether the run succeeded or failed as text."""
         if self.is_succesful:
             return "success"
         else:
@@ -42,19 +57,26 @@ class ArgusReport:
 
     @property
     def is_succesful(self) -> bool:
+        """Return whether the run succeeded."""
         return self.returncode == 0
 
     @property
     def is_failed(self) -> bool:
+        """Return whether the run failed."""
         return self.returncode != 0
 
     def __str__(self):
-        out = [f"# {self.__class__.__name__} #",
+        out = [f"<{self.__class__.__name__}>",
                f"status: {self.status} <{self.returncode}>"]
 
-        if self.logbook_file:
-            out.append("logbook_file: " + str(self.logbook_file))
+        if self.batch_file:
+            out.append("batch_file: " + self.batch_file)
 
+        if self.workdir:
+            out.append("workdir: " + self.workdir)
+
+        if self.logbook_file:
+            out.append("logbook_file: " + self.logbook_file)
             log = self.read_log()
             if log is not None:
                 log = [textwrap.indent(line, '\t') for line in self.read_log()]

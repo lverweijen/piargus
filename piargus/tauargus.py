@@ -2,6 +2,7 @@ import re
 import subprocess
 import tempfile
 from pathlib import Path
+from typing import Union, Sequence
 
 from .batchwriter import BatchWriter
 from .argusreport import ArgusReport
@@ -10,51 +11,57 @@ from .argusreport import ArgusReport
 class TauArgus:
     DEFAULT_LOGBOOK = Path(tempfile.gettempdir()) / 'TauLogbook.txt'
 
-    def __init__(self, program='TauArgus'):
-        self.program = program
+    def __init__(self, program: Union[str, Path] = 'TauArgus'):
+        self.program = str(program)
 
-    def run(self, batch_or_job=None, check=True, *args, **kwargs) -> ArgusReport:
+    def run(self, batch_or_job=None, check: bool = True, *args, **kwargs) -> ArgusReport:
         """Run either a batch file or a job."""
         if batch_or_job is None:
-            returncode, logbook = self._run_interactively()
+            result = self._run_interactively()
         elif hasattr(batch_or_job, 'batch_filepath'):
-            returncode, logbook = self._run_job(batch_or_job, *args, **kwargs)
+            result = self._run_job(batch_or_job, *args, **kwargs)
         elif hasattr(batch_or_job, '__iter__'):
-            return self._run_parallel(batch_or_job, check, *args, **kwargs)
+            result = self._run_parallel(batch_or_job, *args, **kwargs)
         else:
-            returncode, logbook = self._run_batch(batch_or_job, *args, **kwargs)
+            result = self._run_batch(batch_or_job, *args, **kwargs)
 
-        result = ArgusReport(returncode, logbook)
         if check:
-            result.check()
+            if hasattr(result, '__iter__'):
+                for res in result:
+                    res.check()
+            else:
+                result.check()
 
         return result
 
     def _run_interactively(self):
-        subprocess_result = subprocess.run([self.program])
-        return subprocess_result.returncode, self.DEFAULT_LOGBOOK
+        cmd = self.program
+        subprocess_result = subprocess.run(cmd)
+        return ArgusReport(subprocess_result.returncode, logbook_file=self.DEFAULT_LOGBOOK)
 
-    def _run_batch(self, batch_file, logbook=None, tmpdir=None):
+    def _run_job(self, job):
+        return self._run_batch(job.batch_filepath, job.logbook_filepath, job.workdir)
+
+    def _run_batch(self, batch_file: Union[str, Path], logbook_file=None, workdir=None):
+        """Run a batchfile str or Path"""
         cmd = [self.program, str(Path(batch_file).absolute())]
 
-        if logbook is not None:
-            cmd.append(str(Path(logbook).absolute()))
-        if tmpdir is not None:
-            cmd.append(str(Path(tmpdir).absolute()))
+        if logbook_file is not None:
+            cmd.append(str(Path(logbook_file).absolute()))
+        if workdir is not None:
+            cmd.append(str(Path(workdir).absolute()))
 
         subprocess_result = subprocess.run(cmd)
-        if logbook is None:
-            logbook = self.DEFAULT_LOGBOOK
-        return subprocess_result.returncode, logbook
+        if logbook_file is None:
+            logbook_file = self.DEFAULT_LOGBOOK
+        return ArgusReport(
+            subprocess_result.returncode,
+            batch_file=batch_file,
+            logbook_file=logbook_file,
+            workdir=workdir,
+        )
 
-    def _run_job(self, job, logbook=None):
-        returncode, logbook = self._run_batch(
-            job.batch_filepath,
-            logbook or job.logbook_filepath,
-            job.workdir)
-        return returncode, logbook
-
-    def _run_parallel(self, jobs, check=True, timeout=None):
+    def _run_parallel(self, jobs: Sequence, timeout=None):
         """Run multiple jobs at the same time (experimental)"""
         jobs = list(jobs)
 
@@ -63,22 +70,26 @@ class TauArgus:
             for job in jobs:
                 batch_file = str(job.batch_filepath.absolute())
                 log_file = str(job.logbook_filepath.absolute())
-                job.workdir.mkdir(parents=True, exist_ok=True)
-                process = subprocess.Popen([self.program, batch_file, log_file, job.workdir])
-                processes.append(process)
+                workdir = str(job.workdir.absolute())
+                cmd = [self.program, batch_file, log_file, workdir]
+                process = subprocess.Popen(cmd)
+                processes.append((cmd, process))
 
             results = []
-            for process in processes:
-                result = ArgusReport(process.wait(timeout), Path(process.args[2]))
+            for cmd, process in processes:
+                result = ArgusReport(
+                    process.wait(timeout),
+                    batch_file=Path(process.args[1]),
+                    logbook_file=Path(process.args[2]),
+                    workdir=Path(process.args[3]),
+                )
                 results.append(result)
+                if timeout is not None:
+                    timeout = 1
         finally:
-            for process in processes:
+            for _, process in processes:
                 if process.poll() is None:
                     process.kill()
-
-        if check:
-            for result in results:
-                result.check()
 
         return results
 

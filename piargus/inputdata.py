@@ -1,5 +1,5 @@
 import abc
-from abc import ABC
+from typing import Dict
 
 from pandas.core.dtypes.common import is_string_dtype, is_categorical_dtype, is_bool_dtype
 
@@ -10,8 +10,16 @@ from .metadata import MetaData, Column
 DEFAULT_COLUMN_LENGTH = 20
 
 
-class InputData(ABC):
-    def __init__(self, dataset, name=None, hierarchies=None, codelists=None, column_lengths=None):
+class InputData(metaclass=abc.ABCMeta):
+    def __init__(
+            self,
+            dataset,
+            name: str = None,
+            hierarchies: Dict[str, Hierarchy] = None,
+            codelists: Dict[str, CodeList] = None,
+            column_lengths: Dict[str, int] = None,
+            total_codes: Dict[str, str] = None,
+    ):
         """
         Abstract class for input data. Either initialize MicroData or TableData.
 
@@ -20,20 +28,34 @@ class InputData(ABC):
         :param hierarchies: The hierarchies to use for categorial data in the dataset.
         :param codelists: Codelists (dicts) for categorical data in the dataset.
         :param column_lengths: For each column the length.
+        :param total_codes: Codes within explanatory that are used for the totals.
         The lengths can also be derived by calling resolve_column_lengths.
         """
 
         if name is None:
             name = f'data_{id(self)}'
 
+        if hierarchies is None:
+            hierarchies = dict()
+
+        if codelists is None:
+            codelists = dict()
+
         if column_lengths is None:
             column_lengths = dict()
+
+        if total_codes is None:
+            total_codes = dict()
+        elif isinstance(total_codes, str):
+            # This is allowed on TableData, but not in general
+            raise TypeError("Total codes must be a dict.")
 
         self.dataset = dataset
         self.name = name
         self.hierarchies = hierarchies
         self.codelists = codelists
         self.column_lengths = column_lengths
+        self.total_codes = total_codes
 
         self.filepath = None
 
@@ -44,7 +66,11 @@ class InputData(ABC):
 
         metadata = MetaData()
         for col in self.dataset.columns:
-            metadata[col] = Column(col, length=self.column_lengths[col])
+            metacol = metadata[col] = Column(col, length=self.column_lengths[col])
+
+            total_code = self.total_codes.get(col)
+            if total_code:
+                metacol['TOTCODE'] = total_code
 
         return metadata
 
@@ -62,7 +88,7 @@ class InputData(ABC):
 
         :param default: The length to use for numbers and other datatypes.
         """
-        dataset = self.dataset  # type: pd.DataFrame
+        dataset = self.dataset
 
         for col in dataset.columns:
             if col not in self.column_lengths:
@@ -87,8 +113,6 @@ class InputData(ABC):
 
     @hierarchies.setter
     def hierarchies(self, value):
-        if value is None:
-            value = dict()
         self._hierarchies = {col: hierarchy if isinstance(hierarchy, Hierarchy) else Hierarchy(hierarchy)
                              for col, hierarchy in value.items()}
 
@@ -98,7 +122,5 @@ class InputData(ABC):
 
     @codelists.setter
     def codelists(self, value):
-        if value is None:
-            value = dict()
         self._codelists = {col: codelist if isinstance(codelist, CodeList) else CodeList(codelist)
                            for col, codelist in value.items()}

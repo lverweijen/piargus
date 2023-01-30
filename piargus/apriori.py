@@ -48,6 +48,10 @@ class Apriori:
     def __str__(self):
         return self.to_hst()
 
+    def __bool__(self):
+        """Whether the apriori file contains at least one change."""
+        return bool(self.changes)
+
     def _add_change(self, cell, code=None, *args):
         if isinstance(cell, AprioriChange):
             change = cell

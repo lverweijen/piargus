@@ -141,14 +141,14 @@ class Job:
 
     def _setup_apriories(self):
         for table in self.tables:
-            if table.apriori is not None and table.apriori.filepath is None:
+            if table.apriori and table.apriori.filepath is None:
                 default = self.directory / 'input' / f'apriori_{table.name}.hst'
                 table.apriori.to_hst(default)
 
     def _setup_tables(self):
         for table in self.tables:
             if table.filepath_out is None:
-                table.filepath_out = Path(self.directory / 'output' / table.name).with_suffix('.csv')
+                table.filepath_out = Path(self.directory / 'output' / f'{table.name}.csv')
 
     def _setup_batch(self):
         with open(self.batch_filepath, 'w') as batch:
@@ -174,7 +174,7 @@ class Job:
                 writer.read_microdata()
 
             for t_index, table in enumerate(self.tables, 1):
-                if table.apriori is not None:
+                if table.apriori:
                     writer.apriori(table.apriori.filepath, t_index,
                                    separator=table.apriori.separator,
                                    ignore_error=table.apriori.ignore_error,

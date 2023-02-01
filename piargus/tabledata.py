@@ -1,9 +1,11 @@
 from pathlib import Path
+from typing import Sequence, Optional, Union, Dict, Any, Collection
 
+from . import Apriori
 from .inputdata import InputData
 from .metadata import MetaData
 from .table import Table
-from .constants import SAFE, UNSAFE, PROTECTED
+from .constants import SAFE, UNSAFE, PROTECTED, OPTIMAL
 
 DEFAULT_STATUS_MARKERS = {
     "SAFE": SAFE,
@@ -16,22 +18,22 @@ class TableData(InputData, Table):
     def __init__(
             self,
             dataset,
-            explanatory,
-            response,
-            shadow=None,
-            cost=None,
-            labda=None,
-            total_codes='Total',
-            frequency=None,
-            top_contributors=None,
-            lower_protection_level=None,
-            upper_protection_level=None,
-            status_indicator=None,
-            status_markers=None,
-            safety_rules=(),
-            apriori=None,
-            suppress_method=None,
-            suppress_method_args=None,
+            explanatory: Sequence[str],
+            response: str,
+            shadow: Optional[str] = None,
+            cost: Optional[str] = None,
+            labda: Optional[int] = None,
+            total_codes: Union[str, Dict[str, str]] = 'Total',
+            frequency: Optional[str] = None,
+            top_contributors: Sequence[str] = (),
+            lower_protection_level: Optional[str] = None,
+            upper_protection_level: Optional[str] = None,
+            status_indicator: Optional[str] = None,
+            status_markers: Optional[Dict[str, str]] = None,
+            safety_rules: Collection[str] = (),
+            apriori: Optional[Apriori] = None,
+            suppress_method: Optional[str] = OPTIMAL,
+            suppress_method_args: Sequence[Any] = (),
             **kwargs
     ):
         """
@@ -42,17 +44,16 @@ class TableData(InputData, Table):
         Most of the parameters are already explained either in InputData or in Table.
 
         :param dataset: The dataset containing the table. This dataset should include totals.
-        :param explanatory: See Table
-        :param response: See Table
-        :param shadow: See Table
-        :param cost: See Table
-        :param labda: See Table
-        :param total_codes: Codes within explanatory that are used for the totals.
-        :param frequency: See Table
+        :param explanatory: See Table.
+        :param response: See Table.
+        :param shadow: See Table.
+        :param cost: See Table.
+        :param labda: See Table.
+        :param frequency: Column containing number of contributors to this cell.
         :param top_contributors: The columns containing top contributions for dominance rule.
         The columns should be in the same order as they appear in the dataset.
         The first of the these columns should describe the highest contribution,
-        the second column the second highest contribution.
+        the second column the second-highest contribution.
         :param lower_protection_level: Column that denotes the level below which values are unsafe.
         :param upper_protection_level: Column that denotes the level above which values are unsafe.
         :param status_indicator: Column indicating the status of cells.
@@ -71,19 +72,18 @@ class TableData(InputData, Table):
                        apriori=apriori,
                        suppress_method=suppress_method,
                        suppress_method_args=suppress_method_args)
-        InputData.__init__(self, dataset, **kwargs)
 
         if isinstance(total_codes, str):
             total_code = total_codes
-            total_codes = {self.response: total_code}
+            total_codes = {}
             for col in self.explanatory:
                 total_codes[col] = total_code
+
+        InputData.__init__(self, dataset, total_codes=total_codes, **kwargs)
+
         if status_markers is None:
             status_markers = DEFAULT_STATUS_MARKERS
-        if top_contributors is None:
-            top_contributors = []
 
-        self.total_codes = total_codes
         self.lower_protection_level = lower_protection_level
         self.upper_protection_level = upper_protection_level
         self.frequency = frequency
@@ -106,10 +106,6 @@ class TableData(InputData, Table):
             if col in self.codelists:
                 metacol["RECODABLE"] = True
                 metacol.set_codelist(self.codelists[col])
-
-            total_code = self.total_codes.get(col)
-            if total_code:
-                metacol['TOTCODE'] = total_code
 
             if col in self.explanatory:
                 metacol["RECODABLE"] = True

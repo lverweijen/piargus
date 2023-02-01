@@ -28,13 +28,15 @@ class Table:
         A simple table can be created from MicroData.
 
         Parameters:
-        :param explanatory: List of background variables that explain the response. Will be set as a Dataframe-index.
+        :param explanatory: List of background variables that explain the response.
+        Will be set as a Dataframe-index.
         :param response: The column that needs to be explained.
         :param shadow: The column that is used for the safety rules. Default: response.
         :param cost: The column that contains the cost of suppressing a cell.
         Set to 1 to minimise the number of cells suppressed (although this might suppress totals).
         Default: response.
-        :param labda: If set to a value > 0, a box-cox transformation is applied on the cost variable.
+        :param labda: If set to a value > 0, a box-cox transformation is applied on the cost
+        variable.
         If set to 0, a log transformation is applied on the cost.
         Default: 1.
         :param safety_rules: A set of safety rules on individual level.

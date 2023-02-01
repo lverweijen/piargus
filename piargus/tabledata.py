@@ -1,11 +1,12 @@
 from pathlib import Path
-from typing import Sequence, Optional, Union, Dict, Any, Collection
+from typing import Dict, Collection
+from typing import Optional, Sequence, Iterable, Union, Any
 
-from . import Apriori
+from .apriori import Apriori
+from .constants import SAFE, UNSAFE, PROTECTED, OPTIMAL
 from .inputdata import InputData
 from .metadata import MetaData
 from .table import Table
-from .constants import SAFE, UNSAFE, PROTECTED, OPTIMAL
 
 DEFAULT_STATUS_MARKERS = {
     "SAFE": SAFE,
@@ -31,7 +32,7 @@ class TableData(InputData, Table):
             status_indicator: Optional[str] = None,
             status_markers: Optional[Dict[str, str]] = None,
             safety_rules: Collection[str] = (),
-            apriori: Optional[Apriori] = None,
+            apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
             suppress_method: Optional[str] = OPTIMAL,
             suppress_method_args: Sequence[Any] = (),
             **kwargs
@@ -49,6 +50,7 @@ class TableData(InputData, Table):
         :param shadow: See Table.
         :param cost: See Table.
         :param labda: See Table.
+        :param total_codes: Codes within explanatory that are used for the totals.
         :param frequency: Column containing number of contributors to this cell.
         :param top_contributors: The columns containing top contributions for dominance rule.
         The columns should be in the same order as they appear in the dataset.

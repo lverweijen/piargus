@@ -1,4 +1,4 @@
-from typing import Union, Optional, Sequence, Collection
+from typing import Union, Optional, Sequence, Collection, Iterable, Any
 
 import pandas as pd
 
@@ -18,8 +18,8 @@ class Table:
             name: str = None,
             safety_rules: Union[str, Collection[str]] = (),
             safety_rules_holding: Union[str, Collection[str]] = (),
-            apriori: Optional[Apriori] = None,
-            suppress_method: str = OPTIMAL,
+            apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
+            suppress_method: Optional[str] = OPTIMAL,
             suppress_method_args: Sequence = (),
     ):
         """
@@ -66,7 +66,7 @@ class Table:
         if name is None:
             name = f'table_{id(self)}'
 
-        if apriori is not None and not isinstance(apriori, Apriori):
+        if not isinstance(apriori, Apriori):
             apriori = Apriori(apriori)
 
         self.explanatory = explanatory

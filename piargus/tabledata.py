@@ -17,25 +17,25 @@ DEFAULT_STATUS_MARKERS = {
 
 class TableData(InputData, Table):
     def __init__(
-            self,
-            dataset,
-            explanatory: Sequence[str],
-            response: str,
-            shadow: Optional[str] = None,
-            cost: Optional[str] = None,
-            labda: Optional[int] = None,
-            total_codes: Union[str, Dict[str, str]] = 'Total',
-            frequency: Optional[str] = None,
-            top_contributors: Sequence[str] = (),
-            lower_protection_level: Optional[str] = None,
-            upper_protection_level: Optional[str] = None,
-            status_indicator: Optional[str] = None,
-            status_markers: Optional[Dict[str, str]] = None,
-            safety_rules: Collection[str] = (),
-            apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
-            suppress_method: Optional[str] = OPTIMAL,
-            suppress_method_args: Sequence[Any] = (),
-            **kwargs
+        self,
+        dataset,
+        explanatory: Sequence[str],
+        response: str,
+        shadow: Optional[str] = None,
+        cost: Optional[str] = None,
+        labda: Optional[int] = None,
+        total_codes: Union[str, Dict[str, str]] = 'Total',
+        frequency: Optional[str] = None,
+        top_contributors: Sequence[str] = (),
+        lower_protection_level: Optional[str] = None,
+        upper_protection_level: Optional[str] = None,
+        status_indicator: Optional[str] = None,
+        status_markers: Optional[Dict[str, str]] = None,
+        safety_rules: Collection[str] = (),
+        apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
+        suppress_method: Optional[str] = OPTIMAL,
+        suppress_method_args: Sequence[Any] = (),
+        **kwargs
     ):
         """
         A TableData instance contains data which has already been aggregated.

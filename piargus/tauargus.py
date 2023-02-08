@@ -64,9 +64,9 @@ class TauArgus:
     def _run_parallel(self, jobs: Sequence, timeout=None):
         """Run multiple jobs at the same time (experimental)"""
         jobs = list(jobs)
+        processes = []
 
         try:
-            processes = []
             for job in jobs:
                 batch_file = str(job.batch_filepath.absolute())
                 log_file = str(job.logbook_filepath.absolute())

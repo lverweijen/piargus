@@ -1,26 +1,25 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Tuple, Any, Union
+from typing import List, Optional, Union
 
 from .batchwriter import BatchWriter
-from .constants import OPTIMAL
 from .inputdata import InputData
 from .metadata import MetaData
-from .utils import join_rules_with_holding
 from .table import Table
+from .utils import join_rules_with_holding
 
 
 class Job:
     def __init__(
-            self,
-            input_data: InputData,
-            tables: Optional[List[Table]] = None,
-            metadata: Optional[MetaData] = None,
-            directory: Optional[Union[str, Path]] = None,
-            name: Optional[str] = None,
-            logbook: Union[bool, str] = True,
-            interactive: bool = False,
-            setup: bool = True,
+        self,
+        input_data: InputData,
+        tables: Optional[List[Table]] = None,
+        metadata: Optional[MetaData] = None,
+        directory: Optional[Union[str, Path]] = None,
+        name: Optional[str] = None,
+        logbook: Union[bool, str] = True,
+        interactive: bool = False,
+        setup: bool = True,
     ):
         """
         A job to protect a data source.
@@ -29,9 +28,13 @@ class Job:
         If a directory is supplied, the necessary files will be created in that directory.
         Otherwise, a temporary directory is created, but it's better to always supply one.
         Existing files won't be written to `directory`.
-        For example, metadata created from MetaData.from_rda("otherdir/metadata.rda") will use the existing file.
+        For example, if metadata is created from
+        `MetaData.from_rda("otherdir/metadata.rda")`
+        the existing file is used. If modifications are made to the metadata, then the user
+        should call metadata.to_rda() first.
 
-        :param input_data: The source from which to generate tables. Needs to be either MicroData or TableData.
+        :param input_data: The source from which to generate tables. Needs to be either
+        MicroData or TableData.
         :param tables: The tables to be generated. Can be omitted if input_data is TableData.
         :param metadata: The metadata of input_data. If omitted, it will be derived from input_data.
         :param directory: Where to write tau-argus files
@@ -165,7 +168,8 @@ class Job:
                 writer.specify_table(table.explanatory, table.response, table.shadow, table.cost,
                                      table.labda)
 
-                safety_rules = join_rules_with_holding(table.safety_rules, table.safety_rules_holding)
+                safety_rules = join_rules_with_holding(table.safety_rules,
+                                                       table.safety_rules_holding)
                 writer.safety_rule(safety_rules)
 
             if isinstance(self.input_data, Table):
@@ -175,10 +179,13 @@ class Job:
 
             for t_index, table in enumerate(self.tables, 1):
                 if table.apriori:
-                    writer.apriori(table.apriori.filepath, t_index,
-                                   separator=table.apriori.separator,
-                                   ignore_error=table.apriori.ignore_error,
-                                   expand_trivial=table.apriori.expand_trivial)
+                    writer.apriori(
+                        table.apriori.filepath,
+                        t_index,
+                        separator=table.apriori.separator,
+                        ignore_error=table.apriori.ignore_error,
+                        expand_trivial=table.apriori.expand_trivial,
+                    )
 
                 if table.suppress_method:
                     writer.suppress(table.suppress_method, t_index, *table.suppress_method_args)

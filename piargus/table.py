@@ -9,18 +9,18 @@ from .tableresult import TableResult
 
 class Table:
     def __init__(
-            self,
-            explanatory: Sequence[str],
-            response: Union[str, int] = FREQUENCY_RESPONSE,
-            shadow: Optional[str] = None,
-            cost: Optional[Union[int, str]] = None,
-            labda: int = None,
-            name: str = None,
-            safety_rules: Union[str, Collection[str]] = (),
-            safety_rules_holding: Union[str, Collection[str]] = (),
-            apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
-            suppress_method: Optional[str] = OPTIMAL,
-            suppress_method_args: Sequence = (),
+        self,
+        explanatory: Sequence[str],
+        response: Union[str, int] = FREQUENCY_RESPONSE,
+        shadow: Optional[str] = None,
+        cost: Optional[Union[int, str]] = None,
+        labda: int = None,
+        name: str = None,
+        safety_rules: Union[str, Collection[str]] = (),
+        safety_rules_holding: Union[str, Collection[str]] = (),
+        apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
+        suppress_method: Optional[str] = OPTIMAL,
+        suppress_method_args: Sequence = (),
     ):
         """
         A Table instance describes the output of the table.

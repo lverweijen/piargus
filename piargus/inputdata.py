@@ -12,13 +12,13 @@ DEFAULT_COLUMN_LENGTH = 20
 
 class InputData(metaclass=abc.ABCMeta):
     def __init__(
-            self,
-            dataset,
-            name: str = None,
-            hierarchies: Dict[str, Hierarchy] = None,
-            codelists: Dict[str, CodeList] = None,
-            column_lengths: Dict[str, int] = None,
-            total_codes: Dict[str, str] = None,
+        self,
+        dataset,
+        name: str = None,
+        hierarchies: Dict[str, Hierarchy] = None,
+        codelists: Dict[str, CodeList] = None,
+        column_lengths: Dict[str, int] = None,
+        total_codes: Dict[str, str] = None,
     ):
         """
         Abstract class for input data. Either initialize MicroData or TableData.
@@ -113,7 +113,8 @@ class InputData(metaclass=abc.ABCMeta):
 
     @hierarchies.setter
     def hierarchies(self, value):
-        self._hierarchies = {col: hierarchy if isinstance(hierarchy, Hierarchy) else Hierarchy(hierarchy)
+        self._hierarchies = {col: hierarchy
+                             if isinstance(hierarchy, Hierarchy) else Hierarchy(hierarchy)
                              for col, hierarchy in value.items()}
 
     @property
@@ -122,5 +123,6 @@ class InputData(metaclass=abc.ABCMeta):
 
     @codelists.setter
     def codelists(self, value):
-        self._codelists = {col: codelist if isinstance(codelist, CodeList) else CodeList(codelist)
+        self._codelists = {col: codelist
+                           if isinstance(codelist, CodeList) else CodeList(codelist)
                            for col, codelist in value.items()}

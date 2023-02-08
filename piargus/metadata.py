@@ -14,11 +14,14 @@ class MetaData:
     """
     Metadata describing InputData.
 
-    Usually it's not required for a user to create a MetaData themselves, because one can be generated from inputdata.
-    However, this class can be used when a user has an existing rda file that they are completely content with.
-    In that case MetaData.from_rda can be used.
-    In rare cases, some needs that are not available by the microdata or tabledata classes can be supplied by creating
-    a metafile directly or modifying one generated from input_data.generate_metadata().
+    Usually it's not required for a user to create a MetaData themselves.
+    If not provided to job one can be generated from inputdata.
+    It's also possible to call:
+    `metadata = inputdata.generate_metadata()`
+    Then the resulting object can be modified.
+
+    This class can be used directly when an existing rda file needs to be used.
+    An existing file can be loaded by MetaData.from_rda and passed to Job.
     """
     @classmethod
     def from_rda(cls, file):

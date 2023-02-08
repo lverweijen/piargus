@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional, Sequence, Any
 
 from pandas.core.dtypes.common import is_bool_dtype, is_numeric_dtype, is_float_dtype
 
@@ -13,18 +14,26 @@ class MicroData(InputData):
     From such microdata, tabular aggregates can be constructed.
     """
 
-    def __init__(self, dataset, weight=None, request=None, request_values=("1", "2"), holding=None,
-                 *args, **kwargs):
+    def __init__(
+        self,
+        dataset,
+        weight: Optional[str] = None,
+        request: Optional[str] = None,
+        request_values: Sequence[Any] = ("1", "2"),
+        holding: Optional[str] = None,
+        *args,
+        **kwargs
+    ):
         """
 
         :param dataset: The dataset (pd.DataFrame) containing the microdata.
         :param weight: Column that contains the sampling weight of this record.
         :param request: Column that indicates if a respondent asks for protection.
         :param request_values: Parameters that indicate if request is asked.
-        Two different request values can be specified for two different levels in the REQ-safety rule.
+        Two different request values can be specified for two different levels in the request_rule.
         :param holding: Column containing the group identifier.
-        :param args: See InputData
-        :param kwargs: See InputData
+        :param args: See InputData.
+        :param kwargs: See InputData.
         See the Tau-Argus documentation for more details on these parameters.
         """
         super().__init__(dataset, *args, **kwargs)

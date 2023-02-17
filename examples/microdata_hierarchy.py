@@ -15,7 +15,7 @@ def main():
     )
     output_table = pa.Table(['sbi', 'regio'], 'income',
                             name='T_hier',
-                            safety_rules={pa.dominance_rule(3, 70), pa.zero_rule(20)})
+                            safety_rule={pa.dominance_rule(3, 70), pa.zero_rule(20)})
     job = pa.Job(input_data, [output_table], directory='tau', name='microdata_total_example')
     report = tau.run(job)
     table_result = output_table.load_result()

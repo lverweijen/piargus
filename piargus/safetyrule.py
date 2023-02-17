@@ -1,3 +1,6 @@
+from typing import Union, Collection
+
+
 def safety_rule(code, maximum=None, dummy=None):
     """
     Decorator to add metadata to safety rule.
@@ -97,3 +100,30 @@ RULES = [
 # Aliases for consistency with τ-argus-api
 nk_rule = dominance_rule
 p_rule = percent_rule
+
+
+def make_safety_rule(individual: Union[str, Collection[str]], holding: Union[str, Collection[str]]) -> str:
+    """
+    Construct a safety rule from individual and holding parts.
+
+    Dummy elements are inserted when necessary.
+    """
+    if isinstance(individual, str):
+        individual = individual.split("|")
+    if isinstance(holding, str):
+        holding = holding.split("|")
+
+    dummy = []
+    for rule in RULES:
+        individual_count = sum(1 for part in individual if part.startswith(rule.code))
+        holding_count = sum(1 for part in holding if part.startswith(rule.code))
+
+        if rule.maximum:
+            if max(individual_count, holding_count) > rule.maximum:
+                raise ValueError(f"Rule {rule.code} can only appear {rule.maximum} times.")
+            elif rule.dummy and holding_count > 0:
+                n_dummies = rule.maximum - individual_count
+                dummy.extend(n_dummies * [rule.dummy])
+
+    safety_rule_list = list(individual) + dummy + list(holding)
+    return "|".join(safety_rule_list)

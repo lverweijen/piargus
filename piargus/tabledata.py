@@ -31,7 +31,7 @@ class TableData(InputData, Table):
         upper_protection_level: Optional[str] = None,
         status_indicator: Optional[str] = None,
         status_markers: Optional[Dict[str, str]] = None,
-        safety_rules: Collection[str] = (),
+        safety_rule: Collection[str] = (),
         apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
         suppress_method: Optional[str] = OPTIMAL,
         suppress_method_args: Sequence[Any] = (),
@@ -70,7 +70,7 @@ class TableData(InputData, Table):
                        shadow=shadow,
                        cost=cost,
                        labda=labda,
-                       safety_rules=safety_rules,
+                       safety_rule=safety_rule,
                        apriori=apriori,
                        suppress_method=suppress_method,
                        suppress_method_args=suppress_method_args)

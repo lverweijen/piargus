@@ -14,7 +14,7 @@ def main():
     apriori.change_protection_level(['C', 'ExampleCity'], 5)
 
     tables = [pa.Table(['sbi', 'regio'], 'income', name='T3',
-                       safety_rules={'NK(3,70)', 'FREQ(3,20)', 'ZERO(20)'},
+                       safety_rule={'NK(3,70)', 'FREQ(3,20)', 'ZERO(20)'},
                        apriori=apriori,
                        suppress_method='OPT')]
 

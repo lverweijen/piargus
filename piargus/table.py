@@ -1,9 +1,11 @@
-from typing import Union, Optional, Sequence, Collection, Iterable, Any
+import warnings
+from typing import Union, Optional, Sequence, Collection, Iterable, Any, Mapping
 
 import pandas as pd
 
 from .apriori import Apriori
 from .constants import FREQUENCY_RESPONSE, OPTIMAL
+from .safetyrule import make_safety_rule
 from .tableresult import TableResult
 
 
@@ -16,8 +18,9 @@ class Table:
         cost: Optional[Union[int, str]] = None,
         labda: int = None,
         name: str = None,
-        safety_rules: Union[str, Collection[str]] = (),
-        safety_rules_holding: Union[str, Collection[str]] = (),
+        safety_rule: Union[str, Collection[str], Mapping[str, Collection[str]]] = (),
+        safety_rules=None,  # Deprecated
+        safety_rules_holding=None,  # Deprecated
         apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
         suppress_method: Optional[str] = OPTIMAL,
         suppress_method_args: Sequence = (),
@@ -39,15 +42,19 @@ class Table:
         variable.
         If set to 0, a log transformation is applied on the cost.
         Default: 1.
-        :param safety_rules: A set of safety rules on individual level.
-        Options are:
-        - "P(p, n)": p% rule
+        :param safety_rule: A set of safety rules on individual level.
+        Can be supplied as:
+        - str where parts are separated by |
+        - A sequence of parts
+        - A dict with keys {"individual": x "holding": y} with separate rules on individual and
+        holding level .
+        Each part can be:
+        - "P(p, n=1)": p% rule
         - "NK(n, k)": (n, k)-dominance rule
         - "ZERO(safety_range)": Zero rule
         - "FREQ(minfreq, safety_range)": Frequency rule
         - "REQ(percentage_1, percentage_2, safety_margin)": Request rule
         See the Tau-Argus manual for details on those rules.
-        :param safety_rules_holding: A set of safety rules which are applied on holding level.
         :param name: Name to use for generated files
         :param apriori: Apriori file to change parameters
         :param suppress_method: Method to use for secondary suppression.
@@ -69,6 +76,17 @@ class Table:
         if not isinstance(apriori, Apriori):
             apriori = Apriori(apriori)
 
+        if safety_rules is not None:
+            warnings.warn("safety_rules is deprecated, use safety_rule instead")
+            safety_rule = safety_rules
+
+        if safety_rules_holding is not None:
+            warnings.warn("safety_rules_holding is deprecated"
+                          'use safety_rule={'
+                          '"individual": individual_rules, '
+                          '"holding": holding_rules} instead')
+            safety_rule = make_safety_rule(safety_rule, safety_rules_holding)
+
         self.explanatory = explanatory
         self.response = response
         self.shadow = shadow
@@ -76,27 +94,24 @@ class Table:
         self.labda = labda
         self.name = name
         self.filepath_out = None
-        self.safety_rules = safety_rules
-        self.safety_rules_holding = safety_rules_holding
+        self.safety_rule = safety_rule
         self.apriori = apriori
         self.suppress_method = suppress_method
         self.suppress_method_args = suppress_method_args
 
     @property
-    def safety_rules(self):
-        return self._safety_rules
+    def safety_rule(self) -> str:
+        return self._safety_rule
 
-    @safety_rules.setter
-    def safety_rules(self, value):
-        self._safety_rules = _normalize_safety_rules(value)
-
-    @property
-    def safety_rules_holding(self):
-        return self._safety_rules_holding
-
-    @safety_rules_holding.setter
-    def safety_rules_holding(self, value):
-        self._safety_rules_holding = _normalize_safety_rules(value)
+    @safety_rule.setter
+    def safety_rule(self,
+                    value: Union[str, Collection[str], Mapping[str, Union[str, Collection[str]]]]):
+        if isinstance(value, str):
+            self._safety_rule = value
+        elif isinstance(value, dict):
+            self._safety_rule = make_safety_rule(**value)
+        else:
+            self._safety_rule = "|".join(value)
 
     def load_result(self) -> TableResult:
         if self.response == FREQUENCY_RESPONSE:
@@ -118,12 +133,3 @@ class Table:
                 yield self.shadow
             if self.cost and isinstance(self.cost, str):
                 yield self.cost
-
-
-def _normalize_safety_rules(value):
-    if isinstance(value, str):
-        value = set(value.split('|'))
-    else:
-        value = set(value)
-
-    return value

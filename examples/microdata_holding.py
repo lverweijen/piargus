@@ -9,8 +9,8 @@ def main():
     tables = [pa.Table(['sbi', 'regio'], 'income',
                        name='T4',
                        safety_rule={
-                           "individual": {pa.dominance_rule(2, 20), pa.frequency_rule(1, 20)},
-                           "holding": {pa.dominance_rule(1, 90), pa.p_rule(1, 30)},
+                           "individual": {pa.dominance_rule(2, 70), pa.missing_rule(True)},
+                           "holding": {pa.dominance_rule(1, 90), pa.frequency_rule(1, 20)},
                        },
                        suppress_method=pa.OPTIMAL)]
     job = pa.Job(input_data, tables, directory='tau', name='holding_example')

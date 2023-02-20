@@ -1,4 +1,4 @@
-from typing import Union, Collection
+from typing import Union, Collection, Sequence
 
 
 def safety_rule(code, maximum=None, dummy=None):
@@ -102,16 +102,17 @@ nk_rule = dominance_rule
 p_rule = percent_rule
 
 
-def make_safety_rule(individual: Union[str, Collection[str]], holding: Union[str, Collection[str]]) -> str:
+def make_safety_rule(individual: Union[str, Collection[str]],
+                     holding: Union[str, Collection[str]]) -> str:
     """
     Construct a safety rule from individual and holding parts.
 
     Dummy elements are inserted when necessary.
     """
     if isinstance(individual, str):
-        individual = individual.split("|")
+        individual = _split_rule(individual)
     if isinstance(holding, str):
-        holding = holding.split("|")
+        holding = _split_rule(holding)
 
     dummy = []
     for rule in RULES:
@@ -127,3 +128,16 @@ def make_safety_rule(individual: Union[str, Collection[str]], holding: Union[str
 
     safety_rule_list = list(individual) + dummy + list(holding)
     return "|".join(safety_rule_list)
+
+
+def _split_rule(rule: Union[str, Collection[str]]) -> Sequence[str]:
+    """
+    Split a safety rule into parts.
+
+    >>> _split_rule(["P(1)|NK(3, 7)", "FREQ(1)|NK(3, 7)", "ZERO(5)", [" P(1,2)", "MIS(1) "]])
+    ['P(1)', 'NK(3, 7)', 'FREQ(1)', 'NK(3, 7)', 'ZERO(5)', 'P(1,2)', 'MIS(1)']
+    """
+    if isinstance(rule, str):
+        return [part.strip() for part in rule.split("|")]
+    else:
+        return [part for subrule in rule for part in _split_rule(subrule)]

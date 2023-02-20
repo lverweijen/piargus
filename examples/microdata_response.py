@@ -10,7 +10,7 @@ def main():
                        response=pa.FREQUENCY_RESPONSE,
                        cost=pa.UNITY_COST,
                        name='T5',
-                       safety_rules={pa.frequency_rule(3, 20)},
+                       safety_rule=pa.frequency_rule(3, 20),
                        suppress_method=pa.OPTIMAL)]
     job = pa.Job(input_data, tables, directory='tau', name='response_example')
     report = tau.run(job)

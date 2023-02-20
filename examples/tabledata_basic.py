@@ -9,7 +9,7 @@ def main():
     input_df = pd.read_csv("data/tabledata.csv")
     table = pa.TableData(input_df, ["activity", "size"], "val",
                          name='T2',
-                         safety_rules={pa.frequency_rule(3, 10), pa.dominance_rule(1, 85)},
+                         safety_rule={pa.frequency_rule(3, 10), pa.dominance_rule(1, 85)},
                          frequency="n_obs",
                          top_contributors=["max"],
                          suppress_method=pa.GHMITER)

@@ -1,19 +1,18 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Union
+from typing import Optional, Union, Iterable
 
 from .batchwriter import BatchWriter
 from .inputdata import InputData
 from .metadata import MetaData
 from .table import Table
-from .utils import join_rules_with_holding
 
 
 class Job:
     def __init__(
         self,
         input_data: InputData,
-        tables: Optional[List[Table]] = None,
+        tables: Optional[Iterable[Table]] = None,
         metadata: Optional[MetaData] = None,
         directory: Optional[Union[str, Path]] = None,
         name: Optional[str] = None,
@@ -168,8 +167,7 @@ class Job:
                 writer.specify_table(table.explanatory, table.response, table.shadow, table.cost,
                                      table.labda)
 
-                safety_rules = join_rules_with_holding(table.safety_rules,
-                                                       table.safety_rules_holding)
+                safety_rules = table.safety_rule,
                 writer.safety_rule(safety_rules)
 
             if isinstance(self.input_data, Table):

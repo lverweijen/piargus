@@ -8,9 +8,7 @@ def main():
     input_data = pa.MicroData(input_df, name='example')
     output_table = pa.Table(['sbi', 'regio'], 'income',
                             name='T1',
-                            safety_rules={pa.dominance_rule(3, 70),
-                                          pa.frequency_rule(3, 20),
-                                          pa.zero_rule(20)},
+                            safety_rule=pa.percent_rule(p=10),
                             suppress_method=pa.OPTIMAL)
     job = pa.Job(input_data, [output_table], directory='tau', name='microdata_example')
     report = tau.run(job)

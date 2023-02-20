@@ -25,7 +25,7 @@ import piargus as pa
 tau = pa.TauArgus(r'C:\Users\User\Programs\TauArgus4.2.0b5\TauArgus.exe')
 input_df = pd.read_csv('data/microdata.csv')
 input_data = pa.MicroData(input_df)
-output_table = pa.Table(['sbi', 'regio'], 'income', safety_rules={pa.p_rule(10)})
+output_table = pa.Table(['sbi', 'regio'], 'income', safety_rule="P(10)")
 
 job = pa.Job(input_data, [output_table], directory='tau')
 report = tau.run(job)

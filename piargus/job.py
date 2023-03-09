@@ -36,11 +36,11 @@ class Job:
         MicroData or TableData.
         :param tables: The tables to be generated. Can be omitted if input_data is TableData.
         :param metadata: The metadata of input_data. If omitted, it will be derived from input_data.
-        :param directory: Where to write tau-argus files
-        :param name: Name from which to derive the name of some temporary files
-        :param logbook: Whether this job should create its own logging file
-        :param interactive: Whether the gui should be opened
-        :param setup: Whether to set up the job inmediately. (required before run)
+        :param directory: Where to write tau-argus files.
+        :param name: Name from which to derive the name of some temporary files.
+        :param logbook: Whether this job should create its own logging file.
+        :param interactive: Whether the gui should be opened.
+        :param setup: Whether to set up the job inmediately. (required before run).
         """
 
         if directory is None:

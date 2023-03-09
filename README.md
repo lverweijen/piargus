@@ -1,20 +1,29 @@
 # PiArgus
 
-This package provides a python wrapper around [τ-ARGUS](https://research.cbs.nl/casc/tau.htm), a program that is commonly used to protect statistical tables.
-This package takes care of generating all the required metadata and runs the TauArgus program in the background to do the heavy work.
+This package provides a python wrapper around [τ-ARGUS](https://research.cbs.nl/casc/tau.htm), a program to protect statistical tables.
+This package takes care of generating all the required metadata and runs τ-ARGUS in the background to do the heavy work.
+
+For this package to work, it is required to install τ-ARGUS locally first.
+It's also recommended to read the [TauArgus manual](https://research.cbs.nl/casc/Software/TauManualV4.1.pdf) to understand how it should be used.
 
 ## Features
 
-- Generate tables from microdata or tabledata.
-- Automatically generate metadata from inputdata or load an existing one using `Metadata.from_rda('data.rda')`.
-- Codelists and hierarchies.
+- Generate output tables from microdata or tabledata. It is recommended to generate from microdata.
+- Error checking is done to prevent most errors that make argus hang forever.
+- Metadata can be generated automatically, although using an existing rda-file is also possible.
+- It's possible to create hierarchies, codelists, apriori files all from code or from existing files.
 
-Not all features have been extensively tested yet. [Feedback](https://github.com/lverweijen/piargus/issues) is welcome.
-For now generating tables from microdata (over tabledata) is recommended.
+Feel free to [contribute](https://github.com/lverweijen/piargus) support for other useful TauArgus-features.
+[Feedback](https://github.com/lverweijen/piargus/issues) is welcome too.
 
-## Wishlist
+## Installing
 
-Other TauArgus features not yet supported but useful to someone.
+- Download and install the latest version of [τ-ARGUS](https://research.cbs.nl/casc/tau.htm).
+- Then use [pip](https://pip.pypa.io/en/stable/getting-started/) to install piargus:
+
+```sh
+$ pip install --upgrade piargus
+```
 
 ## Example
 
@@ -35,7 +44,8 @@ print(report)
 print(table_result)
 ```
 
-See [Examples](examples) for more examples.
+Change `C:\Users\User\Programs\TauArgus4.2.0b5\TauArgus.exe` to the location where argus is installed.
+See [Examples](https://github.com/lverweijen/tree/main/examples) for more examples.
 
 ## See also
 

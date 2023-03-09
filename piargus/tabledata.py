@@ -31,7 +31,7 @@ class TableData(InputData, Table):
         upper_protection_level: Optional[str] = None,
         status_indicator: Optional[str] = None,
         status_markers: Optional[Dict[str, str]] = None,
-        safety_rule: Collection[str] = (),
+        safety_rule: Union[str, Collection[str]] = (),
         apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
         suppress_method: Optional[str] = OPTIMAL,
         suppress_method_args: Sequence[Any] = (),

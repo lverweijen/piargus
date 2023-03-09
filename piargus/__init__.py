@@ -14,3 +14,6 @@ from piargus.safetyrule import dominance_rule, percent_rule, frequency_rule, req
 from piargus.table import Table
 from piargus.tabledata import TableData
 from piargus.tauargus import TauArgus
+
+
+__version__ = "0.1.0"

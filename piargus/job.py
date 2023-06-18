@@ -1,18 +1,21 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional, Union, Iterable
+from typing import Optional, Union, Mapping, Hashable, Iterable
 
+from .tableset import TableSet
 from .batchwriter import BatchWriter
 from .inputdata import InputData
 from .metadata import MetaData
 from .table import Table
+from .tabledata import TableData
+from .utils import slugify
 
 
 class Job:
     def __init__(
         self,
         input_data: InputData,
-        tables: Optional[Iterable[Table]] = None,
+        tables: Optional[Union[Mapping[Hashable, Table], Iterable[Table]]] = None,
         metadata: Optional[MetaData] = None,
         directory: Optional[Union[str, Path]] = None,
         name: Optional[str] = None,
@@ -43,29 +46,14 @@ class Job:
         :param setup: Whether to set up the job inmediately. (required before run).
         """
 
-        if directory is None:
-            # Prevent the directory from being garbage-collected as long as this job exists
-            self._tmp_directory = TemporaryDirectory(prefix='pyargus_')
-            directory = Path(self._tmp_directory.name)
+        if tables is None and isinstance(input_data, TableData):
+            tables = [input_data]
 
-        if name is None:
-            name = f'job_{id(self)}'
-
-        if not isinstance(input_data, InputData):
-            raise TypeError("Input needs to be MicroData or TableData")
-
-        if tables is None:
-            if isinstance(input_data, Table):
-                tables = [input_data]
-            else:
-                raise ValueError("No outputs specified")
-
-        self.directory = Path(directory)
-        self.directory.mkdir(parents=True, exist_ok=True)
+        self._tmp_directory = None  # Will be used if directory is temporary
+        self.directory = directory
         self.input_data = input_data
         self.tables = tables
         self.metadata = metadata
-        self.directory = Path(directory).absolute()
         self.name = name
         self.logbook = logbook
         self.interactive = interactive
@@ -75,6 +63,47 @@ class Job:
 
     def __str__(self):
         return self.name
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        if value is None:
+            value = f'job_{id(self)}'
+        self._name = slugify(value)
+
+    @property
+    def directory(self):
+        return self._directory
+
+    @directory.setter
+    def directory(self, value):
+        if value is None:
+            # Prevent the directory from being garbage-collected as long as this job exists
+            self._tmp_directory = TemporaryDirectory(prefix='piargus_')
+            value = Path(self._tmp_directory.name)
+
+        self._directory = Path(value).absolute()
+
+    @property
+    def input_data(self) -> InputData:
+        return self._input_data
+
+    @input_data.setter
+    def input_data(self, value):
+        if not isinstance(value, InputData):
+            raise TypeError("Input needs to be MicroData or TableData")
+        self._input_data = value
+
+    @property
+    def tables(self) -> Mapping[Hashable, Table]:
+        return self._tables
+
+    @tables.setter
+    def tables(self, value):
+        self._tables = TableSet(value)
 
     @property
     def batch_filepath(self):
@@ -108,6 +137,7 @@ class Job:
             self.check()
 
     def _setup_directories(self):
+        self.directory.mkdir(parents=True, exist_ok=True)
         input_directory = self.directory / 'input'
         output_directory = self.directory / 'output'
         input_directory.mkdir(exist_ok=True)
@@ -115,7 +145,8 @@ class Job:
         self.workdir.mkdir(parents=True, exist_ok=True)
 
     def _setup_input_data(self):
-        default = self.directory / 'input' / f"{self.input_data.name}.csv"
+        name = f"{self.name}_{type(self.input_data).__name__.casefold()}"
+        default = self.directory / 'input' / f"{name}.csv"
         if not self.input_data.filepath:
             self.input_data.to_csv(default)
 
@@ -123,7 +154,8 @@ class Job:
         if not self.metadata:
             self.metadata = self.input_data.generate_metadata()
 
-        default = self.directory / 'input' / f"{self.input_data.name}.rda"
+        name = f"{self.name}_{type(self.input_data).__name__.casefold()}"
+        default = self.directory / 'input' / f"{name}.rda"
         if not self.metadata.filepath:
             self.metadata.to_rda(default)
 
@@ -131,26 +163,28 @@ class Job:
         self.input_data.resolve_column_lengths()
         for col, hierarchy in self.input_data.hierarchies.items():
             if not hierarchy.filepath:
-                default = self.directory / 'input' / f'hierarchy_{col}.hrc'
+                default = self.directory / 'input' / f'{col}_hierarchy.hrc'
                 hierarchy.to_hrc(default, length=self.input_data.column_lengths[col])
 
     def _setup_codelists(self):
         self.input_data.resolve_column_lengths()
         for col, codelist in self.input_data.codelists.items():
             if not codelist.filepath:
-                default = self.directory / 'input' / f'codelist_{col}.cdl'
+                default = self.directory / 'input' / f'{col}_codelist.cdl'
                 codelist.to_cdl(default, length=self.input_data.column_lengths[col])
 
     def _setup_apriories(self):
-        for table in self.tables:
+        for t_name, table in self.tables.items():
             if table.apriori and table.apriori.filepath is None:
-                default = self.directory / 'input' / f'apriori_{table.name}.hst'
+                tablename = f'{self.name}_{slugify(t_name)}'
+                default = self.directory / 'input' / f'{tablename}_apriori.hst'
                 table.apriori.to_hst(default)
 
     def _setup_tables(self):
-        for table in self.tables:
+        for t_name, table in self.tables.items():
             if table.filepath_out is None:
-                table.filepath_out = Path(self.directory / 'output' / f'{table.name}.csv')
+                tablename = f'{self.name}_{slugify(t_name)}'
+                table.filepath_out = self.directory / 'output' / f"{tablename}.csv"
 
     def _setup_batch(self):
         with open(self.batch_filepath, 'w') as batch:

@@ -9,9 +9,9 @@ It's also recommended to read the [TauArgus manual](https://research.cbs.nl/casc
 ## Features
 
 - Generate output tables from microdata or tabledata. It is recommended to generate from microdata.
-- Error checking is done to prevent most errors that make argus hang forever.
 - Metadata can be generated automatically, although using an existing rda-file is also possible.
 - It's possible to create hierarchies, codelists, apriori files all from code or from existing files.
+- Error checking of input is done before input is supplied to argus.
 
 Feel free to [contribute](https://github.com/lverweijen/piargus) support for other useful TauArgus-features.
 [Feedback](https://github.com/lverweijen/piargus/issues) is welcome too.

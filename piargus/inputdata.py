@@ -1,4 +1,5 @@
 import abc
+import warnings
 from typing import Dict
 
 from pandas.core.dtypes.common import is_string_dtype, is_categorical_dtype, is_bool_dtype
@@ -24,7 +25,7 @@ class InputData(metaclass=abc.ABCMeta):
         Abstract class for input data. Either initialize MicroData or TableData.
 
         :param dataset: The dataset to make tables for.
-        :param name: The name to use when write the data to a file.
+        :param name: (unused)
         :param hierarchies: The hierarchies to use for categorial data in the dataset.
         :param codelists: Codelists (dicts) for categorical data in the dataset.
         :param column_lengths: For each column the length.
@@ -32,8 +33,8 @@ class InputData(metaclass=abc.ABCMeta):
         The lengths can also be derived by calling resolve_column_lengths.
         """
 
-        if name is None:
-            name = f'data_{id(self)}'
+        if name is not None:
+            warnings.warn("Name on input_data is no longer used.")
 
         if hierarchies is None:
             hierarchies = dict()
@@ -51,7 +52,6 @@ class InputData(metaclass=abc.ABCMeta):
             raise TypeError("Total codes must be a dict.")
 
         self.dataset = dataset
-        self.name = name
         self.hierarchies = hierarchies
         self.codelists = codelists
         self.column_lengths = column_lengths

@@ -16,4 +16,4 @@ from piargus.tabledata import TableData
 from piargus.tauargus import TauArgus
 
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

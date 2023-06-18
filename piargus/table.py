@@ -17,7 +17,7 @@ class Table:
         shadow: Optional[str] = None,
         cost: Optional[Union[int, str]] = None,
         labda: int = None,
-        name: str = None,
+        name: str = None,  # Deprecated
         safety_rule: Union[str, Collection[str], Mapping[str, Collection[str]]] = (),
         safety_rules=None,  # Deprecated
         safety_rules_holding=None,  # Deprecated
@@ -55,7 +55,7 @@ class Table:
         - "FREQ(minfreq, safety_range)": Frequency rule
         - "REQ(percentage_1, percentage_2, safety_margin)": Request rule
         See the Tau-Argus manual for details on those rules.
-        :param name: Name to use for generated files
+        :param name: (unused)
         :param apriori: Apriori file to change parameters
         :param suppress_method: Method to use for secondary suppression.
         Options are:
@@ -70,11 +70,11 @@ class Table:
         :param suppress_method_args: Parameters to pass to suppress_method.
         """
 
-        if name is None:
-            name = f'table_{id(self)}'
-
         if not isinstance(apriori, Apriori):
             apriori = Apriori(apriori)
+
+        if name is not None:
+            warnings.warn("name is deprecated, pass a dict to Job instead")
 
         if safety_rules is not None:
             warnings.warn("safety_rules is deprecated, use safety_rule instead")
@@ -92,7 +92,6 @@ class Table:
         self.shadow = shadow
         self.cost = cost
         self.labda = labda
-        self.name = name
         self.filepath_out = None
         self.safety_rule = safety_rule
         self.apriori = apriori

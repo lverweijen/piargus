@@ -18,7 +18,7 @@ def main():
                        apriori=apriori,
                        suppress_method='OPT')]
 
-    job = pa.Job(input_data, tables, directory='tau', name='apriori_example')
+    job = pa.Job(input_data, tables, directory='tau', name='apriori-example')
     report = tau.run(job)
     table_result = tables[0].load_result()
 

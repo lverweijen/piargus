@@ -9,14 +9,12 @@ def main():
     regio_hierarchy = pa.Hierarchy({"Example": ["ExampleDam", "ExampleCity"]})
     input_data = pa.MicroData(
         input_df,
-        name='example',
         hierarchies={'sbi': sbi_hierarchy, "regio": regio_hierarchy},
         total_codes={"sbi": "Industry", "regio": "Country"},
     )
     output_table = pa.Table(['sbi', 'regio'], 'income',
-                            name='T_hier',
                             safety_rule={pa.dominance_rule(3, 70), pa.zero_rule(20)})
-    job = pa.Job(input_data, [output_table], directory='tau', name='microdata_total_example')
+    job = pa.Job(input_data, [output_table], directory='tau', name='hierarchy-example')
     report = tau.run(job)
     table_result = output_table.load_result()
 

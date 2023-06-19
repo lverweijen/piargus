@@ -5,11 +5,10 @@ import piargus as pa
 def main():
     tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
     input_df = pd.read_csv('data/microdata.csv')
-    input_data = pa.MicroData(input_df, name='example')
+    input_data = pa.MicroData(input_df)
     tables = [pa.Table(['sbi', 'regio'],
                        response=pa.FREQUENCY_RESPONSE,
                        cost=pa.UNITY_COST,
-                       name='T5',
                        safety_rule=pa.frequency_rule(3, 20),
                        suppress_method=pa.OPTIMAL)]
     job = pa.Job(input_data, tables, directory='tau', name='response_example')

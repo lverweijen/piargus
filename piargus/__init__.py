@@ -3,6 +3,7 @@ from piargus.argusreport import TauArgusException
 from piargus.batchwriter import BatchWriter
 from piargus.codelist import CodeList
 from piargus.constants import *
+from piargus.graphrecode import GraphRecode
 from piargus.hierarchy import Hierarchy
 from piargus.inputdata import InputData
 from piargus.job import Job

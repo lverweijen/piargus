@@ -2,12 +2,13 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional, Union, Mapping, Hashable, Iterable
 
-from .tableset import TableSet
 from .batchwriter import BatchWriter
+from .graphrecode import GraphRecode
 from .inputdata import InputData
 from .metadata import MetaData
 from .table import Table
 from .tabledata import TableData
+from .tableset import TableSet
 from .utils import slugify
 
 
@@ -132,7 +133,6 @@ class Job:
         self._setup_hierarchies()
         self._setup_codelists()
         self._setup_metadata()
-        self._setup_apriories()
         self._setup_tables()
         self._setup_batch()
 
@@ -176,18 +176,22 @@ class Job:
                 default = self.directory / 'input' / f'{col}_codelist.cdl'
                 codelist.to_cdl(default, length=self.input_data.column_lengths[col])
 
-    def _setup_apriories(self):
-        for t_name, table in self.tables.items():
-            if table.apriori and table.apriori.filepath is None:
-                tablename = f'{self.name}_{slugify(t_name)}'
-                default = self.directory / 'input' / f'{tablename}_apriori.hst'
-                table.apriori.to_hst(default)
-
     def _setup_tables(self):
         for t_name, table in self.tables.items():
             if table.filepath_out is None:
                 tablename = f'{self.name}_{slugify(t_name)}'
                 table.filepath_out = self.directory / 'output' / f"{tablename}.csv"
+
+            if table.apriori and table.apriori.filepath is None:
+                tablename = f'{self.name}_{slugify(t_name)}'
+                default = self.directory / 'input' / f'{tablename}_apriori.hst'
+                table.apriori.to_hst(default)
+
+            for col, recode in table.recodes.items():
+                if isinstance(recode, GraphRecode) and recode.filepath is None:
+                    tablename = f'{self.name}_{slugify(t_name)}'
+                    default = self.directory / 'input' / f"{tablename}_{col}_recode.grc"
+                    recode.to_grc(default, length=self.input_data.column_lengths[col])
 
     def _setup_batch(self):
         with open(self.batch_filepath, 'w') as batch:
@@ -222,8 +226,11 @@ class Job:
                         expand_trivial=table.apriori.expand_trivial,
                     )
 
-                for variable, recode in table.recodes:
-                    writer.recode(table, variable, recode)
+                for variable, recode in table.recodes.items():
+                    if isinstance(recode, GraphRecode):
+                        writer.recode(t_index, variable, recode.filepath)
+                    else:
+                        writer.recode(t_index, variable, recode)
 
                 if table.suppress_method:
                     writer.suppress(table.suppress_method, t_index, *table.suppress_method_args)

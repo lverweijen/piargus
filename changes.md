@@ -1,8 +1,9 @@
 ## Version 0.2.0 ##
 
-- Remove `name` parameter on most object, except Job
-- Job construct now accepts tables as both iterable or dict.
+- Add support for recode table (requires TauArgus version >= 4.2.4).
+- Make `name` parameter on most objects obsolete, except Job.
+- Tables can now be passed to Job as both iterable or dict.
   Tables will now be stored in a TableSet object.
-- Experimental linked protection is possible by using a TableSet.
-  Although it seems to work fine, this feature is not documented in the manual.
-  Therefore, usage cannot be recommended.
+- Experimental linked protection is possible when using a TableSet.
+  Although it seems to produce output, this feature is not documented in the Tau Argus manual.
+  Therefore, usage cannot be recommended (a warning will be shown).

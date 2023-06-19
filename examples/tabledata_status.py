@@ -9,11 +9,10 @@ def main():
     input_df = pd.read_csv("data/tabledata_status.csv")
     table = pa.TableData(input_df, ["activity", "size"], "val",
                          status_indicator="status",
-                         name='T_status',
                          frequency="n_obs",
                          top_contributors=["max"],
                          suppress_method=pa.GHMITER)
-    job = pa.Job(table, directory='tau', name='tabledata_status')
+    job = pa.Job(table, directory='tau', name='tabledata-status')
     result = tau.run(job)
     table_result = table.load_result()
 

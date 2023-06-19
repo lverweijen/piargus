@@ -13,6 +13,7 @@ from piargus.safetyrule import dominance_rule, percent_rule, frequency_rule, req
     missing_rule, weight_rule, manual_rule, p_rule, nk_rule
 from piargus.table import Table
 from piargus.tabledata import TableData
+from piargus.tableset import TableSet
 from piargus.tauargus import TauArgus
 
 

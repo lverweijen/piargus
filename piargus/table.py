@@ -70,11 +70,12 @@ class Table:
         :param suppress_method_args: Parameters to pass to suppress_method.
         """
 
+        if name is not None:
+            warnings.warn("name is deprecated, pass a dict to Job instead")
+
         if not isinstance(apriori, Apriori):
             apriori = Apriori(apriori)
 
-        if name is not None:
-            warnings.warn("name is deprecated, pass a dict to Job instead")
 
         if safety_rules is not None:
             warnings.warn("safety_rules is deprecated, use safety_rule instead")

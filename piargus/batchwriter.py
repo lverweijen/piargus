@@ -38,7 +38,8 @@ class BatchWriter:
     def open_metadata(self, metadata):
         return self.write_command("OPENMETADATA", format_argument(metadata))
 
-    def specify_table(self, explanatory, response=FREQUENCY_RESPONSE, shadow=None, cost=None, labda=None):
+    def specify_table(self, explanatory, response=FREQUENCY_RESPONSE, shadow=None, cost=None,
+                      labda=None):
         explanatory_str = "".join([format_argument(v) for v in explanatory])
         response_str = format_argument(response)
         shadow_str = format_argument(shadow)

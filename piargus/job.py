@@ -98,11 +98,14 @@ class Job:
         self._input_data = value
 
     @property
-    def tables(self) -> Mapping[Hashable, Table]:
+    def tables(self) -> TableSet:
         return self._tables
 
     @tables.setter
     def tables(self, value):
+        if not isinstance(value, TableSet):
+            value = TableSet(value)
+
         self._tables = TableSet(value)
 
     @property
@@ -219,9 +222,17 @@ class Job:
                         expand_trivial=table.apriori.expand_trivial,
                     )
 
+                for variable, recode in table.recodes:
+                    writer.recode(table, variable, recode)
+
                 if table.suppress_method:
                     writer.suppress(table.suppress_method, t_index, *table.suppress_method_args)
 
+            # Linked suppression
+            if self.tables.suppress_method:
+                writer.suppress(self.tables.suppress_method, 0)
+
+            for t_index, table in enumerate(self.tables, 1):
                 writer.write_table(t_index, 2, {"AS": True}, str(table.filepath_out))
 
             if self.interactive:

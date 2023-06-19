@@ -5,6 +5,7 @@ import pandas as pd
 
 from .apriori import Apriori
 from .constants import FREQUENCY_RESPONSE, OPTIMAL
+from .graphrecode import GraphRecode
 from .safetyrule import make_safety_rule
 from .tableresult import TableResult
 
@@ -22,6 +23,7 @@ class Table:
         safety_rules=None,  # Deprecated
         safety_rules_holding=None,  # Deprecated
         apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
+        recodes: Mapping[str, Union[int, GraphRecode]] = None,
         suppress_method: Optional[str] = OPTIMAL,
         suppress_method_args: Sequence = (),
     ):
@@ -76,6 +78,12 @@ class Table:
         if not isinstance(apriori, Apriori):
             apriori = Apriori(apriori)
 
+        if recodes:
+            recodes = {col: (recode if isinstance(recode, (int, GraphRecode))
+                             else GraphRecode(recode))
+                       for col, recode in recodes.items()}
+        else:
+            recodes = dict()
 
         if safety_rules is not None:
             warnings.warn("safety_rules is deprecated, use safety_rule instead")
@@ -96,6 +104,7 @@ class Table:
         self.filepath_out = None
         self.safety_rule = safety_rule
         self.apriori = apriori
+        self.recodes = recodes
         self.suppress_method = suppress_method
         self.suppress_method_args = suppress_method_args
 
@@ -125,6 +134,7 @@ class Table:
     def find_variables(self, categorical=True, numeric=True):
         if categorical:
             yield from self.explanatory
+            yield from self.recodes.keys()
 
         if numeric:
             if self.response != FREQUENCY_RESPONSE:

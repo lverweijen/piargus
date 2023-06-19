@@ -66,6 +66,13 @@ class BatchWriter:
         arg = f"{filename}, {table}, {separator}, {ignore_error}, {expand_trivial}"
         return self.write_command("APRIORI", arg)
 
+    def recode(self, table, variable, file_or_treelevel):
+        table = int(table)
+        variable = format_argument(variable)
+        file_or_treelevel = format_argument(file_or_treelevel)
+        arg = f"{table}, {variable}, {file_or_treelevel}"
+        return self.write_command("RECODE", arg)
+
     def safety_rule(self, rules):
         if isinstance(rules, str):
             rules = (rules,)

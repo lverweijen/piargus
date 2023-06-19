@@ -18,12 +18,14 @@ class TauArgus:
         """Run either a batch file or a job."""
         if batch_or_job is None:
             result = self._run_interactively()
+        elif isinstance(batch_or_job, str):
+            result = self._run_batch(batch_or_job, *args, **kwargs)
         elif hasattr(batch_or_job, 'batch_filepath'):
             result = self._run_job(batch_or_job, *args, **kwargs)
         elif hasattr(batch_or_job, '__iter__'):
             result = self._run_parallel(batch_or_job, *args, **kwargs)
         else:
-            result = self._run_batch(batch_or_job, *args, **kwargs)
+            raise TypeError
 
         if check:
             if hasattr(result, '__iter__'):

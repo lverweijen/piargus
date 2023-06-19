@@ -10,15 +10,15 @@ It's also recommended to read the [TauArgus manual](https://research.cbs.nl/casc
 
 - Generate output tables from microdata or tabledata. It is recommended to generate from microdata.
 - Metadata can be generated automatically, although using an existing rda-file is also possible.
-- It's possible to create hierarchies, codelists, apriori files all from code or from existing files.
-- Error checking of input is done before input is supplied to argus.
+- It's possible to create hierarchies, codelists, apriori files, recode files all from code or from existing files.
+- Basic error checking of input is done before input is supplied to argus.
 
-Feel free to [contribute](https://github.com/lverweijen/piargus) support for other useful TauArgus-features.
+Feel free to [contribute](https://github.com/lverweijen/piargus) for other TauArgus-features.
 [Feedback](https://github.com/lverweijen/piargus/issues) is welcome too.
 
 ## Installing
 
-- Download and install the latest version of [τ-ARGUS](https://research.cbs.nl/casc/tau.htm).
+- Download and install the latest version of [τ-ARGUS](https://github.com/sdcTools/tauargus/releases).
 - Then use [pip](https://pip.pypa.io/en/stable/getting-started/) to install piargus:
 
 ```sh

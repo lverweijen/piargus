@@ -198,18 +198,16 @@ class Job:
             writer = BatchWriter(batch)
 
             if isinstance(self.input_data, Table):
-                writer.open_tabledata(str(self.input_data.filepath))
+                writer.open_tabledata(self.input_data)
             else:
-                writer.open_microdata(str(self.input_data.filepath))
+                writer.open_microdata(self.input_data)
 
-            writer.open_metadata(str(self.metadata.filepath))
+            writer.open_metadata(self.metadata)
 
             for table in self.tables:
                 writer.specify_table(table.explanatory, table.response, table.shadow, table.cost,
                                      table.labda)
-
-                safety_rules = table.safety_rule,
-                writer.safety_rule(safety_rules)
+                writer.safety_rule(table.safety_rule)
 
             if isinstance(self.input_data, Table):
                 writer.read_table()
@@ -219,7 +217,7 @@ class Job:
             for t_index, table in enumerate(self.tables, 1):
                 if table.apriori:
                     writer.apriori(
-                        table.apriori.filepath,
+                        table.apriori,
                         t_index,
                         separator=table.apriori.separator,
                         ignore_error=table.apriori.ignore_error,
@@ -227,17 +225,14 @@ class Job:
                     )
 
                 for variable, recode in table.recodes.items():
-                    if isinstance(recode, GraphRecode):
-                        writer.recode(t_index, variable, recode.filepath)
-                    else:
-                        writer.recode(t_index, variable, recode)
+                    writer.recode(t_index, variable, recode)
 
                 if table.suppress_method:
                     writer.suppress(table.suppress_method, t_index, *table.suppress_method_args)
 
             # Linked suppression
             if self.tables.suppress_method:
-                writer.suppress(self.tables.suppress_method, 0)
+                writer.suppress(self.tables.suppress_method, 0, *self.tables.suppress_method_args)
 
             for t_index, table in enumerate(self.tables, 1):
                 writer.write_table(t_index, 2, {"AS": True}, str(table.filepath_out))

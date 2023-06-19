@@ -138,6 +138,6 @@ def _split_rule(rule: Union[str, Collection[str]]) -> Sequence[str]:
     ['P(1)', 'NK(3, 7)', 'FREQ(1)', 'NK(3, 7)', 'ZERO(5)', 'P(1,2)', 'MIS(1)']
     """
     if isinstance(rule, str):
-        return [part.strip() for part in rule.split("|")]
+        return [part.strip() for part in rule.split("|") if part]
     else:
         return [part for subrule in rule for part in _split_rule(subrule)]

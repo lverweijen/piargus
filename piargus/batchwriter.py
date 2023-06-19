@@ -1,4 +1,5 @@
 from .constants import FREQUENCY_RESPONSE
+from .safetyrule import make_safety_rule
 from .utils import format_argument
 
 
@@ -23,14 +24,8 @@ class BatchWriter:
     def logbook(self, log_file):
         self.write_command('LOGBOOK', format_argument(log_file))
 
-    def open_microdata(self, microdata, sep=','):
-        if hasattr(microdata, 'to_csv'):
-            microdata_file = f'microdata_{id(self)}.csv'
-            microdata.to_csv(microdata_file, sep=sep)
-        else:
-            microdata_file = microdata
-
-        return self.write_command("OPENMICRODATA", format_argument(microdata_file))
+    def open_microdata(self, microdata):
+        return self.write_command("OPENMICRODATA", format_argument(microdata))
 
     def open_tabledata(self, tabledata):
         return self.write_command("OPENTABLEDATA", format_argument(tabledata))
@@ -59,24 +54,28 @@ class BatchWriter:
             return self.write_command("READTABLE", int(compute_totals))
 
     def apriori(self, filename, table, separator=',', ignore_error=False, expand_trivial=True):
-        ignore_error = int(ignore_error)
-        expand_trivial = int(expand_trivial)
         filename = format_argument(filename)
+        table = format_argument(table)
         separator = format_argument(separator)
+        ignore_error = format_argument(ignore_error)
+        expand_trivial = format_argument(expand_trivial)
         arg = f"{filename}, {table}, {separator}, {ignore_error}, {expand_trivial}"
         return self.write_command("APRIORI", arg)
 
     def recode(self, table, variable, file_or_treelevel):
-        table = int(table)
+        table = format_argument(table)
         variable = format_argument(variable)
         file_or_treelevel = format_argument(file_or_treelevel)
         arg = f"{table}, {variable}, {file_or_treelevel}"
         return self.write_command("RECODE", arg)
 
-    def safety_rule(self, rules):
-        if isinstance(rules, str):
-            rules = (rules,)
-        return self.write_command('SAFETYRULE', "|".join(rules))
+    def safety_rule(self, rule="", /, *, individual="", holding=""):
+        if not rule:
+            rule = make_safety_rule(individual, holding)
+        elif not isinstance(rule, str):
+            rule = "|".join(rule)
+
+        return self.write_command('SAFETYRULE', rule)
 
     def suppress(self, method, table, *method_args):
         args = ",".join(map(str, [table, *method_args]))

@@ -27,16 +27,18 @@ class GraphRecode:
 
         return cls(codes)
 
-    def to_grc(self, file=None):
+    def to_grc(self, file=None, length=0):
         if file is None:
             file = io.StringIO(newline=os.linesep)
-            self.to_grc(file)
+            self.to_grc(file, length)
             return file.getvalue()
+
         elif not hasattr(file, 'write'):
             self.filepath = Path(file)
             with open(file, 'w', newline='\n') as writer:
-                return self.to_grc(writer)
+                self.to_grc(writer, length)
 
-        file.write(f"{self.HEADER}\n")
-        for code in self.codes:
-            file.write(code)
+        else:
+            file.write(f"{self.HEADER}\n")
+            for code in self.codes:
+                file.write(code.rjust(length) + "\n")

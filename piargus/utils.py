@@ -7,12 +7,17 @@ import unicodedata
 def format_argument(argument) -> str:
     if argument is None:
         return ""
+    elif isinstance(argument, bool):
+        return str(int(argument))
     elif isinstance(argument, Path):
         return f'"{argument!s}"'
     elif isinstance(argument, str):
         return f'"{argument!s}"'
-    elif isinstance(argument, bool):
-        return str(int(argument))
+    elif hasattr(argument, "filepath"):
+        if argument.filepath is not None:
+            return f'"{argument.filepath!s}"'
+        else:
+            raise ValueError(f"Make sure to save {argument!r} first.")
     else:
         return str(argument)
 

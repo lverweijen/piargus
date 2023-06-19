@@ -1,7 +1,7 @@
 import io
 from unittest import TestCase
 
-from piargus import BatchWriter
+from piargus import BatchWriter, MetaData
 
 
 class TestBatchWriter(TestCase):
@@ -15,6 +15,7 @@ class TestBatchWriter(TestCase):
         writer.open_metadata('metadata.rda')
         writer.specify_table(["sbi", "gk"], "income")
         writer.safety_rule({"NK(3, 70)"})
+        writer.safety_rule(holding={"P(5)"})
         writer.apriori("apriori.hst", 55, ignore_error=True, expand_trivial=False)
         writer.read_microdata()
         writer.read_table()
@@ -31,6 +32,7 @@ class TestBatchWriter(TestCase):
             '<OPENMETADATA>\t"metadata.rda"\n',
             '<SPECIFYTABLE>\t"sbi""gk"|"income"||\n',
             '<SAFETYRULE>\tNK(3, 70)\n',
+            '<SAFETYRULE>\tP(0, 0)|P(0, 0)|P(5)\n',
             '<APRIORI>\t"apriori.hst", 55, ",", 1, 0\n',
             '<READMICRODATA>\n',
             '<READTABLE>\n',

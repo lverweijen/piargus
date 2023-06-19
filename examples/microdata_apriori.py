@@ -3,7 +3,7 @@ import piargus as pa
 
 
 def main():
-    tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
+    tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.4b2\TauArgus')
     input_df = pd.read_csv('data/microdata.csv')
     input_data = pa.MicroData(input_df)
 

@@ -5,7 +5,7 @@ import piargus as pa
 def main():
     tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
     input_df = pd.read_csv('data/microdata.csv')
-    input_data = pa.MicroData(input_df, name='example')
+    input_data = pa.MicroData(input_df)
 
     apriori = pa.Apriori(expand_trivial=True)
     apriori.change_status(['A', 'ExampleDam'], pa.SAFE)
@@ -13,7 +13,7 @@ def main():
     apriori.change_cost(['C', 'ExampleDam'], 10)
     apriori.change_protection_level(['C', 'ExampleCity'], 5)
 
-    tables = [pa.Table(['sbi', 'regio'], 'income', name='T3',
+    tables = [pa.Table(['sbi', 'regio'], 'income',
                        safety_rule={'NK(3,70)', 'FREQ(3,20)', 'ZERO(20)'},
                        apriori=apriori,
                        suppress_method='OPT')]

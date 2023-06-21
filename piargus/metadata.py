@@ -134,14 +134,14 @@ class Column:
 
         return "\n".join(out)
 
-    def set_hierarchy(self, hierarchy: Optional[Hierarchy], indent='@'):
+    def set_hierarchy(self, hierarchy: Optional[Hierarchy]):
         if hierarchy is not None:
             if hierarchy.filepath is None:
                 raise TypeError("hierarchy.to_hrc needs to be called first.")
 
             self['HIERARCHICAL'] = True
             self['HIERCODELIST'] = hierarchy.filepath
-            self['HIERLEADSTRING'] = indent
+            self['HIERLEADSTRING'] = hierarchy.indent
         else:
             self['HIERARCHICAL'] = False
             self['HIERCODELIST'] = None

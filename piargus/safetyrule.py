@@ -1,4 +1,4 @@
-from typing import Union, Collection, Sequence
+from typing import Union, Collection, Sequence, Mapping
 
 
 def safety_rule(code, maximum=None, dummy=None):
@@ -102,13 +102,27 @@ nk_rule = dominance_rule
 p_rule = percent_rule
 
 
-def make_safety_rule(individual: Union[str, Collection[str]],
-                     holding: Union[str, Collection[str]]) -> str:
+def make_safety_rule(
+    rule: Union[str, Collection[str]] = "", /, *,
+    individual: Union[str, Collection[str]] = "",
+    holding: Union[str, Collection[str]] = "",
+) -> str:
     """
     Construct a safety rule from individual and holding parts.
 
     Dummy elements are inserted when necessary.
     """
+    if rule:
+        if individual or holding:
+            raise ValueError("Function should either be called with 1 positional "
+                             "or 2 keyword arguments.")
+        elif isinstance(rule, str):
+            return rule
+        elif isinstance(rule, Mapping):
+            return make_safety_rule(**rule)
+        else:
+            return "|".join(_split_rule(rule))
+
     if isinstance(individual, str):
         individual = _split_rule(individual)
     if isinstance(holding, str):

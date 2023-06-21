@@ -20,8 +20,6 @@ class Table:
         labda: int = None,
         name: str = None,  # Deprecated
         safety_rule: Union[str, Collection[str], Mapping[str, Collection[str]]] = (),
-        safety_rules=None,  # Deprecated
-        safety_rules_holding=None,  # Deprecated
         apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
         recodes: Mapping[str, Union[int, GraphRecode]] = None,
         suppress_method: Optional[str] = OPTIMAL,
@@ -75,26 +73,12 @@ class Table:
         if name is not None:
             warnings.warn("name is deprecated, pass a dict to Job instead")
 
-        if not isinstance(apriori, Apriori):
-            apriori = Apriori(apriori)
-
         if recodes:
             recodes = {col: (recode if isinstance(recode, (int, GraphRecode))
                              else GraphRecode(recode))
                        for col, recode in recodes.items()}
         else:
             recodes = dict()
-
-        if safety_rules is not None:
-            warnings.warn("safety_rules is deprecated, use safety_rule instead")
-            safety_rule = safety_rules
-
-        if safety_rules_holding is not None:
-            warnings.warn("safety_rules_holding is deprecated"
-                          'use safety_rule={'
-                          '"individual": individual_rules, '
-                          '"holding": holding_rules} instead')
-            safety_rule = make_safety_rule(safety_rule, safety_rules_holding)
 
         self.explanatory = explanatory
         self.response = response
@@ -113,14 +97,21 @@ class Table:
         return self._safety_rule
 
     @safety_rule.setter
-    def safety_rule(self,
-                    value: Union[str, Collection[str], Mapping[str, Union[str, Collection[str]]]]):
-        if isinstance(value, str):
-            self._safety_rule = value
-        elif isinstance(value, dict):
-            self._safety_rule = make_safety_rule(**value)
-        else:
-            self._safety_rule = "|".join(value)
+    def safety_rule(
+        self,
+        rule: Union[str, Collection[str],  Mapping[str, Union[str, Collection[str]]]] = ""
+    ):
+        self._safety_rule = make_safety_rule(rule)
+
+    @property
+    def apriori(self):
+        return self._apriori
+
+    @apriori.setter
+    def apriori(self, value):
+        if not isinstance(value, Apriori):
+            value = Apriori(value)
+        self._apriori = value
 
     def load_result(self) -> TableResult:
         if self.response == FREQUENCY_RESPONSE:

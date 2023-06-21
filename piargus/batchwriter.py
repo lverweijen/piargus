@@ -70,11 +70,7 @@ class BatchWriter:
         return self.write_command("RECODE", arg)
 
     def safety_rule(self, rule="", /, *, individual="", holding=""):
-        if not rule:
-            rule = make_safety_rule(individual, holding)
-        elif not isinstance(rule, str):
-            rule = "|".join(rule)
-
+        rule = make_safety_rule(rule, individual=individual, holding=holding)
         return self.write_command('SAFETYRULE', rule)
 
     def suppress(self, method, table, *method_args):

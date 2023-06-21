@@ -24,8 +24,8 @@ class TestSafetyRule(unittest.TestCase):
 
     def test_make_safety_rule(self):
         result = make_safety_rule(
-            [rule.dominance_rule(3, 75), rule.frequency_rule(5, 20)],
-            [rule.p_rule(5), rule.frequency_rule(6, 15), rule.request_rule(2, 2, 9)],
+            individual=[rule.dominance_rule(3, 75), rule.frequency_rule(5, 20)],
+            holding=[rule.p_rule(5), rule.frequency_rule(6, 15), rule.request_rule(2, 2, 9)],
         )
         expected = "|".join([
             'NK(3, 75)',
@@ -41,7 +41,11 @@ class TestSafetyRule(unittest.TestCase):
 
     def test_make_safety_rule_maximum(self):
         with self.assertRaises(ValueError):
-            make_safety_rule([rule.p_rule(2), rule.p_rule(3), rule.p_rule(4)], [])
+            make_safety_rule(individual=[rule.p_rule(2), rule.p_rule(3), rule.p_rule(4)])
+
+    def test_make_safety_rule_holding_only(self):
+        result = make_safety_rule(holding="P(5)")
+        self.assertEqual("P(0, 0)|P(0, 0)|P(5)", result)
 
 
 if __name__ == '__main__':

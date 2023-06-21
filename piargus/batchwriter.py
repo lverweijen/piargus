@@ -74,7 +74,7 @@ class BatchWriter:
         return self.write_command('SAFETYRULE', rule)
 
     def suppress(self, method, table, *method_args):
-        args = ",".join(map(str, [table, *method_args]))
+        args = ",".join(map(format_argument, [table, *method_args]))
         return self.write_command('SUPPRESS', f"{method}({args})")
 
     def write_table(self, table, kind, options, filename):

@@ -6,7 +6,7 @@ import pandas as pd
 from .apriori import Apriori
 from .constants import FREQUENCY_RESPONSE, OPTIMAL
 from .graphrecode import GraphRecode
-from .safetyrule import make_safety_rule
+from .safetyrule import make_safety_rule, SafetyRuleDict
 from .tableresult import TableResult
 
 
@@ -19,7 +19,7 @@ class Table:
         cost: Optional[Union[int, str]] = None,
         labda: int = None,
         name: str = None,  # Deprecated
-        safety_rule: Union[str, Collection[str], Mapping[str, Collection[str]]] = (),
+        safety_rule: Union[str, Collection[str], SafetyRuleDict] = (),
         apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
         recodes: Mapping[str, Union[int, GraphRecode]] = None,
         suppress_method: Optional[str] = OPTIMAL,
@@ -97,10 +97,7 @@ class Table:
         return self._safety_rule
 
     @safety_rule.setter
-    def safety_rule(
-        self,
-        rule: Union[str, Collection[str],  Mapping[str, Union[str, Collection[str]]]] = ""
-    ):
+    def safety_rule(self, rule: Union[str, Collection[str], SafetyRuleDict] = ""):
         self._safety_rule = make_safety_rule(rule)
 
     @property

@@ -1,4 +1,4 @@
-from typing import Union, Collection, Sequence, Mapping
+from typing import Union, Collection, Sequence, Mapping, TypedDict
 
 
 def safety_rule(code, maximum=None, dummy=None):
@@ -102,8 +102,13 @@ nk_rule = dominance_rule
 p_rule = percent_rule
 
 
+class SafetyRuleDict(TypedDict, total=False):
+    individual: Union[str, Collection[str]]
+    holding: Union[str, Collection[str]]
+
+
 def make_safety_rule(
-    rule: Union[str, Collection[str]] = "", /, *,
+    rule: Union[str, Collection[str], SafetyRuleDict] = "", /, *,
     individual: Union[str, Collection[str]] = "",
     holding: Union[str, Collection[str]] = "",
 ) -> str:
@@ -114,8 +119,8 @@ def make_safety_rule(
     """
     if rule:
         if individual or holding:
-            raise ValueError("Function should either be called with 1 positional "
-                             "or 2 keyword arguments.")
+            raise TypeError("Function should either be called with 1 positional "
+                            "or 2 keyword arguments.")
         elif isinstance(rule, str):
             return rule
         elif isinstance(rule, Mapping):

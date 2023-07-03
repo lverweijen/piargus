@@ -74,7 +74,7 @@ class TestHierarchy(TestCase):
                                'Noord-Holland': ['Haarlem', 'Amsterdam'],
                                'Utrecht': ['Utrecht'],
                                "Zeeland": []})
-        dataframe = pd.DataFrame(hierarchy.tree.iterate_paths(only_leaves=True),
+        dataframe = pd.DataFrame(hierarchy.tree.iter_paths(only_leaves=True),
                                  columns=["province", "city"])
         expected = pd.DataFrame([
             {"province": "Zuid-Holland", "city": "Rotterdam"},
@@ -92,8 +92,8 @@ class TestHierarchy(TestCase):
             "Zuid-Holland": ["Rotterdam", "Den Haag"],
             "Noord-Holland": ["Haarlem"]})
 
-        result1 = list(hierarchy.tree.iterate_codes(only_leaves=True))
-        result2 = list(hierarchy.tree.iterate_codes(only_leaves=False))
+        result1 = list(hierarchy.tree.iter_codes(only_leaves=True))
+        result2 = list(hierarchy.tree.iter_codes(only_leaves=False))
         expected1 = ['Rotterdam', 'Den Haag', 'Haarlem']
         expected2 = ['Zuid-Holland', 'Rotterdam', 'Den Haag', 'Noord-Holland', 'Haarlem']
         self.assertEqual(expected1, result1)

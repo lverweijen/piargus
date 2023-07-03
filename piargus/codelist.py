@@ -48,7 +48,7 @@ class CodeList:
     def keys(self):
         return self._codes.keys()
 
-    def codes(self):
+    def iter_codes(self):
         for code in self._codes.index:
             yield code
 

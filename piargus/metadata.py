@@ -6,6 +6,7 @@ from typing import Optional
 
 from .codelist import CodeList
 from .hierarchy import Hierarchy
+from .hiercode import HierCode
 
 PROPERTY_PATTERN = re.compile(r"\<(.*)\>")
 
@@ -135,17 +136,23 @@ class Column:
         return "\n".join(out)
 
     def set_hierarchy(self, hierarchy: Optional[Hierarchy]):
-        if hierarchy is not None:
+        if isinstance(hierarchy, Hierarchy):
             if hierarchy.filepath is None:
                 raise TypeError("hierarchy.to_hrc needs to be called first.")
 
             self['HIERARCHICAL'] = True
             self['HIERCODELIST'] = hierarchy.filepath
             self['HIERLEADSTRING'] = hierarchy.indent
-        else:
+        elif isinstance(hierarchy, HierCode):
+            self['HIERARCHICAL'] = True
+            self['HIERLEVELS'] = " ".join(map(str, hierarchy))
+            self['HIERLEADSTRING'] = None
+        elif hierarchy is None:
             self['HIERARCHICAL'] = False
             self['HIERCODELIST'] = None
             self['HIERLEADSTRING'] = None
+        else:
+            raise TypeError
 
     def get_hierarchy(self) -> Optional[Hierarchy]:
         if self["HIERCODELIST"]:

@@ -45,6 +45,9 @@ class CodeList:
 
         return self.to_dict() == other
 
+    def column_length(self) -> int:
+        return max(map(len, self.iter_codes()))
+
     def keys(self):
         return self._codes.keys()
 

@@ -1,11 +1,12 @@
 import abc
 import warnings
-from typing import Dict
+from typing import Dict, Union, Sequence
 
 from pandas.core.dtypes.common import is_string_dtype, is_categorical_dtype, is_bool_dtype
 
 from .codelist import CodeList
 from .hierarchy import Hierarchy
+from .hiercode import HierCode
 from .metadata import MetaData, Column
 
 DEFAULT_COLUMN_LENGTH = 20
@@ -16,7 +17,7 @@ class InputData(metaclass=abc.ABCMeta):
         self,
         dataset,
         name: str = None,
-        hierarchies: Dict[str, Hierarchy] = None,
+        hierarchies: Dict[str, Union[Hierarchy, HierCode]] = None,
         codelists: Dict[str, CodeList] = None,
         column_lengths: Dict[str, int] = None,
         total_codes: Dict[str, str] = None,
@@ -92,14 +93,10 @@ class InputData(metaclass=abc.ABCMeta):
 
         for col in dataset.columns:
             if col not in self.column_lengths:
-                if col in self.codelists:
-                    column_length = max(map(len, self.codelists[col].iter_codes()))
-                elif col in self.hierarchies:
-                    hierarchy = self.hierarchies[col]
-
-                    if isinstance(hierarchy, Hierarchy):
-                        codes = hierarchy.tree.iter_codes()
-                        column_length = max(map(len, codes))
+                if col in self.hierarchies:
+                    column_length = self.hierarchies[col].column_length()
+                elif col in self.codelists:
+                    column_length = self.codelists[col].column_length()
                 elif is_categorical_dtype(dataset[col].dtype):
                     column_length = dataset[col].cat.categories.str.len().max()
                 elif is_string_dtype(dataset[col].dtype):
@@ -117,9 +114,15 @@ class InputData(metaclass=abc.ABCMeta):
 
     @hierarchies.setter
     def hierarchies(self, value):
-        self._hierarchies = {col: hierarchy
-                             if isinstance(hierarchy, Hierarchy) else Hierarchy(hierarchy)
-                             for col, hierarchy in value.items()}
+        def as_hierarchy(hrc):
+            if isinstance(hrc, (Hierarchy, HierCode)):
+                return hrc
+            elif isinstance(hrc, Sequence) and all(isinstance(x, int) for x in hrc):
+                return HierCode(hrc)
+            else:
+                return Hierarchy(hrc)
+
+        self._hierarchies = {col: as_hierarchy(hrc) for col, hrc in value.items()}
 
     @property
     def codelists(self):

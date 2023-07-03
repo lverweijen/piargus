@@ -18,6 +18,9 @@ class Hierarchy:
         self.indent = indent
         self.filepath = None
 
+    def column_length(self) -> int:
+        return max(map(len, self.tree.iter_codes()))
+
     def __repr__(self):
         return f"{self.__class__.__qualname__}({self.tree, self.indent})"
 

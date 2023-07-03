@@ -93,9 +93,13 @@ class InputData(metaclass=abc.ABCMeta):
         for col in dataset.columns:
             if col not in self.column_lengths:
                 if col in self.codelists:
-                    column_length = max(map(len, self.codelists[col].codes()))
+                    column_length = max(map(len, self.codelists[col].iter_codes()))
                 elif col in self.hierarchies:
-                    column_length = max(map(len, self.hierarchies[col].codes()))
+                    hierarchy = self.hierarchies[col]
+
+                    if isinstance(hierarchy, Hierarchy):
+                        codes = hierarchy.tree.iter_codes()
+                        column_length = max(map(len, codes))
                 elif is_categorical_dtype(dataset[col].dtype):
                     column_length = dataset[col].cat.categories.str.len().max()
                 elif is_string_dtype(dataset[col].dtype):

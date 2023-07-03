@@ -2,7 +2,7 @@ import io
 import os
 import re
 from pathlib import Path
-from typing import Mapping, Sequence, Hashable, Optional, Iterable
+from typing import Mapping, Sequence, Hashable, Optional, Iterable, Tuple
 
 
 class Hierarchy:
@@ -23,6 +23,12 @@ class Hierarchy:
 
     def __str__(self):
         return self.to_hrc()
+
+    def __eq__(self, other):
+        return self.tree, self.indent == other.tree, other.indent
+
+    def __hash__(self):
+        raise TypeError
 
     @classmethod
     def from_hrc(cls, file, indent='@'):
@@ -63,7 +69,7 @@ class Hierarchy:
             with open(file, 'w', newline='\n') as writer:
                 self._node_to_hrc(self.tree, writer, length)
 
-    def _node_to_hrc(self, node: "Node", file, length=0, depth=0):
+    def _node_to_hrc(self, node: "Node", file, length, depth=0):
         for key in node.children:
             file.write(self.indent * depth + str(key).rjust(length) + '\n')
             self._node_to_hrc(node.get(key), file, length, depth=depth + 1)
@@ -94,6 +100,9 @@ class Node:
 
         return self.to_dict() == other
 
+    def __hash__(self):
+        raise TypeError
+
     def __getitem__(self, item) -> "Node":
         return self._children[item]
 
@@ -117,13 +126,13 @@ class Node:
     def remove(self, key: Hashable) -> Optional["Node"]:
         return self._children.pop(key)
 
-    def add_path(self, path: Sequence[Hashable]) -> "Node":  # noqa
+    def add_path(self, path: Sequence[Hashable]) -> "Node":
         node = self
         for child in path:
             node = node.add(child)
         return node
 
-    def get_path(self, path: Sequence[Hashable]) -> "Node":  # noqa
+    def get_path(self, path: Sequence[Hashable]) -> Optional["Node"]:
         node = self
         for child in path:
             if node:
@@ -134,18 +143,18 @@ class Node:
     def to_dict(self):
         return {key: value.to_dict() for key, value in self._children.items()}
 
-    def iterate_codes(self, only_leaves=True) -> Iterable[Hashable]:
+    def iter_codes(self, only_leaves=False) -> Iterable[Hashable]:
         for child in self.children:
             child_node = self.get(child)
 
             if child_node.is_leaf or not only_leaves:
                 yield child
-            yield from child_node.iterate_codes(only_leaves)
+            yield from child_node.iter_codes(only_leaves)
 
-    def iterate_paths(self, only_leaves=True) -> Iterable[Sequence[Hashable]]:
+    def iter_paths(self, only_leaves=False) -> Iterable[Tuple[Hashable, ...]]:
         if self.is_leaf or not only_leaves:
             yield ()
         else:
             for child in self.children:
-                for subpath in self.get(child).iterate_paths(only_leaves):
+                for subpath in self.get(child).iter_paths(only_leaves):
                     yield (child,) + subpath

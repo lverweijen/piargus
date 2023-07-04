@@ -1,3 +1,10 @@
+## Version 0.3.0 ##
+
+- Refactor Hierarchy.
+- Hierarchy now has an attribute `indent`
+- Hierarchy is now backed by anytree. A new attribute `tree` gives access to this tree.
+- Replace method `to_dataframe` and `from_dataframe` by `to_rows` and `from_rows`.
+
 ## Version 0.2.0 ##
 
 - Add support for recode table (requires TauArgus version >= 4.2.4).

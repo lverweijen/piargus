@@ -1,34 +1,46 @@
 import io
+import operator
 import os
-import re
 from pathlib import Path
-from typing import Mapping, Sequence, Hashable, Optional, Iterable, Tuple
+from typing import Mapping, Sequence
+
+import anytree
+
+from anytree_utils import from_indented, to_indented, from_rows, to_rows
 
 
 class Hierarchy:
     """Describe a hierarchy for use with TauArgus"""
 
-    __slots__ = "tree", "indent", "filepath"
+    __slots__ = "root", "indent", "filepath"
+    node_resolver = anytree.Resolver("code")
 
     def __init__(self, tree=None, indent='@'):
-        if not isinstance(tree, Node):
-            tree = Node(tree)
+        if not isinstance(tree, HierarchyNode):
+            tree = HierarchyNode(data=tree)
 
-        self.tree = tree
+        self.root = tree
         self.indent = indent
         self.filepath = None
 
+    def get(self, path) -> "HierarchyNode":
+        return self.node_resolver.get(self.root, path)
+
+    def glob(self, pattern) -> Sequence["HierarchyNode"]:
+        return self.node_resolver.glob(self.root, pattern)
+
     def column_length(self) -> int:
-        return max(map(len, self.tree.iter_codes()))
+        codes = [descendant.code for descendant in self.root.descendants]
+        return max(map(len, codes))
 
     def __repr__(self):
-        return f"{self.__class__.__qualname__}({self.tree, self.indent})"
+        return f"{self.__class__.__qualname__}({self.root.to_dict(), self.indent})"
 
     def __str__(self):
-        return self.to_hrc()
+        return anytree.RenderTree(self.root).by_attr("code")
 
     def __eq__(self, other):
-        return self.tree, self.indent == other.tree, other.indent
+        return (self.root, self.indent) == (other.root, other.indent)
 
     def __hash__(self):
         raise TypeError
@@ -41,123 +53,48 @@ class Hierarchy:
                 hierarchy.filepath = Path(file)
                 return hierarchy
 
-        # Each line consists of indent and code
-        pattern = re.compile(rf"^(?P<prefix>({re.escape(indent)})*)(?P<code>.*)")
-
-        root = Node()
-        stack = [root]
-
-        for line in file:
-            match = pattern.match(line)
-            prefix, code = match['prefix'], match['code']
-            depth = len(prefix) // len(indent)
-            parent_node = stack[depth]
-            node = parent_node.add(code)
-
-            # Place node as last item on index depth + 1
-            del stack[depth + 1:]
-            stack.append(node)
-
+        root = from_indented(file, indent=indent, node_factory=HierarchyNode)
         return Hierarchy(root)
 
     def to_hrc(self, file=None, length=0):
         if file is None:
             file = io.StringIO(newline=os.linesep)
-            self._node_to_hrc(self.tree, file, length)
+            self.to_hrc(file, length)
             return file.getvalue()
-        elif hasattr(file, 'write'):
-            self._node_to_hrc(self.tree, file, length)
-        else:
+        elif not hasattr(file, 'write'):
             self.filepath = Path(file)
             with open(file, 'w', newline='\n') as writer:
-                self._node_to_hrc(self.tree, writer, length)
+                self.to_hrc(writer, length)
+        else:
+            return to_indented(self.root, file, self.indent,
+                               str_factory=lambda node: str(node.code).rjust(length))
 
-    def _node_to_hrc(self, node: "Node", file, length, depth=0):
-        for key in node.children:
-            file.write(self.indent * depth + str(key).rjust(length) + '\n')
-            self._node_to_hrc(node.get(key), file, length, depth=depth + 1)
+    @classmethod
+    def from_rows(cls, rows):
+        return Hierarchy(from_rows(rows, node_factory=HierarchyNode))
+
+    def to_rows(self):
+        return to_rows(self.root, str_factory=operator.attrgetter("code"))
 
 
-class Node:
-    __slots__ = "_children"
+class HierarchyNode(anytree.NodeMixin):
+    def __init__(self, code="root", data=None, children=()):
+        self.code = code
 
-    def __init__(self, children=None):
-        if children is None:
-            children = dict()
-        elif isinstance(children, Mapping):
-            children = {k: v if isinstance(v, Node) else Node(v)
-                        for k, v in children.items()}
-        elif isinstance(children, Sequence):
-            children = {e: Node() for e in children}
+        if data is None:
+            self.children = children
+        elif isinstance(data, Mapping):
+            self.children = [HierarchyNode(code=k, data=v) for k, v in data.items()]
+        elif isinstance(data, Sequence):
+            self.children = [HierarchyNode(e) for e in data]
         else:
             raise TypeError
 
-        self._children = children
-
     def __repr__(self):
-        return f"{self.__class__.__qualname__}({self.to_dict()})"
+        return f"{self.__class__.__qualname__}({self.code})"
 
     def __eq__(self, other):
-        if hasattr(other, 'to_dict'):
-            other = other.to_dict()
-
-        return self.to_dict() == other
-
-    def __hash__(self):
-        raise TypeError
-
-    def __getitem__(self, item) -> "Node":
-        return self._children[item]
-
-    @property
-    def children(self) -> Iterable[Hashable]:
-        return self._children.keys()
-
-    @property
-    def is_leaf(self) -> bool:
-        return not self._children
-
-    def add(self, key: Hashable) -> "Node":
-        if key not in self._children:
-            self._children[key] = Node()
-
-        return self._children[key]
-
-    def get(self, key: Hashable) -> Optional["Node"]:
-        return self._children.get(key)
-
-    def remove(self, key: Hashable) -> Optional["Node"]:
-        return self._children.pop(key)
-
-    def add_path(self, path: Sequence[Hashable]) -> "Node":
-        node = self
-        for child in path:
-            node = node.add(child)
-        return node
-
-    def get_path(self, path: Sequence[Hashable]) -> Optional["Node"]:
-        node = self
-        for child in path:
-            if node:
-                node = node.get(child)
-
-        return node
+        return self.code == other.code and self.children == other.children
 
     def to_dict(self):
-        return {key: value.to_dict() for key, value in self._children.items()}
-
-    def iter_codes(self, only_leaves=False) -> Iterable[Hashable]:
-        for child in self.children:
-            child_node = self.get(child)
-
-            if child_node.is_leaf or not only_leaves:
-                yield child
-            yield from child_node.iter_codes(only_leaves)
-
-    def iter_paths(self, only_leaves=False) -> Iterable[Tuple[Hashable, ...]]:
-        if self.is_leaf or not only_leaves:
-            yield ()
-        else:
-            for child in self.children:
-                for subpath in self.get(child).iter_paths(only_leaves):
-                    yield (child,) + subpath
+        return {child.code: child.to_dict() for child in self.children}

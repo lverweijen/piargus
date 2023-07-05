@@ -3,6 +3,7 @@ Helper functions which one day might be added to anytree itself.
 """
 
 import re
+from typing import Iterable, Tuple
 
 import anytree
 
@@ -34,7 +35,7 @@ def to_indented(root, file, indent=" ", depth=0, str_factory=str):
         to_indented(child, file, indent=indent, str_factory=str_factory, depth=depth + 1)
 
 
-def from_rows(rows, node_factory=anytree.Node, root_name="root"):
+def from_rows(rows: Iterable[Tuple], node_factory=anytree.Node, root_name="root"):
     created_nodes = {}
 
     root = node_factory(root_name)
@@ -53,7 +54,7 @@ def from_rows(rows, node_factory=anytree.Node, root_name="root"):
     return root
 
 
-def to_rows(root, str_factory=str, skip_root=True):
+def to_rows(root, str_factory=str, skip_root=True) -> Iterable[Tuple]:
     index = 1 if skip_root else 0
     for leaf in root.leaves:
-        yield [str_factory(node) for node in leaf.path[index:]]
+        yield tuple(str_factory(node) for node in leaf.path[index:])

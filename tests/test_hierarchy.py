@@ -40,18 +40,20 @@ class TestHierarchy(TestCase):
             "Zuid-Holland": ["Rotterdam", "Den Haag"],
             "Noord-Holland": ["Haarlem"]})
 
-        hierarchy['Noord-Holland'].children += tuple([HierarchyNode("Amsterdam")])
-        zh = hierarchy['Zuid-Holland']
-        zh.children = [c for c in zh.children if c.code != "Den Haag"]
-        hierarchy.root.children += tuple([HierarchyNode('Utrecht')])
-        hierarchy["Utrecht"].children += tuple([HierarchyNode('Utrecht')])
+        utrecht_provincie = HierarchyNode("Utrecht")
+        utrecht_stad = HierarchyNode("Utrecht")
+
+        hierarchy.get_node('Noord-Holland').children += tuple([HierarchyNode("Amsterdam")])
+        hierarchy.get_node("Zuid-Holland/Den Haag").parent = None
+        hierarchy.root.children += tuple([utrecht_provincie])
+        hierarchy.get_node("Utrecht").children = [utrecht_stad]
 
         expected = Hierarchy({'Zuid-Holland': ['Rotterdam'],
                               'Noord-Holland': ['Haarlem', 'Amsterdam'],
                               'Utrecht': ['Utrecht']})
         self.assertEqual(expected, hierarchy)
 
-    def test_from_dataframe(self):
+    def test_from_rows(self):
         df = pd.DataFrame([
             {"province": "Zuid-Holland", "city": "Rotterdam"},
             {"province": "Zuid-Holland", "city": "Den Haag"},
@@ -66,7 +68,7 @@ class TestHierarchy(TestCase):
                               'Utrecht': ['Utrecht']})
         self.assertEqual(expected, result)
 
-    def test_to_dataframe(self):
+    def test_to_rows(self):
         hierarchy = Hierarchy({'Zuid-Holland': ['Rotterdam', 'Den Haag'],
                                'Noord-Holland': ['Haarlem', 'Amsterdam'],
                                'Utrecht': ['Utrecht'],

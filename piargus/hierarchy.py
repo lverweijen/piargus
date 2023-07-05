@@ -2,7 +2,7 @@ import io
 import operator
 import os
 from pathlib import Path
-from typing import Mapping, Sequence
+from typing import Mapping, Sequence, Tuple, Iterable
 
 import anytree
 
@@ -13,7 +13,6 @@ class Hierarchy:
     """Describe a hierarchy for use with TauArgus"""
 
     __slots__ = "root", "indent", "filepath"
-    node_resolver = anytree.Resolver("code")
 
     def __init__(self, tree=None, indent='@'):
         if not isinstance(tree, HierarchyNode):
@@ -24,7 +23,7 @@ class Hierarchy:
         self.filepath = None
 
     def __repr__(self):
-        return f"{self.__class__.__qualname__}({self.root.to_dict(), self.indent})"
+        return f"{self.__class__.__name__}({self.root.to_dict(), self.indent})"
 
     def __str__(self):
         # Use ascii, so we are safe in environments that don't use utf8
@@ -36,11 +35,9 @@ class Hierarchy:
     def __hash__(self):
         raise TypeError
 
-    def __getitem__(self, path) -> "HierarchyNode":
-        return self.node_resolver.get(self.root, path)
-
-    def glob(self, pattern) -> Sequence["HierarchyNode"]:
-        return self.node_resolver.glob(self.root, pattern)
+    def get_node(self, path) -> "HierarchyNode":
+        """Follow path to a new Node."""
+        return self.root.resolver.get(self.root, path)
 
     def column_length(self) -> int:
         codes = [descendant.code for descendant in self.root.descendants]
@@ -71,14 +68,18 @@ class Hierarchy:
                                str_factory=lambda node: str(node.code).rjust(length))
 
     @classmethod
-    def from_rows(cls, rows):
-        return Hierarchy(from_rows(rows, node_factory=HierarchyNode, root_name="Total"))
+    def from_rows(cls, rows: Iterable[Tuple[str, str]]):
+        """Construct from list of (code, parent) tuples."""
+        return cls(from_rows(rows, HierarchyNode, "Total"))
 
-    def to_rows(self):
-        return to_rows(self.root, str_factory=operator.attrgetter("code"))
+    def to_rows(self) -> Iterable[Tuple[str, str]]:
+        return to_rows(self.root, operator.attrgetter("code"), skip_root=True)
 
 
 class HierarchyNode(anytree.NodeMixin):
+    __slots__ = "code"
+    resolver = anytree.Resolver("code")
+
     def __init__(self, code="Total", data=None, children=()):
         self.code = code
 
@@ -92,7 +93,7 @@ class HierarchyNode(anytree.NodeMixin):
             raise TypeError
 
     def __repr__(self):
-        return f"{self.__class__.__qualname__}({self.code})"
+        return f"{self.__class__.__name__}({self.code})"
 
     def __eq__(self, other):
         return self.code == other.code and self.children == other.children

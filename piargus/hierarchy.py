@@ -37,7 +37,8 @@ class Hierarchy:
         return f"{self.__class__.__qualname__}({self.root.to_dict(), self.indent})"
 
     def __str__(self):
-        return anytree.RenderTree(self.root).by_attr("code")
+        # Use ascii, so we are safe in environment that don't use utf8
+        return anytree.RenderTree(self.root, style=anytree.AsciiStyle()).by_attr("code")
 
     def __eq__(self, other):
         return (self.root, self.indent) == (other.root, other.indent)
@@ -53,7 +54,7 @@ class Hierarchy:
                 hierarchy.filepath = Path(file)
                 return hierarchy
 
-        root = from_indented(file, indent=indent, node_factory=HierarchyNode)
+        root = from_indented(file, indent=indent, node_factory=HierarchyNode, root_name="Total")
         return Hierarchy(root)
 
     def to_hrc(self, file=None, length=0):
@@ -71,14 +72,14 @@ class Hierarchy:
 
     @classmethod
     def from_rows(cls, rows):
-        return Hierarchy(from_rows(rows, node_factory=HierarchyNode))
+        return Hierarchy(from_rows(rows, node_factory=HierarchyNode, root_name="Total"))
 
     def to_rows(self):
         return to_rows(self.root, str_factory=operator.attrgetter("code"))
 
 
 class HierarchyNode(anytree.NodeMixin):
-    def __init__(self, code="root", data=None, children=()):
+    def __init__(self, code="Total", data=None, children=()):
         self.code = code
 
         if data is None:

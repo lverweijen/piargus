@@ -69,9 +69,10 @@ class InputData(metaclass=abc.ABCMeta):
         for col in self.dataset.columns:
             metacol = metadata[col] = Column(col, length=self.column_lengths[col])
 
-            total_code = self.total_codes.get(col)
-            if total_code:
-                metacol['TOTCODE'] = total_code
+            if col in self.total_codes:  # Normal way
+                metacol['TOTCODE'] = self.total_codes[col]
+            elif col in self.hierarchies:  # Use hierarchy root name as backup
+                metacol['TOTCODE'] = self.hierarchies[col].root.code
 
         return metadata
 

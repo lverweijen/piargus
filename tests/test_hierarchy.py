@@ -40,11 +40,11 @@ class TestHierarchy(TestCase):
             "Zuid-Holland": ["Rotterdam", "Den Haag"],
             "Noord-Holland": ["Haarlem"]})
 
-        hierarchy.get('Noord-Holland').children += tuple([HierarchyNode("Amsterdam")])
-        zh = hierarchy.get('Zuid-Holland')
+        hierarchy['Noord-Holland'].children += tuple([HierarchyNode("Amsterdam")])
+        zh = hierarchy['Zuid-Holland']
         zh.children = [c for c in zh.children if c.code != "Den Haag"]
         hierarchy.root.children += tuple([HierarchyNode('Utrecht')])
-        hierarchy.get("Utrecht").children += tuple([HierarchyNode('Utrecht')])
+        hierarchy["Utrecht"].children += tuple([HierarchyNode('Utrecht')])
 
         expected = Hierarchy({'Zuid-Holland': ['Rotterdam'],
                               'Noord-Holland': ['Haarlem', 'Amsterdam'],

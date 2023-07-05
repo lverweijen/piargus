@@ -23,7 +23,20 @@ class Hierarchy:
         self.indent = indent
         self.filepath = None
 
-    def get(self, path) -> "HierarchyNode":
+    def __repr__(self):
+        return f"{self.__class__.__qualname__}({self.root.to_dict(), self.indent})"
+
+    def __str__(self):
+        # Use ascii, so we are safe in environments that don't use utf8
+        return anytree.RenderTree(self.root, style=anytree.AsciiStyle()).by_attr("code")
+
+    def __eq__(self, other):
+        return (self.root, self.indent) == (other.root, other.indent)
+
+    def __hash__(self):
+        raise TypeError
+
+    def __getitem__(self, path) -> "HierarchyNode":
         return self.node_resolver.get(self.root, path)
 
     def glob(self, pattern) -> Sequence["HierarchyNode"]:
@@ -32,19 +45,6 @@ class Hierarchy:
     def column_length(self) -> int:
         codes = [descendant.code for descendant in self.root.descendants]
         return max(map(len, codes))
-
-    def __repr__(self):
-        return f"{self.__class__.__qualname__}({self.root.to_dict(), self.indent})"
-
-    def __str__(self):
-        # Use ascii, so we are safe in environment that don't use utf8
-        return anytree.RenderTree(self.root, style=anytree.AsciiStyle()).by_attr("code")
-
-    def __eq__(self, other):
-        return (self.root, self.indent) == (other.root, other.indent)
-
-    def __hash__(self):
-        raise TypeError
 
     @classmethod
     def from_hrc(cls, file, indent='@'):

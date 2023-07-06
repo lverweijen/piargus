@@ -5,16 +5,16 @@ import piargus as pa
 def main():
     tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.4b2\TauArgus')
     input_df = pd.read_csv('data/microdata.csv')
-    sbi_hierarchy = pa.Hierarchy(["A", "C"])
+    symbol_hierarchy = pa.Hierarchy(["A", "C"])
     regio_hierarchy = pa.Hierarchy({"Example": ["ExampleDam", "ExampleCity"]})
     input_data = pa.MicroData(
         input_df,
-        hierarchies={'sbi': sbi_hierarchy, "regio": regio_hierarchy},
-        total_codes={"sbi": "Industry", "regio": "Country"},
+        hierarchies={'symbol': symbol_hierarchy, "regio": regio_hierarchy},
+        total_codes={"symbol": "Industry", "regio": "Country"},
     )
-    output_table = pa.Table(['sbi', 'regio'], 'income',
+    output_table = pa.Table(['symbol', 'regio'], 'income',
                             safety_rule={pa.p_rule(3)},
-                            recodes={"regio": ["Example"], "sbi": 1})
+                            recodes={"regio": ["Example"], "symbol": 1})
     job = pa.Job(input_data, [output_table], directory='tau', name='recode-example')
     report = tau.run(job)
     table_result = output_table.load_result()

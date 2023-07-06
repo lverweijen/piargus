@@ -6,7 +6,7 @@ def main():
     tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
     input_df = pd.read_csv('data/microdata.csv')
     input_data = pa.MicroData(input_df, holding='holding')
-    tables = [pa.Table(['sbi', 'regio'], 'income',
+    tables = [pa.Table(['symbol', 'regio'], 'income',
                        safety_rule={
                            "individual": {pa.dominance_rule(2, 70), pa.missing_rule(True)},
                            "holding": {pa.dominance_rule(1, 90), pa.frequency_rule(1, 20)},

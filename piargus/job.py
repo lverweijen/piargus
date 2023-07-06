@@ -165,7 +165,7 @@ class Job:
     def _setup_hierarchies(self):
         self.input_data.resolve_column_lengths()
         for col, hierarchy in self.input_data.hierarchies.items():
-            if not hierarchy.filepath:
+            if hasattr(hierarchy, 'filepath') and not hierarchy.filepath:
                 default = self.directory / 'input' / f'{col}_hierarchy.hrc'
                 hierarchy.to_hrc(default, length=self.input_data.column_lengths[col])
 

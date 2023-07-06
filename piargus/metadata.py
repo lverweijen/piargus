@@ -6,7 +6,7 @@ from typing import Optional
 
 from .codelist import CodeList
 from .hierarchy import Hierarchy
-from .hiercode import HierCode
+from .hierarchycode import HierarchyCode
 
 PROPERTY_PATTERN = re.compile(r"\<(.*)\>")
 
@@ -143,7 +143,7 @@ class Column:
             self['HIERARCHICAL'] = True
             self['HIERCODELIST'] = hierarchy.filepath
             self['HIERLEADSTRING'] = hierarchy.indent
-        elif isinstance(hierarchy, HierCode):
+        elif isinstance(hierarchy, HierarchyCode):
             self['HIERARCHICAL'] = True
             self['HIERLEVELS'] = " ".join(map(str, hierarchy))
             self['HIERLEADSTRING'] = None

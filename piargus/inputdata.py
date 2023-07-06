@@ -6,7 +6,7 @@ from pandas.core.dtypes.common import is_string_dtype, is_categorical_dtype, is_
 
 from .codelist import CodeList
 from .hierarchy import Hierarchy
-from .hiercode import HierCode
+from .hierarchycode import HierarchyCode
 from .metadata import MetaData, Column
 
 DEFAULT_COLUMN_LENGTH = 20
@@ -17,7 +17,7 @@ class InputData(metaclass=abc.ABCMeta):
         self,
         dataset,
         name: str = None,
-        hierarchies: Dict[str, Union[Hierarchy, HierCode]] = None,
+        hierarchies: Dict[str, Union[Hierarchy, HierarchyCode]] = None,
         codelists: Dict[str, CodeList] = None,
         column_lengths: Dict[str, int] = None,
         total_codes: Dict[str, str] = None,
@@ -70,9 +70,13 @@ class InputData(metaclass=abc.ABCMeta):
             metacol = metadata[col] = Column(col, length=self.column_lengths[col])
 
             if col in self.total_codes:  # Normal way
-                metacol['TOTCODE'] = self.total_codes[col]
-            elif col in self.hierarchies:  # Use hierarchy root name as backup
-                metacol['TOTCODE'] = self.hierarchies[col].root.code
+                total_code = metacol['TOTCODE'] = self.total_codes[col]
+            elif col in self.hierarchies:  # Use hierarchy as alternative
+                total_code = self.hierarchies[col].total_code
+            else:  # Reasonable default
+                total_code = "Total"
+
+            metacol['TOTCODE'] = total_code
 
         return metadata
 
@@ -116,10 +120,10 @@ class InputData(metaclass=abc.ABCMeta):
     @hierarchies.setter
     def hierarchies(self, value):
         def as_hierarchy(hrc):
-            if isinstance(hrc, (Hierarchy, HierCode)):
+            if isinstance(hrc, (Hierarchy, HierarchyCode)):
                 return hrc
             elif isinstance(hrc, Sequence) and all(isinstance(x, int) for x in hrc):
-                return HierCode(hrc)
+                return HierarchyCode(hrc)
             else:
                 return Hierarchy(hrc)
 

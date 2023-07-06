@@ -1,7 +1,8 @@
-class HierCode:
+class HierarchyCode:
     """Hierarchical code consisting of digits."""
-    def __init__(self, levels):
+    def __init__(self, levels, total_code='Total'):
         self._levels = [int(level) for level in levels]
+        self.total_code = total_code
 
     def column_length(self) -> int:
         return sum(self)

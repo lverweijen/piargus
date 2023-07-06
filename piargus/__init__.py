@@ -5,6 +5,7 @@ from piargus.codelist import CodeList
 from piargus.constants import *
 from piargus.graphrecode import GraphRecode
 from piargus.hierarchy import Hierarchy, HierarchyNode
+from piargus.hierarchycode import HierarchyCode
 from piargus.inputdata import InputData
 from piargus.job import Job
 from piargus.job import JobSetupError

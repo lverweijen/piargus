@@ -35,9 +35,9 @@ class Hierarchy:
     def __hash__(self):
         raise TypeError
 
-    def get_node(self, path) -> "HierarchyNode":
+    def get_node(self, path=".") -> "HierarchyNode":
         """Follow path to a new Node."""
-        return self.root.resolver.get(self.root, path)
+        return HierarchyNode.resolver.get(self.root, path)
 
     def column_length(self) -> int:
         codes = [descendant.code for descendant in self.root.descendants]
@@ -70,6 +70,11 @@ class Hierarchy:
     @classmethod
     def from_rows(cls, rows: Iterable[Tuple[str, str]]):
         """Construct from list of (code, parent) tuples."""
+
+        # Special-case pandas dataframe
+        if hasattr(rows, "itertuples"):
+            rows = rows.itertuples(index=False)
+
         return cls(from_rows(rows, HierarchyNode, "Total"))
 
     def to_rows(self) -> Iterable[Tuple[str, str]]:

@@ -6,7 +6,7 @@ def main():
     tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
     input_df = pd.read_csv('data/microdata.csv')
     input_data = pa.MicroData(input_df)
-    tables = [pa.Table(['sbi', 'regio'],
+    tables = [pa.Table(['symbol', 'regio'],
                        response=pa.FREQUENCY_RESPONSE,
                        cost=pa.UNITY_COST,
                        safety_rule=pa.frequency_rule(3, 20),

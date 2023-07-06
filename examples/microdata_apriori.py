@@ -13,7 +13,7 @@ def main():
     apriori.change_cost(['C', 'ExampleDam'], 10)
     apriori.change_protection_level(['C', 'ExampleCity'], 5)
 
-    tables = [pa.Table(['sbi', 'regio'], 'income',
+    tables = [pa.Table(['symbol', 'regio'], 'income',
                        safety_rule={'NK(3,70)', 'FREQ(3,20)', 'ZERO(20)'},
                        apriori=apriori,
                        suppress_method='OPT')]

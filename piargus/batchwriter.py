@@ -74,6 +74,12 @@ class BatchWriter:
         return self.write_command('SAFETYRULE', rule)
 
     def suppress(self, method, table, *method_args):
+        if not isinstance(method, str):
+            if not method_args:
+                method, method_args = method
+            else:
+                raise TypeError("method_args can only be used with string")
+
         args = ",".join(map(format_argument, [table, *method_args]))
         return self.write_command('SUPPRESS', f"{method}({args})")
 

@@ -5,8 +5,13 @@ import piargus as pa
 def main():
     tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
     input_df = pd.read_csv('data/microdata.csv')
-    sbi_hierarchy = pa.Hierarchy(["A", "C"])
-    regio_hierarchy = pa.Hierarchy({"Example": ["ExampleDam", "ExampleCity"]})
+
+    # Use a hierarchy to have much control about how the codes are nested
+    regio_hierarchy = pa.Hierarchy({"Example": ["ExampleDam", "ExampleCity"], "Empty": []})
+
+    # Use HierarchyCode if the code itself is hierarchical e.g. [sbi2, sbi3, sbi4]
+    sbi_hierarchy = pa.HierarchyCode([2, 1, 1])
+
     input_data = pa.MicroData(
         input_df,
         hierarchies={'sbi': sbi_hierarchy, "regio": regio_hierarchy},

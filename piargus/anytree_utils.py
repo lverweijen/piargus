@@ -36,6 +36,10 @@ def to_indented(root, file, indent=" ", depth=0, str_factory=str):
 
 
 def from_rows(rows: Iterable[Tuple], node_factory=anytree.Node, root_name="root"):
+    # Special-case pandas dataframe
+    if hasattr(rows, "itertuples"):
+        rows = rows.itertuples(index=False)
+
     created_nodes = {}
 
     root = node_factory(root_name)

@@ -5,6 +5,8 @@
   Individual nodes can be accessed by `get_node()`.
 - Hierarchy now has an attribute `indent`.
 - Replace methods `to_dataframe` and `from_dataframe` by `to_rows` and `from_rows`.
+- Simple HierarchyCode if the code itself is hierarchical.
+- `<TOTCODE>` is now always written to metadata.
 
 ## Version 0.2.0 ##
 

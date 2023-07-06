@@ -62,7 +62,7 @@ class TestHierarchy(TestCase):
             {"province": "Utrecht", "city": "Utrecht"},
         ])
 
-        result = Hierarchy.from_rows(df.itertuples(index=False))
+        result = Hierarchy.from_rows(df)
         expected = Hierarchy({'Zuid-Holland': ['Rotterdam', 'Den Haag'],
                               'Noord-Holland': ['Haarlem', 'Amsterdam'],
                               'Utrecht': ['Utrecht']})

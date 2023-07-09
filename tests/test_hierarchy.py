@@ -3,12 +3,12 @@ import os
 from unittest import TestCase
 import pandas as pd
 
-from piargus import Hierarchy, HierarchyNode
+from piargus import TreeHierarchy, TreeHierarchyNode
 
 
 class TestHierarchy(TestCase):
     def test_to_hrc(self):
-        hierarchy = Hierarchy({
+        hierarchy = TreeHierarchy({
             "Zuid-Holland": ["Rotterdam", "Den Haag"],
             "Noord-Holland": ["Haarlem"]})
 
@@ -28,29 +28,29 @@ class TestHierarchy(TestCase):
                     "Noord-Holland<CR>"
                     "@Haarlem<CR>")
         hrc_file = io.StringIO(hrc_text.replace("<CR>", "\n"))
-        result = Hierarchy.from_hrc(hrc_file)
-        expected = Hierarchy({
+        result = TreeHierarchy.from_hrc(hrc_file)
+        expected = TreeHierarchy({
             "Zuid-Holland": {"Rotterdam": (),
                              "Den Haag": ["Schilderswijk"]},
             "Noord-Holland": ["Haarlem"]})
         self.assertEqual(expected.root, result.root)
 
     def test_item_manipulation(self):
-        hierarchy = Hierarchy({
+        hierarchy = TreeHierarchy({
             "Zuid-Holland": ["Rotterdam", "Den Haag"],
             "Noord-Holland": ["Haarlem"]})
 
-        utrecht_provincie = HierarchyNode("Utrecht")
-        utrecht_stad = HierarchyNode("Utrecht")
+        utrecht_provincie = TreeHierarchyNode("Utrecht")
+        utrecht_stad = TreeHierarchyNode("Utrecht")
 
-        hierarchy.get_node('Noord-Holland').children += tuple([HierarchyNode("Amsterdam")])
+        hierarchy.get_node('Noord-Holland').children += tuple([TreeHierarchyNode("Amsterdam")])
         hierarchy.get_node("Zuid-Holland/Den Haag").parent = None
         hierarchy.root.children += tuple([utrecht_provincie])
         hierarchy.get_node("Utrecht").children = [utrecht_stad]
 
-        expected = Hierarchy({'Zuid-Holland': ['Rotterdam'],
-                              'Noord-Holland': ['Haarlem', 'Amsterdam'],
-                              'Utrecht': ['Utrecht']})
+        expected = TreeHierarchy({'Zuid-Holland': ['Rotterdam'],
+                                  'Noord-Holland': ['Haarlem', 'Amsterdam'],
+                                  'Utrecht': ['Utrecht']})
         self.assertEqual(expected, hierarchy)
 
     def test_from_rows(self):
@@ -62,17 +62,17 @@ class TestHierarchy(TestCase):
             {"province": "Utrecht", "city": "Utrecht"},
         ])
 
-        result = Hierarchy.from_rows(df)
-        expected = Hierarchy({'Zuid-Holland': ['Rotterdam', 'Den Haag'],
-                              'Noord-Holland': ['Haarlem', 'Amsterdam'],
-                              'Utrecht': ['Utrecht']})
+        result = TreeHierarchy.from_rows(df)
+        expected = TreeHierarchy({'Zuid-Holland': ['Rotterdam', 'Den Haag'],
+                                  'Noord-Holland': ['Haarlem', 'Amsterdam'],
+                                  'Utrecht': ['Utrecht']})
         self.assertEqual(expected, result)
 
     def test_to_rows(self):
-        hierarchy = Hierarchy({'Zuid-Holland': ['Rotterdam', 'Den Haag'],
-                               'Noord-Holland': ['Haarlem', 'Amsterdam'],
-                               'Utrecht': ['Utrecht'],
-                               "Zeeland": []})
+        hierarchy = TreeHierarchy({'Zuid-Holland': ['Rotterdam', 'Den Haag'],
+                                   'Noord-Holland': ['Haarlem', 'Amsterdam'],
+                                   'Utrecht': ['Utrecht'],
+                                   "Zeeland": []})
         dataframe = pd.DataFrame(hierarchy.to_rows(), columns=["province", "city"])
         expected = pd.DataFrame([
             {"province": "Zuid-Holland", "city": "Rotterdam"},
@@ -86,7 +86,7 @@ class TestHierarchy(TestCase):
         self.assertEqual(expected.to_dict('records'), dataframe.to_dict('records'))
 
     def test_codes(self):
-        hierarchy = Hierarchy({
+        hierarchy = TreeHierarchy({
             "Zuid-Holland": ["Rotterdam", "Den Haag"],
             "Noord-Holland": ["Haarlem"]})
 

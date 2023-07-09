@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 
-class GraphRecode:
+class TreeRecode:
     HEADER = "<TREERECODE>"
 
     def __init__(self, codes):
@@ -20,9 +20,7 @@ class GraphRecode:
 
         codes = list()
         for line in file:
-            if line.strip().upper() == cls.HEADER:
-                continue
-            else:
+            if line.strip().upper() != cls.HEADER:
                 codes.append(line)
 
         return cls(codes)

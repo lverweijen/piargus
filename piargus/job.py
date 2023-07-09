@@ -3,12 +3,12 @@ from tempfile import TemporaryDirectory
 from typing import Optional, Union, Mapping, Hashable, Iterable
 
 from .batchwriter import BatchWriter
-from .graphrecode import GraphRecode
 from .inputdata import InputData
 from .metadata import MetaData
 from .table import Table
 from .tabledata import TableData
 from .tableset import TableSet
+from .treerecode import TreeRecode
 from .utils import slugify
 
 
@@ -188,7 +188,7 @@ class Job:
                 table.apriori.to_hst(default)
 
             for col, recode in table.recodes.items():
-                if isinstance(recode, GraphRecode) and recode.filepath is None:
+                if isinstance(recode, TreeRecode) and recode.filepath is None:
                     tablename = f'{self.name}_{slugify(t_name)}'
                     default = self.directory / 'input' / f"{tablename}_{col}_recode.grc"
                     recode.to_grc(default, length=self.input_data.column_lengths[col])

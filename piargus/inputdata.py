@@ -1,12 +1,12 @@
 import abc
 import warnings
-from typing import Dict, Union, Sequence
+from typing import Dict
 
 from pandas.core.dtypes.common import is_string_dtype, is_categorical_dtype, is_bool_dtype
 
+from .constants import DEFAULT_TOTAL_CODE
 from .codelist import CodeList
 from .hierarchy import Hierarchy
-from .hierarchycode import HierarchyCode
 from .metadata import MetaData, Column
 
 DEFAULT_COLUMN_LENGTH = 20
@@ -17,7 +17,7 @@ class InputData(metaclass=abc.ABCMeta):
         self,
         dataset,
         name: str = None,
-        hierarchies: Dict[str, Union[Hierarchy, HierarchyCode]] = None,
+        hierarchies: Dict[str, Hierarchy] = None,
         codelists: Dict[str, CodeList] = None,
         column_lengths: Dict[str, int] = None,
         total_codes: Dict[str, str] = None,
@@ -53,10 +53,10 @@ class InputData(metaclass=abc.ABCMeta):
             raise TypeError("Total codes must be a dict.")
 
         self.dataset = dataset
-        self.hierarchies = hierarchies
         self.codelists = codelists
         self.column_lengths = column_lengths
         self.total_codes = total_codes
+        self.hierarchies = hierarchies  # Needs to be done after total_codes are created
 
         self.filepath = None
 
@@ -74,7 +74,7 @@ class InputData(metaclass=abc.ABCMeta):
             elif col in self.hierarchies:  # Use hierarchy as alternative
                 total_code = self.hierarchies[col].total_code
             else:  # Reasonable default
-                total_code = "Total"
+                total_code = DEFAULT_TOTAL_CODE
 
             metacol['TOTCODE'] = total_code
 
@@ -119,15 +119,14 @@ class InputData(metaclass=abc.ABCMeta):
 
     @hierarchies.setter
     def hierarchies(self, value):
-        def as_hierarchy(hrc):
-            if isinstance(hrc, (Hierarchy, HierarchyCode)):
-                return hrc
-            elif isinstance(hrc, Sequence) and all(isinstance(x, int) for x in hrc):
-                return HierarchyCode(hrc)
+        def m_hierarchy(value, col):
+            if isinstance(value, Hierarchy):
+                return value
             else:
-                return Hierarchy(hrc)
+                return Hierarchy(value, total_code=self.total_codes.get(col, DEFAULT_COLUMN_LENGTH))
 
-        self._hierarchies = {col: as_hierarchy(hrc) for col, hrc in value.items()}
+        self._hierarchies = {col: hrc if isinstance(hrc, Hierarchy) else m_hierarchy(hrc, col)
+                             for col, hrc in value.items()}
 
     @property
     def codelists(self):

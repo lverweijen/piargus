@@ -6,7 +6,7 @@ from typing import Optional
 
 from .codehierarchy import CodeHierarchy
 from .codelist import CodeList
-from .hierarchy import Hierarchy
+from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
 from .treehierarchy import TreeHierarchy
 
 PROPERTY_PATTERN = re.compile(r"\<(.*)\>")
@@ -161,11 +161,15 @@ class Column:
             self['HIERLEVELS'] = None
 
     def get_hierarchy(self) -> Optional[Hierarchy]:
+        total_code = self['TOTCODE'] or DEFAULT_TOTAL_CODE
+
         if self["HIERCODELIST"]:
-            return TreeHierarchy.from_hrc(self["HIERCODELIST"], self["HIERLEADSTRING"])
+            return TreeHierarchy.from_hrc(self["HIERCODELIST"],
+                                          indent=self["HIERLEADSTRING"],
+                                          total_code=total_code)
         elif self["HIERLEVELS"]:
             levels = map(int, self['HIERLEVELS'].split())
-            return CodeHierarchy(levels)
+            return CodeHierarchy(levels, total_code=total_code)
         else:
             return None
 

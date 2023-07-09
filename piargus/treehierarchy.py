@@ -7,8 +7,7 @@ from typing import Mapping, Sequence, Tuple, Iterable
 import anytree
 
 from .anytree_utils import from_indented, to_indented, from_rows, to_rows
-from .constants import DEFAULT_TOTAL_CODE
-from .hierarchy import Hierarchy
+from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
 
 
 class TreeHierarchy(Hierarchy):

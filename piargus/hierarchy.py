@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from .constants import DEFAULT_TOTAL_CODE
+DEFAULT_TOTAL_CODE = "Total"
 
 
 class Hierarchy:
@@ -29,3 +29,6 @@ class Hierarchy:
             return CodeHierarchy(hierarchy, total_code=total_code)
         else:
             return TreeHierarchy(hierarchy, total_code=total_code)
+
+    def column_length(self) -> int:
+        raise NotImplementedError

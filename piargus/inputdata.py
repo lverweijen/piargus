@@ -4,9 +4,8 @@ from typing import Dict
 
 from pandas.core.dtypes.common import is_string_dtype, is_categorical_dtype, is_bool_dtype
 
-from .constants import DEFAULT_TOTAL_CODE
 from .codelist import CodeList
-from .hierarchy import Hierarchy
+from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
 from .metadata import MetaData, Column
 
 DEFAULT_COLUMN_LENGTH = 20

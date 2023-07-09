@@ -3,7 +3,8 @@ from typing import Dict, Collection
 from typing import Optional, Sequence, Iterable, Union, Any
 
 from .apriori import Apriori
-from .constants import SAFE, UNSAFE, PROTECTED, OPTIMAL, DEFAULT_TOTAL_CODE
+from .constants import SAFE, UNSAFE, PROTECTED, OPTIMAL
+from .hierarchy import DEFAULT_TOTAL_CODE
 from .inputdata import InputData
 from .metadata import MetaData
 from .table import Table

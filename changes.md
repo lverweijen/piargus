@@ -1,11 +1,13 @@
 ## Version 0.3.0 ##
 
-- Refactor Hierarchy.
+- Rename `Hierarchy` to `TreeHierarchy`.
+- Rename `GraphRecode` to `TreeRecode`.
+- Add `CodeHierarchy` as an alternative to TreeHierarchy.
+- Refactor TreeHierarchy.
   The implementation is now backed by anytree.
   Individual nodes can be accessed by `get_node()`.
-- Hierarchy now has an attribute `indent`.
+- Hierarchy now keeps track of `indent` itself. This parameters no longer needs to be supplied to `to_hrc`.
 - Replace methods `to_dataframe` and `from_dataframe` by `to_rows` and `from_rows`.
-- Simple HierarchyCode if the code itself is hierarchical.
 - `<TOTCODE>` is now always written to metadata.
 
 ## Version 0.2.0 ##

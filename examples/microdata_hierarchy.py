@@ -6,11 +6,11 @@ def main():
     tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
     input_df = pd.read_csv('data/microdata.csv')
 
-    # Use a hierarchy to have much control about how the codes are nested
-    regio_hierarchy = pa.Hierarchy({"Example": ["ExampleDam", "ExampleCity"], "Empty": []})
+    # Use CodeHierarchy if the code itself is hierarchical e.g. [sbi2, sbi3, sbi4]
+    sbi_hierarchy = pa.CodeHierarchy([2, 1, 1])
 
-    # Use HierarchyCode if the code itself is hierarchical e.g. [sbi2, sbi3, sbi4]
-    sbi_hierarchy = pa.HierarchyCode([2, 1, 1])
+    # Use a TreeHierarchy to have much control about how the codes are nested
+    regio_hierarchy = pa.TreeHierarchy({"Example": ["ExampleDam", "ExampleCity"], "Empty": []})
 
     input_data = pa.MicroData(
         input_df,

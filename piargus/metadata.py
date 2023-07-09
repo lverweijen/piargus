@@ -4,9 +4,10 @@ import shlex
 from pathlib import Path
 from typing import Optional
 
+from .codehierarchy import CodeHierarchy
 from .codelist import CodeList
 from .hierarchy import Hierarchy
-from .hierarchycode import HierarchyCode
+from .treehierarchy import TreeHierarchy
 
 PROPERTY_PATTERN = re.compile(r"\<(.*)\>")
 
@@ -136,27 +137,35 @@ class Column:
         return "\n".join(out)
 
     def set_hierarchy(self, hierarchy: Optional[Hierarchy]):
-        if isinstance(hierarchy, Hierarchy):
-            if hierarchy.filepath is None:
-                raise TypeError("hierarchy.to_hrc needs to be called first.")
+        if hasattr(hierarchy, "filepath") and hierarchy.filepath is None:
+            raise TypeError("hierarchy.to_hrc needs to be called first.")
+        elif hierarchy is not None and not isinstance(hierarchy, Hierarchy):
+            raise TypeError(f"{hierarchy} should be a hierarchy")
 
-            self['HIERARCHICAL'] = True
-            self['HIERCODELIST'] = hierarchy.filepath
-            self['HIERLEADSTRING'] = hierarchy.indent
-        elif isinstance(hierarchy, HierarchyCode):
-            self['HIERARCHICAL'] = True
-            self['HIERLEVELS'] = " ".join(map(str, hierarchy))
-            self['HIERLEADSTRING'] = None
-        elif hierarchy is None:
-            self['HIERARCHICAL'] = False
-            self['HIERCODELIST'] = None
-            self['HIERLEADSTRING'] = None
+        is_hierarchical = bool(hierarchy)
+
+        # Handle ThreeHierarchy
+        codelist = getattr(hierarchy, "filepath", None)
+        leadstring = getattr(hierarchy, "indent", None)
+
+        # Handle CodeHierarchy
+        levels = getattr(hierarchy, "levels", None)
+
+        self["HIERARCHICAL"] = is_hierarchical
+        self['HIERCODELIST'] = codelist
+        self['HIERLEADSTRING'] = leadstring
+
+        if levels:
+            self['HIERLEVELS'] = " ".join(map(str, levels))
         else:
-            raise TypeError
+            self['HIERLEVELS'] = None
 
     def get_hierarchy(self) -> Optional[Hierarchy]:
         if self["HIERCODELIST"]:
-            return Hierarchy.from_hrc(self["HIERCODELIST"], self["HIERLEADSTRING"])
+            return TreeHierarchy.from_hrc(self["HIERCODELIST"], self["HIERLEADSTRING"])
+        elif self["HIERLEVELS"]:
+            levels = map(int, self['HIERLEVELS'].split())
+            return CodeHierarchy(levels)
         else:
             return None
 

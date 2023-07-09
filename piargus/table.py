@@ -5,7 +5,7 @@ import pandas as pd
 
 from .apriori import Apriori
 from .constants import FREQUENCY_RESPONSE, OPTIMAL
-from .graphrecode import GraphRecode
+from .treerecode import TreeRecode
 from .safetyrule import make_safety_rule, SafetyRuleDict
 from .tableresult import TableResult
 
@@ -21,7 +21,7 @@ class Table:
         name: str = None,  # Deprecated
         safety_rule: Union[str, Collection[str], SafetyRuleDict] = (),
         apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
-        recodes: Mapping[str, Union[int, GraphRecode]] = None,
+        recodes: Mapping[str, Union[int, TreeRecode]] = None,
         suppress_method: Optional[str] = OPTIMAL,
         suppress_method_args: Sequence = (),
     ):
@@ -74,8 +74,8 @@ class Table:
             warnings.warn("name is deprecated, pass a dict to Job instead")
 
         if recodes:
-            recodes = {col: (recode if isinstance(recode, (int, GraphRecode))
-                             else GraphRecode(recode))
+            recodes = {col: (recode if isinstance(recode, (int, TreeRecode))
+                             else TreeRecode(recode))
                        for col, recode in recodes.items()}
         else:
             recodes = dict()

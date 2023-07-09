@@ -3,9 +3,10 @@ from piargus.argusreport import TauArgusException
 from piargus.batchwriter import BatchWriter
 from piargus.codelist import CodeList
 from piargus.constants import *
-from piargus.graphrecode import GraphRecode
-from piargus.hierarchy import Hierarchy, HierarchyNode
-from piargus.hierarchycode import HierarchyCode
+from piargus.treerecode import TreeRecode
+from piargus.hierarchy import Hierarchy
+from piargus.treehierarchy import TreeHierarchy, TreeHierarchyNode
+from piargus.codehierarchy import CodeHierarchy
 from piargus.inputdata import InputData
 from piargus.job import Job
 from piargus.job import JobSetupError

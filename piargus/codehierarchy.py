@@ -1,5 +1,4 @@
-from .constants import DEFAULT_TOTAL_CODE
-from .hierarchy import Hierarchy
+from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
 
 
 class CodeHierarchy(Hierarchy):

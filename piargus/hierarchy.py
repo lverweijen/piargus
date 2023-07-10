@@ -6,6 +6,8 @@ DEFAULT_TOTAL_CODE = "Total"
 class Hierarchy:
     __slots__ = ()
 
+    total_code: str
+
     def __new__(cls, *args, **kwargs):
         if cls is Hierarchy:
             return cls._create_child_object(*args, **kwargs)

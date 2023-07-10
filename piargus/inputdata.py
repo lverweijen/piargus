@@ -54,9 +54,8 @@ class InputData(metaclass=abc.ABCMeta):
         self.dataset = dataset
         self.codelists = codelists
         self.column_lengths = column_lengths
+        self.hierarchies = hierarchies
         self.total_codes = total_codes
-        self.hierarchies = hierarchies  # Needs to be done after total_codes are created
-
         self.filepath = None
 
     @abc.abstractmethod
@@ -118,13 +117,7 @@ class InputData(metaclass=abc.ABCMeta):
 
     @hierarchies.setter
     def hierarchies(self, value):
-        def m_hierarchy(value, col):
-            if isinstance(value, Hierarchy):
-                return value
-            else:
-                return Hierarchy(value, total_code=self.total_codes.get(col, DEFAULT_COLUMN_LENGTH))
-
-        self._hierarchies = {col: hrc if isinstance(hrc, Hierarchy) else m_hierarchy(hrc, col)
+        self._hierarchies = {col: hrc if isinstance(hrc, Hierarchy) else Hierarchy(hrc)
                              for col, hrc in value.items()}
 
     @property

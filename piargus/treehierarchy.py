@@ -17,7 +17,7 @@ class TreeHierarchy(Hierarchy):
 
     def __init__(self, tree=None, indent='@', total_code=DEFAULT_TOTAL_CODE):
         if not isinstance(tree, TreeHierarchyNode):
-            tree = TreeHierarchyNode(total_code, data=tree)
+            tree = TreeHierarchyNode(total_code, tree)
 
         self.root = tree
         self.indent = indent
@@ -91,23 +91,21 @@ class TreeHierarchyNode(anytree.NodeMixin):
     __slots__ = "code"
     resolver = anytree.Resolver("code")
 
-    def __init__(self, code=DEFAULT_TOTAL_CODE, data=None, children=()):
+    def __init__(self, code=DEFAULT_TOTAL_CODE, children=()):
         self.code = code
 
-        if data is None:
-            self.children = children
-        elif isinstance(data, Mapping):
-            self.children = [TreeHierarchyNode(code=k, data=v) for k, v in data.items()]
-        elif isinstance(data, Sequence):
-            self.children = [TreeHierarchyNode(e) for e in data]
+        if isinstance(children, Mapping):
+            children = [TreeHierarchyNode(code=k, children=v) for k, v in children.items()]
+        elif isinstance(children, Sequence):
+            children = [child if isinstance(child, TreeHierarchyNode) else TreeHierarchyNode(child)
+                        for child in children]
         else:
             raise TypeError
+
+        self.children = children
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.code})"
 
     def __eq__(self, other):
         return self.code == other.code and self.children == other.children
-
-    def to_dict(self):
-        return {child.code: child.to_dict() for child in self.children}

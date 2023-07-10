@@ -7,15 +7,22 @@ def main():
     input_df = pd.read_csv('data/microdata.csv')
 
     # Use CodeHierarchy if the code itself is hierarchical e.g. [sbi2, sbi3, sbi4]
-    sbi_hierarchy = pa.CodeHierarchy([2, 1, 1])
+    sbi_hierarchy = pa.CodeHierarchy([2, 1, 1], total_code="TTTT")
 
-    # Use a TreeHierarchy to have much control about how the codes are nested
-    regio_hierarchy = pa.TreeHierarchy({"Example": ["ExampleDam", "ExampleCity"], "Empty": []})
+    # Use a TreeHierarchy to have more control about how the codes are nested
+    # Can also be stored and loaded as hrc-format.
+    regio_hierarchy = pa.TreeHierarchy(
+        pa.TreeHierarchyNode("CountryTotal", children=[
+            pa.TreeHierarchyNode("ExampleProvince", children=[
+                pa.TreeHierarchyNode("ExampleDam"),
+                pa.TreeHierarchyNode("ExampleCity"),
+            ]),
+            pa.TreeHierarchyNode("Empty")
+        ]))
 
     input_data = pa.MicroData(
         input_df,
         hierarchies={'sbi': sbi_hierarchy, "regio": regio_hierarchy},
-        total_codes={"sbi": "Industry", "regio": "Country"},
     )
     output_table = pa.Table(['sbi', 'regio'], 'income',
                             safety_rule={pa.dominance_rule(3, 70), pa.zero_rule(20)})

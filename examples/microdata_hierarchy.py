@@ -11,14 +11,13 @@ def main():
 
     # Use a TreeHierarchy to have more control about how the codes are nested
     # Can also be stored and loaded as hrc-format.
-    regio_hierarchy = pa.TreeHierarchy(
-        pa.TreeHierarchyNode("CountryTotal", children=[
-            pa.TreeHierarchyNode("ExampleProvince", children=[
-                pa.TreeHierarchyNode("ExampleDam"),
-                pa.TreeHierarchyNode("ExampleCity"),
-            ]),
-            pa.TreeHierarchyNode("Empty")
-        ]))
+    regio_hierarchy = pa.TreeHierarchy([
+        pa.TreeHierarchyNode("ExampleProvince", children=[
+            pa.TreeHierarchyNode("ExampleDam"),
+            pa.TreeHierarchyNode("ExampleCity"),
+        ]),
+        pa.TreeHierarchyNode("EmptyProvince")
+    ], total_code="CountryTotal")
 
     input_data = pa.MicroData(
         input_df,

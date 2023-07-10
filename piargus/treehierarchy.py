@@ -11,11 +11,11 @@ from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
 
 
 class TreeHierarchy(Hierarchy):
-    """Describe a hierarchy for use with TauArgus"""
+    """A hierarchy where the codes are built as a tree."""
 
     __slots__ = "root", "indent", "filepath"
 
-    def __init__(self, tree=None, indent='@', total_code=DEFAULT_TOTAL_CODE):
+    def __init__(self, tree=None, total_code=DEFAULT_TOTAL_CODE, indent='@'):
         if not isinstance(tree, TreeHierarchyNode):
             tree = TreeHierarchyNode(total_code, tree)
 
@@ -24,8 +24,8 @@ class TreeHierarchy(Hierarchy):
         self.filepath = None
 
     def __repr__(self):
-        return (f"{self.__class__.__name__}("
-                f"{self.root}, indent={self.indent}, total_code={self.total_code})")
+        return (f"{self.__class__.__name__}({list(self.root.children)}, "
+                f"total_code={self.total_code!r}, indent={self.indent!r})")
 
     def __str__(self):
         # Use ascii, so we are safe in environments that don't use utf8
@@ -105,7 +105,10 @@ class TreeHierarchyNode(anytree.NodeMixin):
         self.children = children
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.code})"
+        if self.is_leaf:
+            return f"{self.__class__.__name__}({self.code!r})"
+        else:
+            return f"{self.__class__.__name__}({self.code, list(self.children)})"
 
     def __eq__(self, other):
         return self.code == other.code and self.children == other.children

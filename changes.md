@@ -1,3 +1,8 @@
+## Version 0.4.0 ##
+
+- Add FlatHierarchy
+
+
 ## Version 0.3.0 ##
 
 - Rename `Hierarchy` to `TreeHierarchy`.

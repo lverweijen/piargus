@@ -11,9 +11,12 @@ class CodeHierarchy(Hierarchy):
     """
     __slots__ = "levels", "total_code"
 
-    def __init__(self, levels, total_code=DEFAULT_TOTAL_CODE):
+    is_hierarchical = True
+
+    def __init__(self, levels, *, total_code: str = DEFAULT_TOTAL_CODE):
         self.levels = [int(level) for level in levels]
         self.total_code = total_code
 
-    def column_length(self) -> int:
+    @property
+    def code_length(self) -> int:
         return sum(self.levels)

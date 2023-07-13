@@ -2,12 +2,11 @@ from pathlib import Path
 from typing import Dict, Collection
 from typing import Optional, Sequence, Iterable, Union, Any
 
-from .apriori import Apriori
-from .constants import SAFE, UNSAFE, PROTECTED, OPTIMAL
-from .hierarchy import DEFAULT_TOTAL_CODE
+from ..apriori import Apriori
+from ..constants import SAFE, UNSAFE, PROTECTED, OPTIMAL
 from .inputdata import InputData
 from .metadata import MetaData
-from .table import Table
+from ..table import Table
 
 DEFAULT_STATUS_MARKERS = {
     "SAFE": SAFE,
@@ -25,7 +24,7 @@ class TableData(InputData, Table):
         shadow: Optional[str] = None,
         cost: Optional[str] = None,
         labda: Optional[int] = None,
-        total_codes: Union[str, Dict[str, str]] = DEFAULT_TOTAL_CODE,
+        total_codes: Union[str, Dict[str, str]] = 'Total',  # #DEFAULT_TOTAL_CODE,
         frequency: Optional[str] = None,
         top_contributors: Sequence[str] = (),
         lower_protection_level: Optional[str] = None,

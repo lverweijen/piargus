@@ -4,8 +4,9 @@ from typing import Dict
 
 from pandas.core.dtypes.common import is_string_dtype, is_categorical_dtype, is_bool_dtype
 
-from .codelist import CodeList
-from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
+from ..hierarchy import FlatHierarchy
+from ..codelist import CodeList
+from ..hierarchy import Hierarchy
 from .metadata import MetaData, Column
 
 DEFAULT_COLUMN_LENGTH = 20
@@ -46,7 +47,7 @@ class InputData(metaclass=abc.ABCMeta):
             column_lengths = dict()
 
         if total_codes is None:
-            total_codes = dict()
+            total_codes = {}
         elif isinstance(total_codes, str):
             # This is allowed on TableData, but not in general
             raise TypeError("Total codes must be a dict.")
@@ -55,8 +56,13 @@ class InputData(metaclass=abc.ABCMeta):
         self.codelists = codelists
         self.column_lengths = column_lengths
         self.hierarchies = hierarchies
-        self.total_codes = total_codes
         self.filepath = None
+
+        for col, total_code in total_codes.items():
+            if col in self.hierarchies:
+                self.hierarchies[col].total_code = total_code
+            else:
+                self.hierarchies[col] = FlatHierarchy(total_code=total_code)
 
     @abc.abstractmethod
     def generate_metadata(self) -> MetaData:
@@ -65,16 +71,20 @@ class InputData(metaclass=abc.ABCMeta):
 
         metadata = MetaData()
         for col in self.dataset.columns:
-            metacol = metadata[col] = Column(col, length=self.column_lengths[col])
+            metadata[col] = Column(col, length=self.column_lengths[col])
 
-            if col in self.total_codes:  # Normal way
-                total_code = metacol['TOTCODE'] = self.total_codes[col]
-            elif col in self.hierarchies:  # Use hierarchy as alternative
-                total_code = self.hierarchies[col].total_code
-            else:  # Reasonable default
-                total_code = DEFAULT_TOTAL_CODE
+            # if col in self.hierarchies:
+            #     metacol['TOTCODE'] = total_code
+            # Do in set_hierarchy!
 
-            metacol['TOTCODE'] = total_code
+        # if col in self.total_codes:  # Normal way
+            #     total_code = metacol['TOTCODE'] = self.total_codes[col]
+            # elif col in self.hierarchies:  # Use hierarchy as alternative
+            #     total_code = self.hierarchies[col].total_code
+            # else:  # Reasonable default
+            #     total_code = "Total"
+            #
+            # metacol['TOTCODE'] = total_code
 
         return metadata
 
@@ -97,17 +107,24 @@ class InputData(metaclass=abc.ABCMeta):
         for col in dataset.columns:
             if col not in self.column_lengths:
                 if col in self.hierarchies:
-                    column_length = self.hierarchies[col].column_length()
-                elif col in self.codelists:
-                    column_length = self.codelists[col].column_length()
-                elif is_categorical_dtype(dataset[col].dtype):
-                    column_length = dataset[col].cat.categories.str.len().max()
-                elif is_string_dtype(dataset[col].dtype):
-                    column_length = dataset[col].str.len().max()
-                elif is_bool_dtype(dataset[col].dtype):
-                    column_length = 1
+                    try:
+                        column_length = self.hierarchies[col].code_length
+                    except NotImplementedError:
+                        column_length = None
                 else:
-                    column_length = default
+                    column_length = None
+
+                if column_length is None:
+                    if col in self.codelists:
+                        column_length = self.codelists[col].code_length
+                    elif is_categorical_dtype(dataset[col].dtype):
+                        column_length = dataset[col].cat.categories.str.len().max()
+                    elif is_string_dtype(dataset[col].dtype):
+                        column_length = dataset[col].str.len().max()
+                    elif is_bool_dtype(dataset[col].dtype):
+                        column_length = 1
+                    else:
+                        column_length = default
 
                 self.column_lengths[col] = column_length
 

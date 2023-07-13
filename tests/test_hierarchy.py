@@ -96,4 +96,4 @@ class TestHierarchy(TestCase):
         expected2 = ['Zuid-Holland', 'Rotterdam', 'Den Haag', 'Noord-Holland', 'Haarlem']
         self.assertEqual(expected1, result1)
         self.assertEqual(expected2, result2)
-        self.assertEqual(13, hierarchy.column_length())
+        self.assertEqual(13, hierarchy.code_length)

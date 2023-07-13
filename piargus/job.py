@@ -1,12 +1,10 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional, Union, Mapping, Hashable, Iterable
+from typing import Optional, Union, Mapping, Hashable, Iterable, Sequence, Any
 
 from .batchwriter import BatchWriter
-from .inputdata import InputData
-from .metadata import MetaData
+from .inputdata import InputData, TableData, MetaData
 from .table import Table
-from .tabledata import TableData
 from .tableset import TableSet
 from .treerecode import TreeRecode
 from .utils import slugify
@@ -17,7 +15,10 @@ class Job:
         self,
         input_data: InputData,
         tables: Optional[Union[Mapping[Hashable, Table], Iterable[Table]]] = None,
+        *,
         metadata: Optional[MetaData] = None,
+        linked_suppress_method: Optional[str] = None,  # TODO
+        linked_suppress_method_args: Sequence[Any] = (),  # TODO
         directory: Optional[Union[str, Path]] = None,
         name: Optional[str] = None,
         logbook: Union[bool, str] = True,
@@ -40,11 +41,17 @@ class Job:
         MicroData or TableData.
         :param tables: The tables to be generated. Can be omitted if input_data is TableData.
         :param metadata: The metadata of input_data. If omitted, it will be derived from input_data.
+        :param linked_suppress_method: Method to use for linked suppression.
+        Options are:
+        - `GHMITER` ("GH"): Hypercube
+        - `MODULAR` ("MOD"): Modular
+        Warning: The Tau-Argus manual doesn't document this. Therefore, usage is not recommended.
+        :param linked_suppress_method_args: Parameters to pass to suppress_method.
         :param directory: Where to write tau-argus files.
         :param name: Name from which to derive the name of some temporary files.
         :param logbook: Whether this job should create its own logging file.
         :param interactive: Whether the gui should be opened.
-        :param setup: Whether to set up the job inmediately. (required before run).
+        :param setup: Whether to set up the job immediately. (required before run).
         """
 
         if tables is None and isinstance(input_data, TableData):

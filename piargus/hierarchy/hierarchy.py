@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, Optional
 
 DEFAULT_TOTAL_CODE = "Total"
 
@@ -6,6 +6,7 @@ DEFAULT_TOTAL_CODE = "Total"
 class Hierarchy:
     __slots__ = ()
 
+    is_hierarchical: bool = None
     total_code: str
 
     def __new__(cls, *args, **kwargs):
@@ -23,14 +24,18 @@ class Hierarchy:
         """
         # Prevent circular imports
         from .codehierarchy import CodeHierarchy
+        from .flathierarchy import FlatHierarchy
         from .treehierarchy import TreeHierarchy
 
         if isinstance(hierarchy, Hierarchy):
             return hierarchy
+        elif hierarchy is None:
+            return FlatHierarchy(total_code=total_code)
         elif isinstance(hierarchy, Sequence) and all(isinstance(x, int) for x in hierarchy):
             return CodeHierarchy(hierarchy, total_code=total_code)
         else:
             return TreeHierarchy(hierarchy, total_code=total_code)
 
-    def column_length(self) -> int:
+    @property
+    def code_length(self) -> Optional[int]:
         raise NotImplementedError

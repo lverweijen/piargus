@@ -13,15 +13,18 @@ from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
 class TreeHierarchy(Hierarchy):
     """A hierarchy where the codes are built as a tree."""
 
-    __slots__ = "root", "indent", "filepath"
+    __slots__ = "root", "indent", "filepath", "_code_length"
 
-    def __init__(self, tree=None, total_code=DEFAULT_TOTAL_CODE, indent='@'):
+    is_hierarchical = True
+
+    def __init__(self, tree=None, *, total_code: str = DEFAULT_TOTAL_CODE, indent='@'):
         if not isinstance(tree, TreeHierarchyNode):
             tree = TreeHierarchyNode(total_code, tree)
 
         self.root = tree
         self.indent = indent
         self.filepath = None
+        self._code_length = None
 
     def __repr__(self):
         return (f"{self.__class__.__name__}({list(self.root.children)}, "
@@ -49,9 +52,21 @@ class TreeHierarchy(Hierarchy):
         """Follow path to a new Node."""
         return TreeHierarchyNode.resolver.get(self.root, path)
 
-    def column_length(self) -> int:
-        codes = [descendant.code for descendant in self.root.descendants]
-        return max(map(len, codes))
+    @property
+    def code_length(self) -> int:
+        if self._code_length is None:
+            codes = [descendant.code for descendant in self.root.descendants]
+            self._code_length = max(map(len, codes))
+
+        return self._code_length
+
+    @code_length.setter
+    def code_length(self, value):
+        self._code_length = value
+
+    @code_length.deleter
+    def code_length(self):
+        self._code_length = None
 
     @classmethod
     def from_hrc(cls, file, indent='@', total_code=DEFAULT_TOTAL_CODE):

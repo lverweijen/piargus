@@ -4,10 +4,8 @@ import shlex
 from pathlib import Path
 from typing import Optional
 
-from .codehierarchy import CodeHierarchy
-from .codelist import CodeList
-from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
-from .treehierarchy import TreeHierarchy
+from ..codelist import CodeList
+from ..hierarchy import Hierarchy, CodeHierarchy, TreeHierarchy, FlatHierarchy
 
 PROPERTY_PATTERN = re.compile(r"\<(.*)\>")
 
@@ -142,7 +140,7 @@ class Column:
         elif hierarchy is not None and not isinstance(hierarchy, Hierarchy):
             raise TypeError(f"{hierarchy} should be a hierarchy")
 
-        is_hierarchical = bool(hierarchy)
+        is_hierarchical = getattr(hierarchy, "is_hierarchical", False)
 
         # Handle ThreeHierarchy
         codelist = getattr(hierarchy, "filepath", None)
@@ -160,16 +158,24 @@ class Column:
         else:
             self['HIERLEVELS'] = None
 
-    def get_hierarchy(self) -> Optional[Hierarchy]:
-        total_code = self['TOTCODE'] or DEFAULT_TOTAL_CODE
+        self["TOTCODE"] = getattr(hierarchy, "total_code", None)
 
-        if self["HIERCODELIST"]:
-            return TreeHierarchy.from_hrc(self["HIERCODELIST"],
-                                          indent=self["HIERLEADSTRING"],
-                                          total_code=total_code)
-        elif self["HIERLEVELS"]:
-            levels = map(int, self['HIERLEVELS'].split())
-            return CodeHierarchy(levels, total_code=total_code)
+    def get_hierarchy(self) -> Optional[Hierarchy]:
+        total_code = self['TOTCODE']
+
+        if self["RECODABLE"]:
+            if self["HIERCODELIST"]:
+                hierarchy = TreeHierarchy.from_hrc(self["HIERCODELIST"], indent=self["HIERLEADSTRING"])
+            elif self["HIERLEVELS"]:
+                levels = map(int, self['HIERLEVELS'].split())
+                hierarchy = CodeHierarchy(levels)
+            else:
+                hierarchy = FlatHierarchy()
+
+            if total_code is not None:
+                hierarchy.total_code = total_code
+
+            return hierarchy
         else:
             return None
 

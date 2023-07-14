@@ -2,11 +2,11 @@ from pathlib import Path
 from typing import Dict, Collection
 from typing import Optional, Sequence, Iterable, Union, Any
 
-from ..apriori import Apriori
-from ..constants import SAFE, UNSAFE, PROTECTED, OPTIMAL
+from .hierarchy import Hierarchy
 from .inputdata import InputData
 from .metadata import MetaData
-from ..table import Table
+from ..constants import SAFE, UNSAFE, PROTECTED, OPTIMAL
+from ..table import Table, Apriori
 
 DEFAULT_STATUS_MARKERS = {
     "SAFE": SAFE,
@@ -24,7 +24,9 @@ class TableData(InputData, Table):
         shadow: Optional[str] = None,
         cost: Optional[str] = None,
         labda: Optional[int] = None,
-        total_codes: Union[str, Dict[str, str]] = 'Total',  # #DEFAULT_TOTAL_CODE,
+        *,
+        hierarchies: Dict[str, Hierarchy] = None,
+        total_codes: Union[str, Dict[str, str]] = 'Total',
         frequency: Optional[str] = None,
         top_contributors: Sequence[str] = (),
         lower_protection_level: Optional[str] = None,
@@ -79,9 +81,10 @@ class TableData(InputData, Table):
             total_code = total_codes
             total_codes = {}
             for col in self.explanatory:
-                total_codes[col] = total_code
+                if col not in hierarchies:
+                    total_codes[col] = total_code
 
-        InputData.__init__(self, dataset, total_codes=total_codes, **kwargs)
+        InputData.__init__(self, dataset, hierarchies=hierarchies, total_codes=total_codes, **kwargs)
 
         if status_markers is None:
             status_markers = DEFAULT_STATUS_MARKERS

@@ -4,9 +4,7 @@ from typing import Optional, Union, Mapping, Hashable, Iterable, Sequence, Any
 
 from .batchwriter import BatchWriter
 from .inputdata import InputData, TableData, MetaData
-from .table import Table
-from .tableset import TableSet
-from .treerecode import TreeRecode
+from .table import Table, TreeRecode
 from .utils import slugify
 
 
@@ -17,8 +15,8 @@ class Job:
         tables: Optional[Union[Mapping[Hashable, Table], Iterable[Table]]] = None,
         *,
         metadata: Optional[MetaData] = None,
-        linked_suppress_method: Optional[str] = None,  # TODO
-        linked_suppress_method_args: Sequence[Any] = (),  # TODO
+        linked_suppress_method: Optional[str] = None,
+        linked_suppress_method_args: Sequence[Any] = (),
         directory: Optional[Union[str, Path]] = None,
         name: Optional[str] = None,
         logbook: Union[bool, str] = True,
@@ -62,6 +60,8 @@ class Job:
         self.input_data = input_data
         self.tables = tables
         self.metadata = metadata
+        self.linked_suppress_method = linked_suppress_method
+        self.linked_suppress_method_args = linked_suppress_method_args
         self.name = name
         self.logbook = logbook
         self.interactive = interactive
@@ -106,15 +106,15 @@ class Job:
         self._input_data = value
 
     @property
-    def tables(self) -> TableSet:
+    def tables(self) -> Mapping[Hashable, Table]:
         return self._tables
 
     @tables.setter
     def tables(self, value):
-        if not isinstance(value, TableSet):
-            value = TableSet(value)
+        if not isinstance(value, Mapping):
+            value = dict(enumerate(value))
 
-        self._tables = TableSet(value)
+        self._tables = value
 
     @property
     def batch_filepath(self):
@@ -211,7 +211,7 @@ class Job:
 
             writer.open_metadata(self.metadata)
 
-            for table in self.tables:
+            for table in self.tables.values():
                 writer.specify_table(table.explanatory, table.response, table.shadow, table.cost,
                                      table.labda)
                 writer.safety_rule(table.safety_rule)
@@ -221,7 +221,7 @@ class Job:
             else:
                 writer.read_microdata()
 
-            for t_index, table in enumerate(self.tables, 1):
+            for t_index, table in enumerate(self.tables.values(), 1):
                 if table.apriori:
                     writer.apriori(
                         table.apriori,
@@ -238,10 +238,10 @@ class Job:
                     writer.suppress(table.suppress_method, t_index, *table.suppress_method_args)
 
             # Linked suppression
-            if self.tables.suppress_method:
-                writer.suppress(self.tables.suppress_method, 0, *self.tables.suppress_method_args)
+            if self.linked_suppress_method:
+                writer.suppress(self.linked_suppress_method, 0, *self.linked_suppress_method_args)
 
-            for t_index, table in enumerate(self.tables, 1):
+            for t_index, table in enumerate(self.tables.values(), 1):
                 writer.write_table(t_index, 2, {"AS": True}, str(table.filepath_out))
 
             if self.interactive:
@@ -249,7 +249,7 @@ class Job:
 
     def check(self):
         problems = []
-        for table in self.tables:
+        for table in self.tables.values():
             for var in table.find_variables():
                 if var not in self.input_data.dataset.columns:
                     problems.append(f"Variable {var} not present in input_data")

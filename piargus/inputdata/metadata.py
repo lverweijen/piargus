@@ -4,8 +4,8 @@ import shlex
 from pathlib import Path
 from typing import Optional
 
-from ..codelist import CodeList
-from ..hierarchy import Hierarchy, CodeHierarchy, TreeHierarchy, FlatHierarchy
+from .codelist import CodeList
+from .hierarchy import Hierarchy, CodeHierarchy, TreeHierarchy, FlatHierarchy
 
 PROPERTY_PATTERN = re.compile(r"\<(.*)\>")
 

@@ -4,4 +4,3 @@ from .treehierarchy import TreeHierarchy, TreeHierarchyNode
 from .hierarchy import Hierarchy
 
 __all__ = ["Hierarchy", "TreeHierarchy", "CodeHierarchy", "FlatHierarchy", "TreeHierarchyNode"]
-

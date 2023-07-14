@@ -17,11 +17,11 @@ class MicroData(InputData):
     def __init__(
         self,
         dataset,
+        *,
         weight: Optional[str] = None,
         request: Optional[str] = None,
         request_values: Sequence[Any] = ("1", "2"),
         holding: Optional[str] = None,
-        *args,
         **kwargs
     ):
         """
@@ -36,7 +36,7 @@ class MicroData(InputData):
         :param kwargs: See InputData.
         See the Tau-Argus documentation for more details on these parameters.
         """
-        super().__init__(dataset, *args, **kwargs)
+        super().__init__(dataset, **kwargs)
         self.weight = weight
         self.request = request
         self.request_values = request_values

@@ -1,7 +1,7 @@
 import unittest
 
-from piargus import safetyrule as rule
-from piargus.safetyrule import make_safety_rule
+from piargus.table import safetyrule as rule
+from piargus.table.safetyrule import make_safety_rule
 
 
 class TestSafetyRule(unittest.TestCase):

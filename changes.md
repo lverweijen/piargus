@@ -3,6 +3,7 @@
 - Rename `CodeHierarchy` to `LevelHierarchy`.
 - Move attribute `total_code` of `InputData` to `Hierarchy`.
 - Add `FlatHierarchy`, which is the same as no hierarchy.
+- Add `linked_suppress_method` to Job for protection multiple tables.
 
 ## Version 0.3.0 ##
 
@@ -12,7 +13,7 @@
 - Refactor TreeHierarchy.
   The implementation is now backed by anytree.
   Individual nodes can be accessed by `get_node()`.
-- Hierarchy now keeps track of `indent` itself. This parameters no longer needs to be supplied to `to_hrc`.
+- Hierarchy now keeps track of `indent` itself. This parameter no longer needs to be supplied to `to_hrc`.
 - Replace methods `to_dataframe` and `from_dataframe` by `to_rows` and `from_rows`.
 - `<TOTCODE>` is now always written to metadata.
 

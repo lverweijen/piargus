@@ -112,7 +112,7 @@ class Job:
     @tables.setter
     def tables(self, value):
         if not isinstance(value, Mapping):
-            value = dict(enumerate(value))
+            value = {f"table-{t}": table for t, table in enumerate(value, 1)}
 
         self._tables = value
 

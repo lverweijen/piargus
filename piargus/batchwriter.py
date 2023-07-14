@@ -1,5 +1,5 @@
 from .constants import FREQUENCY_RESPONSE
-from .safetyrule import make_safety_rule
+from .table.safetyrule import make_safety_rule
 from .utils import format_argument
 
 

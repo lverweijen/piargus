@@ -1,7 +1,7 @@
 import io
 from unittest import TestCase
 
-from piargus import BatchWriter, MetaData
+from piargus import BatchWriter
 
 
 class TestBatchWriter(TestCase):

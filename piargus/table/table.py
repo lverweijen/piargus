@@ -4,10 +4,10 @@ from typing import Union, Optional, Sequence, Collection, Iterable, Any, Mapping
 import pandas as pd
 
 from .apriori import Apriori
-from .constants import FREQUENCY_RESPONSE, OPTIMAL
-from .treerecode import TreeRecode
 from .safetyrule import make_safety_rule, SafetyRuleDict
 from .tableresult import TableResult
+from .treerecode import TreeRecode
+from ..constants import FREQUENCY_RESPONSE, OPTIMAL
 
 
 class Table:

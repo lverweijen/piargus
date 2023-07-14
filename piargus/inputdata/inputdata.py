@@ -4,10 +4,9 @@ from typing import Dict
 
 from pandas.core.dtypes.common import is_string_dtype, is_categorical_dtype, is_bool_dtype
 
-from ..hierarchy import FlatHierarchy
-from ..codelist import CodeList
-from ..hierarchy import Hierarchy
+from .hierarchy import FlatHierarchy, Hierarchy
 from .metadata import MetaData, Column
+from .codelist import CodeList
 
 DEFAULT_COLUMN_LENGTH = 20
 
@@ -16,6 +15,7 @@ class InputData(metaclass=abc.ABCMeta):
     def __init__(
         self,
         dataset,
+        *,
         name: str = None,
         hierarchies: Dict[str, Hierarchy] = None,
         codelists: Dict[str, CodeList] = None,
@@ -65,6 +65,10 @@ class InputData(metaclass=abc.ABCMeta):
                 self.hierarchies[col] = FlatHierarchy(total_code=total_code)
 
     @abc.abstractmethod
+    def to_csv(self, target):
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def generate_metadata(self) -> MetaData:
         """Generate metadata corresponding to the input data."""
         self.resolve_column_lengths()
@@ -73,24 +77,7 @@ class InputData(metaclass=abc.ABCMeta):
         for col in self.dataset.columns:
             metadata[col] = Column(col, length=self.column_lengths[col])
 
-            # if col in self.hierarchies:
-            #     metacol['TOTCODE'] = total_code
-            # Do in set_hierarchy!
-
-        # if col in self.total_codes:  # Normal way
-            #     total_code = metacol['TOTCODE'] = self.total_codes[col]
-            # elif col in self.hierarchies:  # Use hierarchy as alternative
-            #     total_code = self.hierarchies[col].total_code
-            # else:  # Reasonable default
-            #     total_code = "Total"
-            #
-            # metacol['TOTCODE'] = total_code
-
         return metadata
-
-    @abc.abstractmethod
-    def to_csv(self, target):
-        raise NotImplementedError
 
     def resolve_column_lengths(self, default=DEFAULT_COLUMN_LENGTH):
         """Make sure each column has a length.

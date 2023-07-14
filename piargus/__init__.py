@@ -1,21 +1,62 @@
-from piargus.apriori import Apriori
 from piargus.argusreport import TauArgusException
 from piargus.batchwriter import BatchWriter
-from piargus.codelist import CodeList
 from piargus.constants import *
-from piargus.treerecode import TreeRecode
-from piargus.hierarchy import Hierarchy , TreeHierarchy, TreeHierarchyNode , CodeHierarchy
-from piargus.inputdata import InputData, MetaData, MicroData, TableData
-from piargus.job import Job
-from piargus.job import JobSetupError
-# from piargus.metadata import MetaData
-# from piargus.microdata import MicroData
-from piargus.safetyrule import dominance_rule, percent_rule, frequency_rule, request_rule, zero_rule, \
-    missing_rule, weight_rule, manual_rule, p_rule, nk_rule
-from piargus.table import Table
-# from piargus.tabledata import TableData
-from piargus.tableset import TableSet
+from piargus.inputdata import InputData, MetaData, MicroData, TableData, CodeList
+from piargus.inputdata.hierarchy import Hierarchy, TreeHierarchy, TreeHierarchyNode, CodeHierarchy
+from piargus.job import Job, JobSetupError
+from piargus.table import Table, Apriori, TreeRecode
+from piargus.table.safetyrule import *
 from piargus.tauargus import TauArgus
 
+__version__ = "0.4.0"
 
-__version__ = "0.3.0"
+__all__ = [
+    "Apriori",
+    "TauArgusException",
+    "BatchWriter",
+    "CodeList",
+    "TreeRecode",
+    "InputData",
+    "MetaData",
+    "MicroData",
+    "TableData",
+    "Job",
+    "JobSetupError",
+
+    # Hierarchy
+    "Hierarchy",
+    "TreeHierarchy",
+    "TreeHierarchyNode",
+    "CodeHierarchy",
+
+    # Safety rules
+    "dominance_rule",
+    "percent_rule",
+    "frequency_rule",
+    "request_rule",
+    "zero_rule",
+    "missing_rule",
+    "weight_rule",
+    "manual_rule",
+    "p_rule",
+    "nk_rule",
+    "Table",
+    "TauArgus",
+
+    # Constants
+    "SAFE",
+    "UNSAFE",
+    "PROTECTED",
+    "SUPPRESSED",
+    "EMPTY",
+    "FREQUENCY_RESPONSE",
+    "FREQUENCY_COST",
+    "UNITY_COST",
+    "DISTANCE_COST",
+    "GHMITER",
+    "MODULAR",
+    "OPTIMAL",
+    "NETWORK",
+    "ROUNDING",
+    "TABULAR_ADJUSTMENT",
+]

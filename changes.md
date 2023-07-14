@@ -1,7 +1,8 @@
 ## Version 0.4.0 ##
 
-- Add FlatHierarchy
-
+- Rename `CodeHierarchy` to `LevelHierarchy`.
+- Move attribute `total_code` of `InputData` to `Hierarchy`.
+- Add `FlatHierarchy`, which is the same as no hierarchy.
 
 ## Version 0.3.0 ##
 

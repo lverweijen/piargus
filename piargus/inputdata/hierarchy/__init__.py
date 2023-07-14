@@ -1,6 +1,6 @@
-from .codehierarchy import CodeHierarchy
+from .levelhierarchy import LevelHierarchy
 from .flathierarchy import FlatHierarchy
 from .treehierarchy import TreeHierarchy, TreeHierarchyNode
 from .hierarchy import Hierarchy
 
-__all__ = ["Hierarchy", "TreeHierarchy", "CodeHierarchy", "FlatHierarchy", "TreeHierarchyNode"]
+__all__ = ["Hierarchy", "TreeHierarchy", "LevelHierarchy", "FlatHierarchy", "TreeHierarchyNode"]

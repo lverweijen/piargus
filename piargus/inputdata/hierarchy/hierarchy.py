@@ -23,7 +23,7 @@ class Hierarchy:
         It's usually better to create one of those directly.
         """
         # Prevent circular imports
-        from .codehierarchy import CodeHierarchy
+        from .levelhierarchy import LevelHierarchy
         from .flathierarchy import FlatHierarchy
         from .treehierarchy import TreeHierarchy
 
@@ -32,7 +32,7 @@ class Hierarchy:
         elif hierarchy is None:
             return FlatHierarchy(total_code=total_code)
         elif isinstance(hierarchy, Sequence) and all(isinstance(x, int) for x in hierarchy):
-            return CodeHierarchy(hierarchy, total_code=total_code)
+            return LevelHierarchy(hierarchy, total_code=total_code)
         else:
             return TreeHierarchy(hierarchy, total_code=total_code)
 

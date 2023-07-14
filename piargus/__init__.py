@@ -2,7 +2,8 @@ from piargus.argusreport import TauArgusException
 from piargus.batchwriter import BatchWriter
 from piargus.constants import *
 from piargus.inputdata import InputData, MetaData, MicroData, TableData, CodeList
-from piargus.inputdata.hierarchy import Hierarchy, TreeHierarchy, TreeHierarchyNode, CodeHierarchy
+from piargus.inputdata.hierarchy import Hierarchy, FlatHierarchy, TreeHierarchy, \
+    TreeHierarchyNode, LevelHierarchy
 from piargus.job import Job, JobSetupError
 from piargus.table import Table, Apriori, TreeRecode
 from piargus.table.safetyrule import *
@@ -25,9 +26,10 @@ __all__ = [
 
     # Hierarchy
     "Hierarchy",
+    "FlatHierarchy",
     "TreeHierarchy",
     "TreeHierarchyNode",
-    "CodeHierarchy",
+    "LevelHierarchy",
 
     # Safety rules
     "dominance_rule",

@@ -6,8 +6,8 @@ def main():
     tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
     input_df = pd.read_csv('data/microdata.csv')
 
-    # Use CodeHierarchy if the code itself is hierarchical e.g. [sbi2, sbi3, sbi4]
-    sbi_hierarchy = pa.CodeHierarchy([2, 1, 1], total_code="TTTT")
+    # Use LevelHierarchy if the code itself is hierarchical e.g. [sbi2, sbi3, sbi4]
+    sbi_hierarchy = pa.LevelHierarchy([2, 1, 1], total_code="TTTT")
 
     # Use a TreeHierarchy to have more control about how the codes are nested
     # Can also be stored and loaded as hrc-format.

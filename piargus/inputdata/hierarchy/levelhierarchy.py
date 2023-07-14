@@ -1,13 +1,13 @@
 from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
 
 
-class CodeHierarchy(Hierarchy):
+class LevelHierarchy(Hierarchy):
     """
     Hierarchical code consisting of digits.
 
     Can be used if the digits of the code make the hierarchy.
     For each hierarchical level the width in the code should be given.
-    For example [3, 4, 1] means the code has format "xxxyyyyz".
+    For example [1, 2, 1] means the code has format "x.yy.z".
     """
     __slots__ = "levels", "total_code"
 

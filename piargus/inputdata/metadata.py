@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 from .codelist import CodeList
-from .hierarchy import Hierarchy, CodeHierarchy, TreeHierarchy, FlatHierarchy
+from .hierarchy import Hierarchy, LevelHierarchy, TreeHierarchy, FlatHierarchy
 
 PROPERTY_PATTERN = re.compile(r"\<(.*)\>")
 
@@ -168,7 +168,7 @@ class Column:
                 hierarchy = TreeHierarchy.from_hrc(self["HIERCODELIST"], indent=self["HIERLEADSTRING"])
             elif self["HIERLEVELS"]:
                 levels = map(int, self['HIERLEVELS'].split())
-                hierarchy = CodeHierarchy(levels)
+                hierarchy = LevelHierarchy(levels)
             else:
                 hierarchy = FlatHierarchy()
 

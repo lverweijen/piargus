@@ -35,7 +35,3 @@ class Hierarchy:
             return LevelHierarchy(hierarchy, total_code=total_code)
         else:
             return TreeHierarchy(hierarchy, total_code=total_code)
-
-    @property
-    def code_length(self) -> Optional[int]:
-        raise NotImplementedError

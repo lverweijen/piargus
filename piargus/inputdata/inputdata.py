@@ -93,25 +93,18 @@ class InputData(metaclass=abc.ABCMeta):
 
         for col in dataset.columns:
             if col not in self.column_lengths:
-                if col in self.hierarchies:
-                    try:
-                        column_length = self.hierarchies[col].code_length
-                    except NotImplementedError:
-                        column_length = None
+                if col in self.hierarchies and hasattr(self.hierarchies[col], "code_length"):
+                    column_length = self.hierarchies[col].code_length
+                elif col in self.codelists:
+                    column_length = self.codelists[col].code_length
+                elif is_categorical_dtype(dataset[col].dtype):
+                    column_length = dataset[col].cat.categories.str.len().max()
+                elif is_string_dtype(dataset[col].dtype):
+                    column_length = dataset[col].str.len().max()
+                elif is_bool_dtype(dataset[col].dtype):
+                    column_length = 1
                 else:
-                    column_length = None
-
-                if column_length is None:
-                    if col in self.codelists:
-                        column_length = self.codelists[col].code_length
-                    elif is_categorical_dtype(dataset[col].dtype):
-                        column_length = dataset[col].cat.categories.str.len().max()
-                    elif is_string_dtype(dataset[col].dtype):
-                        column_length = dataset[col].str.len().max()
-                    elif is_bool_dtype(dataset[col].dtype):
-                        column_length = 1
-                    else:
-                        column_length = default
+                    column_length = default
 
                 self.column_lengths[col] = column_length
 

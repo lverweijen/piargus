@@ -8,7 +8,3 @@ class FlatHierarchy(Hierarchy):
 
     def __init__(self, *, total_code=DEFAULT_TOTAL_CODE):
         self.total_code = total_code
-
-    @property
-    def code_length(self) -> int:
-        raise NotImplementedError

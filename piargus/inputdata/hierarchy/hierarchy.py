@@ -1,4 +1,4 @@
-from typing import Sequence, Optional
+from typing import Sequence
 
 DEFAULT_TOTAL_CODE = "Total"
 

@@ -2,8 +2,8 @@
 
 - Rename `CodeHierarchy` to `LevelHierarchy`.
 - Move attribute `total_code` of `InputData` to `Hierarchy`.
-- Add `FlatHierarchy`, which is the same as no hierarchy.
-- Add `linked_suppress_method` to Job for protection multiple tables.
+- Add `FlatHierarchy`, which is the same as setting no hierarchy.
+- Add `linked_suppress_method` to Job for protecting tables which are linked.
 
 ## Version 0.3.0 ##
 

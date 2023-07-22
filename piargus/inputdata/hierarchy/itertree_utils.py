@@ -5,10 +5,10 @@ Helper functions which one day might be added to anytree itself.
 import re
 from typing import Iterable, Tuple
 
-import anytree
+import itertree
 
 
-def from_indented(file, indent=' ', node_factory=anytree.Node, root_name="root"):
+def from_indented(file, indent=' ', node_factory=itertree.iTree, root_name="root"):
     # Each line consists of indent and code
     pattern = re.compile(rf"^(?P<prefix>({re.escape(indent)})*)(?P<code>.*)")
 
@@ -20,7 +20,7 @@ def from_indented(file, indent=' ', node_factory=anytree.Node, root_name="root")
         prefix, code = match['prefix'], match['code']
         depth = len(prefix) // len(indent)
         node = node_factory(code)
-        node.parent = stack[depth]
+        stack[depth].append(node)
 
         # Place node as last item on index depth + 1
         del stack[depth + 1:]
@@ -30,12 +30,12 @@ def from_indented(file, indent=' ', node_factory=anytree.Node, root_name="root")
 
 
 def to_indented(root, file, indent=" ", depth=0, str_factory=str):
-    for child in root.children:
+    for child in root:
         file.write(indent * depth + str_factory(child) + '\n')
         to_indented(child, file, indent=indent, str_factory=str_factory, depth=depth + 1)
 
 
-def from_rows(rows: Iterable[Tuple], node_factory=anytree.Node, root_name="root"):
+def from_rows(rows: Iterable[Tuple], node_factory=itertree.iTree, root_name="root"):
     # Special-case pandas dataframe
     if hasattr(rows, "itertuples"):
         rows = rows.itertuples(index=False)
@@ -50,7 +50,7 @@ def from_rows(rows: Iterable[Tuple], node_factory=anytree.Node, root_name="root"
                 node = created_nodes[depth, col]
             else:
                 node = node_factory(col)
-                node.parent = parent_node
+                parent_node.append(node)
                 created_nodes[depth, col] = node
 
             parent_node = node
@@ -58,7 +58,7 @@ def from_rows(rows: Iterable[Tuple], node_factory=anytree.Node, root_name="root"
     return root
 
 
-def to_rows(root, str_factory=str, skip_root=True) -> Iterable[Tuple]:
-    index = 1 if skip_root else 0
-    for leaf in root.leaves:
-        yield tuple(str_factory(node) for node in leaf.path[index:])
+def to_rows(root: itertree.iTree) -> Iterable[Tuple]:
+    for node in root.deep:
+        if not len(node):
+            yield tuple(tag for (tag, _idx) in node.tag_idx_path)

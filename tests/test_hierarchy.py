@@ -40,13 +40,10 @@ class TestHierarchy(TestCase):
             "Zuid-Holland": ["Rotterdam", "Den Haag"],
             "Noord-Holland": ["Haarlem"]})
 
-        utrecht_provincie = TreeHierarchyNode("Utrecht")
-        utrecht_stad = TreeHierarchyNode("Utrecht")
-
-        hierarchy.get_node('Noord-Holland').children += tuple([TreeHierarchyNode("Amsterdam")])
-        hierarchy.get_node("Zuid-Holland/Den Haag").parent = None
-        hierarchy.root.children += tuple([utrecht_provincie])
-        hierarchy.get_node("Utrecht").children = [utrecht_stad]
+        hierarchy.get_node('Noord-Holland').append("Amsterdam")
+        hierarchy.get_node("Zuid-Holland").pop(("Den Haag", 0))
+        utrecht_provincie = hierarchy.root.append("Utrecht")
+        utrecht_provincie.append("Utrecht")
 
         expected = TreeHierarchy({'Zuid-Holland': ['Rotterdam'],
                                   'Noord-Holland': ['Haarlem', 'Amsterdam'],

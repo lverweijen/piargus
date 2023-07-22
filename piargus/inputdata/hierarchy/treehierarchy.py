@@ -4,9 +4,9 @@ import os
 from pathlib import Path
 from typing import Mapping, Sequence, Tuple, Iterable
 
-import anytree
+import itertree
 
-from .anytree_utils import from_indented, to_indented, from_rows, to_rows
+from .itertree_utils import from_indented, to_indented, from_rows, to_rows
 from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
 
 
@@ -18,7 +18,7 @@ class TreeHierarchy(Hierarchy):
     is_hierarchical = True
 
     def __init__(self, tree=None, *, total_code: str = DEFAULT_TOTAL_CODE, indent='@'):
-        if not isinstance(tree, TreeHierarchyNode):
+        if not isinstance(tree, itertree.iTree):
             tree = TreeHierarchyNode(total_code, tree)
 
         self.root = tree
@@ -27,12 +27,13 @@ class TreeHierarchy(Hierarchy):
         self._code_length = None
 
     def __repr__(self):
-        return (f"{self.__class__.__name__}({list(self.root.children)}, "
+        return (f"{self.__class__.__name__}({list(self.root)}, "
                 f"total_code={self.total_code!r}, indent={self.indent!r})")
 
     def __str__(self):
         # Use ascii, so we are safe in environments that don't use utf8
-        return anytree.RenderTree(self.root, style=anytree.AsciiStyle()).by_attr("code")
+        # return anytree.RenderTree(self.root, style=anytree.AsciiStyle()).by_attr("code")
+        return self.root.renders()
 
     def __eq__(self, other):
         return (self.root, self.indent) == (other.root, other.indent)
@@ -46,16 +47,23 @@ class TreeHierarchy(Hierarchy):
 
     @total_code.setter
     def total_code(self, value):
-        self.root.code = value
+        self.root = TreeHierarchyNode(value, children=self.root)
 
-    def get_node(self, path=".") -> "TreeHierarchyNode":
+    def get_node(self, *path) -> itertree.iTree:
         """Follow path to a new Node."""
-        return TreeHierarchyNode.resolver.get(self.root, path)
+        node = self.root.get(*path)
+        if not isinstance(node, itertree.iTree):
+            if len(node) == 1:
+                [node] = node
+            else:
+                raise Exception(f"Node is not unique, got {len(node)} nodes instead.")
+
+        return node
 
     @property
     def code_length(self) -> int:
         if self._code_length is None:
-            codes = [descendant.code for descendant in self.root.descendants]
+            codes = [descendant.code for descendant in self.root.deep]
             self._code_length = max(map(len, codes))
 
         return self._code_length
@@ -99,31 +107,55 @@ class TreeHierarchy(Hierarchy):
         return cls(from_rows(rows, TreeHierarchyNode, root_name=total_code), indent=indent)
 
     def to_rows(self) -> Iterable[Tuple[str, str]]:
-        return to_rows(self.root, operator.attrgetter("code"), skip_root=True)
+        return to_rows(self.root)
 
 
-class TreeHierarchyNode(anytree.NodeMixin):
-    __slots__ = "code"
-    resolver = anytree.Resolver("code")
+class TreeHierarchyNode(itertree.iTree):
+    __slots__ = ()
+
+    @classmethod
+    def _to_tree(cls, tree) -> "TreeHierarchyNode":
+        if isinstance(tree, cls):
+            return tree
+        elif isinstance(tree, itertree.iTree):
+            return cls(tree.tag, iter(tree))
+        elif isinstance(tree, str):
+            return cls(tree)
 
     def __init__(self, code=DEFAULT_TOTAL_CODE, children=()):
-        self.code = code
-
         if isinstance(children, Mapping):
             children = [TreeHierarchyNode(code=k, children=v) for k, v in children.items()]
         elif isinstance(children, Sequence):
-            children = [child if isinstance(child, TreeHierarchyNode) else TreeHierarchyNode(child)
-                        for child in children]
-        else:
-            raise TypeError
+            children = [self._to_tree(child) for child in children]
 
-        self.children = children
+        super().__init__(tag=code, subtree=children)
+
+    @property
+    def code(self):
+        return self.tag
+
+    @property  # Please include in itertree
+    def leaves(self):
+        for node in self.deep:
+            if not len(node):
+                yield node
+
+    @property  # Please include in itertree
+    def descendants(self):
+        for node in self.deep:
+            yield node
 
     def __repr__(self):
-        if self.is_leaf:
-            return f"{self.__class__.__name__}({self.code!r})"
+        if len(self):
+            return f"{self.__class__.__name__}({self.code, list(self)})"
         else:
-            return f"{self.__class__.__name__}({self.code, list(self.children)})"
+            return f"{self.__class__.__name__}({self.code!r})"
 
-    def __eq__(self, other):
-        return self.code == other.code and self.children == other.children
+    def append(self, item):
+        return super().append(self._to_tree(item))
+
+    def appendleft(self, item):
+        return super().appendleft(self._to_tree(item))
+
+    def insert(self, target, item):
+        return super().insert(target, self._to_tree(item))

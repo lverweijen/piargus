@@ -1,13 +1,12 @@
 import io
-import operator
 import os
 from pathlib import Path
-from typing import Mapping, Sequence, Tuple, Iterable
+from typing import Mapping, Sequence, Tuple, Iterable, Optional
 
 import itertree
 
-from .itertree_utils import from_indented, to_indented, from_rows, to_rows
 from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
+from .itertree_utils import from_indented, to_indented, from_rows, to_rows
 
 
 class TreeHierarchy(Hierarchy):
@@ -47,16 +46,33 @@ class TreeHierarchy(Hierarchy):
 
     @total_code.setter
     def total_code(self, value):
-        self.root = TreeHierarchyNode(value, children=self.root)
+        self.root.rename(value)
 
-    def get_node(self, *path) -> itertree.iTree:
-        """Follow path to a new Node."""
-        node = self.root.get(*path)
-        if not isinstance(node, itertree.iTree):
-            if len(node) == 1:
-                [node] = node
-            else:
-                raise Exception(f"Node is not unique, got {len(node)} nodes instead.")
+    def get_node(self, *path) -> Optional[itertree.iTree]:
+        """Return single Node, None if it doesn't exist, ValueError if path not unique."""
+        if path:
+            try:
+                return self.root.get.single(*path)
+            except (IndexError, KeyError):
+                return None
+        else:
+            return self.root
+
+    def create_node(self, *path) -> itertree.iTree:
+        """Recursively create a path to a Node or return an existing node."""
+        node = self.root
+
+        path = iter(path)
+
+        for segment in path:
+            try:
+                node = node.get.by_tag_idx((segment, 0))
+            except KeyError:
+                node = node.append(TreeHierarchyNode(segment))
+
+                for new_segment in path:
+                    node = node.append(TreeHierarchyNode(new_segment))
+                break
 
         return node
 
@@ -121,6 +137,8 @@ class TreeHierarchyNode(itertree.iTree):
             return cls(tree.tag, iter(tree))
         elif isinstance(tree, str):
             return cls(tree)
+        else:
+            raise TypeError(f"Unexpected type {type(tree)}")
 
     def __init__(self, code=DEFAULT_TOTAL_CODE, children=()):
         if isinstance(children, Mapping):
@@ -130,27 +148,22 @@ class TreeHierarchyNode(itertree.iTree):
 
         super().__init__(tag=code, subtree=children)
 
-    @property
-    def code(self):
-        return self.tag
-
-    @property  # Please include in itertree
-    def leaves(self):
-        for node in self.deep:
-            if not len(node):
-                yield node
-
-    @property  # Please include in itertree
-    def descendants(self):
-        for node in self.deep:
-            yield node
-
     def __repr__(self):
         if len(self):
             return f"{self.__class__.__name__}({self.code, list(self)})"
         else:
             return f"{self.__class__.__name__}({self.code!r})"
 
+    @property
+    def code(self):
+        return self.tag
+
+    @property
+    def is_leaf(self) -> bool:
+        """Return if node is leaf. Equivalent to bool(node)."""
+        return len(self) == 0
+
+    # Did we overwrite them all?
     def append(self, item):
         return super().append(self._to_tree(item))
 
@@ -159,3 +172,9 @@ class TreeHierarchyNode(itertree.iTree):
 
     def insert(self, target, item):
         return super().insert(target, self._to_tree(item))
+
+    def __setitem__(self, target, item):
+        if isinstance(item, str):
+            super()[target].rename(item)
+        else:
+            super()[target] = self._to_tree(item)

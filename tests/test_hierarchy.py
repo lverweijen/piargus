@@ -40,14 +40,20 @@ class TestHierarchy(TestCase):
             "Zuid-Holland": ["Rotterdam", "Den Haag"],
             "Noord-Holland": ["Haarlem"]})
 
-        hierarchy.get_node('Noord-Holland').append("Amsterdam")
-        hierarchy.get_node("Zuid-Holland").pop(("Den Haag", 0))
-        utrecht_provincie = hierarchy.root.append("Utrecht")
-        utrecht_provincie.append("Utrecht")
+        hierarchy.create_node('Noord-Holland', "Amsterdam")
+        hierarchy.create_node('Utrecht', "Utrecht")
+        deleted = hierarchy.get_node("Zuid-Holland").pop("Den Haag")
+
+        existent = hierarchy.get_node("Zuid-Holland", "Rotterdam")
+        non_existent = hierarchy.get_node("Zuid-Holland", "Den Haag")
 
         expected = TreeHierarchy({'Zuid-Holland': ['Rotterdam'],
                                   'Noord-Holland': ['Haarlem', 'Amsterdam'],
                                   'Utrecht': ['Utrecht']})
+
+        self.assertIsNotNone(deleted)
+        self.assertIsNotNone(existent)
+        self.assertIsNone(non_existent)
         self.assertEqual(expected, hierarchy)
 
     def test_from_rows(self):
@@ -87,8 +93,8 @@ class TestHierarchy(TestCase):
             "Zuid-Holland": ["Rotterdam", "Den Haag"],
             "Noord-Holland": ["Haarlem"]})
 
-        result1 = [d.code for d in hierarchy.root.leaves]
-        result2 = [d.code for d in hierarchy.root.descendants]
+        result1 = [d.code for d in hierarchy.root.deep if len(d) == 0]
+        result2 = [d.code for d in hierarchy.root.deep]
         expected1 = ['Rotterdam', 'Den Haag', 'Haarlem']
         expected2 = ['Zuid-Holland', 'Rotterdam', 'Den Haag', 'Noord-Holland', 'Haarlem']
         self.assertEqual(expected1, result1)

@@ -1,3 +1,7 @@
+## Version 0.4.1 ##
+
+- Add TreeHierarchie.create_node and get_node for making node retrieval eaiser.
+
 ## Version 0.4.0 ##
 
 - Rename `CodeHierarchy` to `LevelHierarchy`.

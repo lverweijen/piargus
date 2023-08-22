@@ -9,7 +9,7 @@ from piargus.table import Table, Apriori, TreeRecode
 from piargus.table.safetyrule import *
 from piargus.tauargus import TauArgus
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 __all__ = [
     "Apriori",

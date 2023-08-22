@@ -1,9 +1,9 @@
 import io
 import os
 from unittest import TestCase
-import pandas as pd
 
-from piargus import TreeHierarchy, TreeHierarchyNode
+import pandas as pd
+from piargus import TreeHierarchy
 
 
 class TestHierarchy(TestCase):
@@ -40,17 +40,18 @@ class TestHierarchy(TestCase):
             "Zuid-Holland": ["Rotterdam", "Den Haag"],
             "Noord-Holland": ["Haarlem"]})
 
-        utrecht_provincie = TreeHierarchyNode("Utrecht")
-        utrecht_stad = TreeHierarchyNode("Utrecht")
+        hierarchy.create_node(['Noord-Holland', "Amsterdam"])
+        hierarchy.create_node(['Utrecht', 'Utrecht'])
+        hierarchy.get_node(["Zuid-Holland", "Den Haag"]).parent = None
 
-        hierarchy.get_node('Noord-Holland').children += tuple([TreeHierarchyNode("Amsterdam")])
-        hierarchy.get_node("Zuid-Holland/Den Haag").parent = None
-        hierarchy.root.children += tuple([utrecht_provincie])
-        hierarchy.get_node("Utrecht").children = [utrecht_stad]
+        existent = hierarchy.get_node(["Zuid-Holland", "Rotterdam"])
+        non_existent = hierarchy.get_node(["Zuid-Holland", "Den Haag"])
 
         expected = TreeHierarchy({'Zuid-Holland': ['Rotterdam'],
                                   'Noord-Holland': ['Haarlem', 'Amsterdam'],
                                   'Utrecht': ['Utrecht']})
+        self.assertIsNotNone(existent)
+        self.assertIsNone(non_existent)
         self.assertEqual(expected, hierarchy)
 
     def test_from_rows(self):
@@ -82,6 +83,7 @@ class TestHierarchy(TestCase):
             {"province": "Utrecht", "city": "Utrecht"},
             {"province": "Zeeland", "city": pd.NA},
         ])
+        hierarchy.to_figure()
 
         self.assertEqual(expected.to_dict('records'), dataframe.to_dict('records'))
 

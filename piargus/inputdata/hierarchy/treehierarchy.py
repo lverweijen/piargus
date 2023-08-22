@@ -2,9 +2,10 @@ import io
 import operator
 import os
 from pathlib import Path
-from typing import Mapping, Sequence, Tuple, Iterable
+from typing import Mapping, Sequence, Tuple, Iterable, Optional
 
 import anytree
+from anytree.exporter import DotExporter
 
 from .anytree_utils import from_indented, to_indented, from_rows, to_rows
 from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
@@ -48,9 +49,30 @@ class TreeHierarchy(Hierarchy):
     def total_code(self, value):
         self.root.code = value
 
-    def get_node(self, path=".") -> "TreeHierarchyNode":
-        """Follow path to a new Node."""
-        return TreeHierarchyNode.resolver.get(self.root, path)
+    def get_node(self, path) -> Optional["TreeHierarchyNode"]:
+        """Return single Node, None if it doesn't exist, ValueError if path not unique."""
+
+        node = self.root
+        for segment in path:
+            node = node[segment]
+            if node is None:
+                return None
+
+        return node
+
+    def create_node(self, path) -> "TreeHierarchyNode":
+        """Return single Node, None if it doesn't exist, ValueError if path not unique."""
+
+        node = self.root
+        for segment in path:
+            nextnode = node[segment]
+            if nextnode is None:
+                nextnode = TreeHierarchyNode(segment)
+                nextnode.parent = node
+
+            node = nextnode
+
+        return node
 
     @property
     def code_length(self) -> int:
@@ -101,9 +123,13 @@ class TreeHierarchy(Hierarchy):
     def to_rows(self) -> Iterable[Tuple[str, str]]:
         return to_rows(self.root, operator.attrgetter("code"), skip_root=True)
 
+    def to_figure(self, filename=None, **kwar):
+        exporter = DotExporter(self.root, nodenamefunc=operator.attrgetter("code"))
+        exporter.to_picture("lala.png")
+
 
 class TreeHierarchyNode(anytree.NodeMixin):
-    __slots__ = "code"
+    __slots__ = "code", "cdict"
     resolver = anytree.Resolver("code")
 
     def __init__(self, code=DEFAULT_TOTAL_CODE, children=()):
@@ -118,6 +144,25 @@ class TreeHierarchyNode(anytree.NodeMixin):
             raise TypeError
 
         self.children = children
+
+    def __getitem__(self, key):
+        cache = getattr(self, 'cdict', None)
+        if cache:
+            item = cache.get(key)
+        else:
+            item = None
+
+        if item is None or item.parent is not self:
+            # Cache is outdated
+            cache = self.cdict = self._make_cache()
+            item = cache.get(key)
+        return item
+
+    def _make_cache(self):
+        cache = dict()
+        for child in self.children:
+            cache[child.code] = child
+        return cache
 
     def __repr__(self):
         if self.is_leaf:

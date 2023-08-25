@@ -7,8 +7,8 @@ def main():
     symbol_hierarchy = pa.TreeHierarchy(["A", "C"], total_code="Industry")
     regio_hierarchy = pa.TreeHierarchy(
         [
-            pa.TreeHierarchyNode("Example", ["ExampleDam", "ExampleCity"]),
-            pa.TreeHierarchyNode("Empty", []),
+            pa.Node("Example", [pa.Node("ExampleDam"), pa.Node("ExampleCity")]),
+            pa.Node("Empty", []),
         ], total_code="Country"
     )
 

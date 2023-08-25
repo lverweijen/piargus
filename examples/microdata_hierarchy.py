@@ -6,18 +6,22 @@ def main():
     tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
     input_df = pd.read_csv('data/microdata.csv')
 
-    # Use LevelHierarchy if the code itself is hierarchical e.g. [sbi2, sbi3, sbi4]
+    # Use LevelHierarchy if the code itself is hierarchical (e.g. nace-codes)
     sbi_hierarchy = pa.LevelHierarchy([2, 1, 1], total_code="TTTT")
 
     # Use a TreeHierarchy to have more control about how the codes are nested
     # Can also be stored and loaded as hrc-format.
     regio_hierarchy = pa.TreeHierarchy([
-        pa.TreeHierarchyNode("ExampleProvince", children=[
-            pa.TreeHierarchyNode("ExampleDam"),
-            pa.TreeHierarchyNode("ExampleCity"),
+        pa.Node("ExampleProvince", children=[
+            pa.Node("ExampleDam"),
+            pa.Node("ExampleCity"),
         ]),
-        pa.TreeHierarchyNode("EmptyProvince")
+        pa.Node("EmptyProvince")
     ], total_code="CountryTotal")
+
+    print(f"Using the following hierarchy for sbi:\n{sbi_hierarchy}")
+    print(f"Using the following hierarchy for regio:\n{regio_hierarchy}")
+    # regio_hierarchy.to_image().show()  # If graphviz and Pillow are installed
 
     input_data = pa.MicroData(
         input_df,

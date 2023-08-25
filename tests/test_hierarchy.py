@@ -42,7 +42,7 @@ class TestHierarchy(TestCase):
 
         hierarchy.create_node(['Noord-Holland', "Amsterdam"])
         hierarchy.create_node(['Utrecht', 'Utrecht'])
-        hierarchy.get_node(["Zuid-Holland", "Den Haag"]).parent = None
+        hierarchy.get_node(["Zuid-Holland", "Den Haag"]).detach()
 
         existent = hierarchy.get_node(["Zuid-Holland", "Rotterdam"])
         non_existent = hierarchy.get_node(["Zuid-Holland", "Den Haag"])
@@ -83,17 +83,34 @@ class TestHierarchy(TestCase):
             {"province": "Utrecht", "city": "Utrecht"},
             {"province": "Zeeland", "city": pd.NA},
         ])
-        hierarchy.to_figure()
-
         self.assertEqual(expected.to_dict('records'), dataframe.to_dict('records'))
+
+    def test_to_string(self):
+        hierarchy = TreeHierarchy({'Zuid-Holland': ['Rotterdam', 'Den Haag'],
+                                   'Noord-Holland': ['Haarlem', 'Amsterdam'],
+                                   'Utrecht': ['Utrecht'],
+                                   "Zeeland": []})
+        result = str(hierarchy)
+        expected = (
+            'Total\n'
+            '|-- Zuid-Holland\n'
+            '|   |-- Rotterdam\n'
+            '|   `-- Den Haag\n'
+            '|-- Noord-Holland\n'
+            '|   |-- Haarlem\n'
+            '|   `-- Amsterdam\n'
+            '|-- Utrecht\n'
+            '|   `-- Utrecht\n'
+            '`-- Zeeland\n')
+        self.assertEqual(expected, result)
 
     def test_codes(self):
         hierarchy = TreeHierarchy({
             "Zuid-Holland": ["Rotterdam", "Den Haag"],
             "Noord-Holland": ["Haarlem"]})
 
-        result1 = [d.code for d in hierarchy.root.leaves]
-        result2 = [d.code for d in hierarchy.root.descendants]
+        result1 = [d.code for d in hierarchy.root.iter_leaves()]
+        result2 = [d.code for d in hierarchy.root.iter_descendants()]
         expected1 = ['Rotterdam', 'Den Haag', 'Haarlem']
         expected2 = ['Zuid-Holland', 'Rotterdam', 'Den Haag', 'Noord-Holland', 'Haarlem']
         self.assertEqual(expected1, result1)

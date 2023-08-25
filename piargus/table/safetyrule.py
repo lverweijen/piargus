@@ -102,13 +102,14 @@ nk_rule = dominance_rule
 p_rule = percent_rule
 
 
-class SafetyRuleDict(TypedDict, total=False):
+class SafetyRule(TypedDict, total=False):
     individual: Union[str, Collection[str]]
     holding: Union[str, Collection[str]]
 
 
 def make_safety_rule(
-    rule: Union[str, Collection[str], SafetyRuleDict] = "", /, *,
+    rule: Union[str, Collection[str], SafetyRule] = "", /,
+    *,
     individual: Union[str, Collection[str]] = "",
     holding: Union[str, Collection[str]] = "",
 ) -> str:

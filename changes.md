@@ -1,6 +1,12 @@
+## Version 1.0.0 ##
+
+- Add alias `Node` for `TreeHierarchyNode`.
+- Make `SafetyRule` directly available.
+- `TreeHierarchy` is now backed by [littletree](https://github.com/lverweijen/littletree).
+
 ## Version 0.4.1 ##
 
-- Add TreeHierarchie.create_node and get_node for making node retrieval eaiser.
+- Add `TreeHierarchie.create_node` and `get_node` for making node retrieval easier.
 
 ## Version 0.4.0 ##
 

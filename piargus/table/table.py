@@ -4,7 +4,7 @@ from typing import Union, Optional, Sequence, Collection, Iterable, Any, Mapping
 import pandas as pd
 
 from .apriori import Apriori
-from .safetyrule import make_safety_rule, SafetyRuleDict
+from .safetyrule import make_safety_rule, SafetyRule
 from .tableresult import TableResult
 from .treerecode import TreeRecode
 from ..constants import FREQUENCY_RESPONSE, OPTIMAL
@@ -19,7 +19,7 @@ class Table:
         cost: Optional[Union[int, str]] = None,
         labda: int = None,
         name: str = None,  # Deprecated
-        safety_rule: Union[str, Collection[str], SafetyRuleDict] = (),
+        safety_rule: Union[str, Collection[str], SafetyRule] = (),
         apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
         recodes: Mapping[str, Union[int, TreeRecode]] = None,
         suppress_method: Optional[str] = OPTIMAL,
@@ -97,7 +97,7 @@ class Table:
         return self._safety_rule
 
     @safety_rule.setter
-    def safety_rule(self, rule: Union[str, Collection[str], SafetyRuleDict] = ""):
+    def safety_rule(self, rule: Union[str, Collection[str], SafetyRule] = ""):
         self._safety_rule = make_safety_rule(rule)
 
     @property

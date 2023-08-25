@@ -4,11 +4,12 @@ import os
 from pathlib import Path
 from typing import Mapping, Sequence, Tuple, Iterable, Optional
 
-import anytree
-from anytree.exporter import DotExporter
+import littletree
+from littletree.exporters import DotExporter, StringExporter
+from littletree.serializers import RowSerializer
 
-from .anytree_utils import from_indented, to_indented, from_rows, to_rows
 from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
+from .hrcserializer import HRCSerializer
 
 
 class TreeHierarchy(Hierarchy):
@@ -21,7 +22,6 @@ class TreeHierarchy(Hierarchy):
     def __init__(self, tree=None, *, total_code: str = DEFAULT_TOTAL_CODE, indent='@'):
         if not isinstance(tree, TreeHierarchyNode):
             tree = TreeHierarchyNode(total_code, tree)
-
         self.root = tree
         self.indent = indent
         self.filepath = None
@@ -31,9 +31,8 @@ class TreeHierarchy(Hierarchy):
         return (f"{self.__class__.__name__}({list(self.root.children)}, "
                 f"total_code={self.total_code!r}, indent={self.indent!r})")
 
-    def __str__(self):
-        # Use ascii, so we are safe in environments that don't use utf8
-        return anytree.RenderTree(self.root, style=anytree.AsciiStyle()).by_attr("code")
+    def __str__(self) -> Optional[str]:
+        return self.to_string(style="ascii")
 
     def __eq__(self, other):
         return (self.root, self.indent) == (other.root, other.indent)
@@ -51,35 +50,17 @@ class TreeHierarchy(Hierarchy):
 
     def get_node(self, path) -> Optional["TreeHierarchyNode"]:
         """Return single Node, None if it doesn't exist, ValueError if path not unique."""
-
-        node = self.root
-        for segment in path:
-            node = node[segment]
-            if node is None:
-                return None
-
-        return node
+        return self.root.path.get(path)
 
     def create_node(self, path) -> "TreeHierarchyNode":
         """Return single Node, None if it doesn't exist, ValueError if path not unique."""
-
-        node = self.root
-        for segment in path:
-            nextnode = node[segment]
-            if nextnode is None:
-                nextnode = TreeHierarchyNode(segment)
-                nextnode.parent = node
-
-            node = nextnode
-
-        return node
+        return self.root.path.create(path)
 
     @property
     def code_length(self) -> int:
         if self._code_length is None:
-            codes = [descendant.code for descendant in self.root.descendants]
+            codes = [descendant.code for descendant in self.root.iter_descendants()]
             self._code_length = max(map(len, codes))
-
         return self._code_length
 
     @code_length.setter
@@ -94,12 +75,12 @@ class TreeHierarchy(Hierarchy):
     def from_hrc(cls, file, indent='@', total_code=DEFAULT_TOTAL_CODE):
         if isinstance(file, (str, Path)):
             with open(file) as reader:
-                hierarchy = cls.from_hrc(reader, indent)
+                hierarchy = cls.from_hrc(reader, indent, total_code)
                 hierarchy.filepath = Path(file)
                 return hierarchy
-
-        root = from_indented(file,
-                             indent=indent, node_factory=TreeHierarchyNode, root_name=total_code)
+        serializer = HRCSerializer(TreeHierarchyNode, indent)
+        root = serializer.from_hrc(file)
+        root.code = total_code
         return cls(root, indent=indent)
 
     def to_hrc(self, file=None, length=0):
@@ -112,63 +93,65 @@ class TreeHierarchy(Hierarchy):
             with open(file, 'w', newline='\n') as writer:
                 self.to_hrc(writer, length)
         else:
-            return to_indented(self.root, file, self.indent,
-                               str_factory=lambda node: str(node.code).rjust(length))
+            serializer = HRCSerializer(TreeHierarchyNode, self.indent, length)
+            return serializer.to_hrc(self.root, file)
 
     @classmethod
     def from_rows(cls, rows: Iterable[Tuple[str, str]], indent='@', total_code=DEFAULT_TOTAL_CODE):
         """Construct from list of (code, parent) tuples."""
-        return cls(from_rows(rows, TreeHierarchyNode, root_name=total_code), indent=indent)
+
+        if hasattr(rows, "itertuples"):
+            rows = rows.itertuples(index=False)
+        serializer = RowSerializer(TreeHierarchyNode, path_name=None)
+        tree = serializer.from_rows(rows)
+        tree.code = total_code
+        return cls(tree, indent=indent)
 
     def to_rows(self) -> Iterable[Tuple[str, str]]:
-        return to_rows(self.root, operator.attrgetter("code"), skip_root=True)
+        serializer = RowSerializer(TreeHierarchyNode, path_name=None)
+        return serializer.to_rows(self.root, leaves_only=True)
 
-    def to_figure(self, filename=None, **kwar):
-        exporter = DotExporter(self.root, nodenamefunc=operator.attrgetter("code"))
-        exporter.to_picture("lala.png")
+    def to_image(self, filename=None, **kwargs):
+        exporter = DotExporter(name_factory=lambda n: hex(id(n)),
+                               node_attributes={"label": operator.attrgetter("code")},
+                               **kwargs)
+        return exporter.to_image(self.root, filename)
+
+    def to_string(self, str_factory="code", **kwargs) -> Optional[str]:
+        exporter = StringExporter(str_factory, **kwargs)
+        return exporter.to_string(self.root)
 
 
-class TreeHierarchyNode(anytree.NodeMixin):
-    __slots__ = "code", "cdict"
-    resolver = anytree.Resolver("code")
+class TreeHierarchyNode(littletree.BaseNode):
+    __slots__ = ()
 
-    def __init__(self, code=DEFAULT_TOTAL_CODE, children=()):
-        self.code = code
-
+    def __init__(self, code=None, children=(), parent=None):
+        if code is None:
+            code = DEFAULT_TOTAL_CODE
         if isinstance(children, Mapping):
             children = [TreeHierarchyNode(code=k, children=v) for k, v in children.items()]
         elif isinstance(children, Sequence):
             children = [child if isinstance(child, TreeHierarchyNode) else TreeHierarchyNode(child)
                         for child in children]
-        else:
-            raise TypeError
+        super().__init__(identifier=code, children=children, parent=parent)
 
-        self.children = children
+    @property
+    def code(self):
+        return self.identifier
 
-    def __getitem__(self, key):
-        cache = getattr(self, 'cdict', None)
-        if cache:
-            item = cache.get(key)
-        else:
-            item = None
-
-        if item is None or item.parent is not self:
-            # Cache is outdated
-            cache = self.cdict = self._make_cache()
-            item = cache.get(key)
-        return item
-
-    def _make_cache(self):
-        cache = dict()
-        for child in self.children:
-            cache[child.code] = child
-        return cache
+    @code.setter
+    def code(self, new_code):
+        self.identifier = new_code
 
     def __repr__(self):
         if self.is_leaf:
-            return f"{self.__class__.__name__}({self.code!r})"
+            return f"Node({self.code!r})"
         else:
-            return f"{self.__class__.__name__}({self.code, list(self.children)})"
+            return f"Node({self.code, list(self.children)})"
 
-    def __eq__(self, other):
-        return self.code == other.code and self.children == other.children
+    def __str__(self):
+        return self.code
+
+
+# Alias for easier use
+Node = TreeHierarchyNode

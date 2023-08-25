@@ -17,6 +17,9 @@ class LevelHierarchy(Hierarchy):
         self.levels = [int(level) for level in levels]
         self.total_code = total_code
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.levels}, total_code={self.total_code})"
+
     @property
     def code_length(self) -> int:
         return sum(self.levels)

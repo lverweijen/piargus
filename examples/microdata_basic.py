@@ -3,7 +3,7 @@ import piargus as pa
 
 
 def main():
-    tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
+    tau = pa.TauArgus()
     input_data = pa.MicroData(pd.read_csv('data/microdata.csv'))
     output_table = pa.Table(['symbol', 'regio'], 'income',
                             safety_rule=pa.percent_rule(p=10),

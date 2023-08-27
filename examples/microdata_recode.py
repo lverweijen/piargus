@@ -3,7 +3,7 @@ import piargus as pa
 
 
 def main():
-    tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.4b2\TauArgus')
+    tau = pa.TauArgus()
     symbol_hierarchy = pa.TreeHierarchy(["A", "C"], total_code="Industry")
     regio_hierarchy = pa.TreeHierarchy(
         [

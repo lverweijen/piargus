@@ -5,7 +5,7 @@ import piargus as pa
 
 
 def main():
-    tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
+    tau = pa.TauArgus()
     input_df = pd.read_csv("data/tabledata_status.csv")
     table = pa.TableData(input_df, ["activity", "size"], "val",
                          status_indicator="status",

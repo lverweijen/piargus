@@ -5,7 +5,7 @@ import piargus as pa
 
 
 def main():
-    tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
+    tau = pa.TauArgus()
     input_df = pd.read_csv("data/tabledata.csv")
     table = pa.TableData(input_df, ["activity", "size"], "val",
                          safety_rule={pa.frequency_rule(3, 10), pa.dominance_rule(1, 85)},

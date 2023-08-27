@@ -3,7 +3,7 @@ import piargus as pa
 
 
 def main():
-    tau = pa.TauArgus(r'C:\Users\LVWN\Desktop\TauArgus4.2.0b5\TauArgus')
+    tau = pa.TauArgus()
     input_df = pd.read_csv('data/microdata.csv')
 
     # Use LevelHierarchy if the code itself is hierarchical (e.g. nace-codes)

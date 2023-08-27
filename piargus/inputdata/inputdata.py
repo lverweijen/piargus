@@ -16,7 +16,6 @@ class InputData(metaclass=abc.ABCMeta):
         self,
         dataset,
         *,
-        name: str = None,
         hierarchies: Dict[str, Hierarchy] = None,
         codelists: Dict[str, CodeList] = None,
         column_lengths: Dict[str, int] = None,
@@ -26,16 +25,12 @@ class InputData(metaclass=abc.ABCMeta):
         Abstract class for input data. Either initialize MicroData or TableData.
 
         :param dataset: The dataset to make tables for.
-        :param name: (unused)
         :param hierarchies: The hierarchies to use for categorial data in the dataset.
         :param codelists: Codelists (dicts) for categorical data in the dataset.
         :param column_lengths: For each column the length.
         :param total_codes: Codes within explanatory that are used for the totals.
         The lengths can also be derived by calling resolve_column_lengths.
         """
-
-        if name is not None:
-            warnings.warn("Name on input_data is no longer used.")
 
         if hierarchies is None:
             hierarchies = dict()

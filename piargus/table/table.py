@@ -18,7 +18,6 @@ class Table:
         shadow: Optional[str] = None,
         cost: Optional[Union[int, str]] = None,
         labda: int = None,
-        name: str = None,  # Deprecated
         safety_rule: Union[str, Collection[str], SafetyRule] = (),
         apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
         recodes: Mapping[str, Union[int, TreeRecode]] = None,
@@ -55,7 +54,6 @@ class Table:
         - "FREQ(minfreq, safety_range)": Frequency rule
         - "REQ(percentage_1, percentage_2, safety_margin)": Request rule
         See the Tau-Argus manual for details on those rules.
-        :param name: (unused)
         :param apriori: Apriori file to change parameters
         :param suppress_method: Method to use for secondary suppression.
         Options are:
@@ -69,9 +67,6 @@ class Table:
         See the Tau-Argus manual for details on those rules.
         :param suppress_method_args: Parameters to pass to suppress_method.
         """
-
-        if name is not None:
-            warnings.warn("name is deprecated, pass a dict to Job instead")
 
         if recodes:
             recodes = {col: (recode if isinstance(recode, (int, TreeRecode))

@@ -100,8 +100,6 @@ class TreeHierarchy(Hierarchy):
     def from_rows(cls, rows: Iterable[Tuple[str, str]], indent='@', total_code=DEFAULT_TOTAL_CODE):
         """Construct from list of (code, parent) tuples."""
 
-        if hasattr(rows, "itertuples"):
-            rows = rows.itertuples(index=False)
         serializer = RowSerializer(TreeHierarchyNode, path_name=None)
         tree = serializer.from_rows(rows)
         tree.code = total_code
@@ -117,9 +115,9 @@ class TreeHierarchy(Hierarchy):
                                **kwargs)
         return exporter.to_image(self.root, filename)
 
-    def to_string(self, str_factory="code", **kwargs) -> Optional[str]:
-        exporter = StringExporter(str_factory, **kwargs)
-        return exporter.to_string(self.root)
+    def to_string(self, file=None, **kwargs) -> Optional[str]:
+        exporter = StringExporter(**kwargs)
+        return exporter.to_string(self.root, file)
 
 
 class TreeHierarchyNode(littletree.BaseNode):
@@ -133,7 +131,7 @@ class TreeHierarchyNode(littletree.BaseNode):
         elif isinstance(children, Sequence):
             children = [child if isinstance(child, TreeHierarchyNode) else TreeHierarchyNode(child)
                         for child in children]
-        super().__init__(identifier=code, children=children, parent=parent)
+        super().__init__(identifier=str(code), children=children, parent=parent)
 
     @property
     def code(self):
@@ -141,7 +139,7 @@ class TreeHierarchyNode(littletree.BaseNode):
 
     @code.setter
     def code(self, new_code):
-        self.identifier = new_code
+        self.identifier = str(new_code)
 
     def __repr__(self):
         if self.is_leaf:

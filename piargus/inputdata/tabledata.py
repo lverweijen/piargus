@@ -81,7 +81,7 @@ class TableData(InputData, Table):
             total_code = total_codes
             total_codes = {}
             for col in self.explanatory:
-                if col not in hierarchies:
+                if not hierarchies or col not in hierarchies:
                     total_codes[col] = total_code
 
         InputData.__init__(self, dataset, hierarchies=hierarchies, total_codes=total_codes, **kwargs)

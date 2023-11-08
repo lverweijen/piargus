@@ -5,8 +5,8 @@ from pathlib import Path
 from typing import Mapping, Sequence, Tuple, Iterable, Optional
 
 import littletree
-from littletree.exporters import DotExporter, StringExporter
-from littletree.serializers import RowSerializer
+from littletree.exporters import DotExporter, StringExporter, MermaidExporter
+from littletree.serializers import RowSerializer, RelationSerializer
 
 from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
 from .hrcserializer import HRCSerializer
@@ -105,19 +105,39 @@ class TreeHierarchy(Hierarchy):
         tree.code = total_code
         return cls(tree, indent=indent)
 
+    @classmethod
+    def from_relations(cls, relations, child_name="code", parent_name="parent"):
+        """Construct from child-parent list."""
+        serializer = RelationSerializer(TreeHierarchyNode,
+                                        child_name=child_name,
+                                        parent_name=parent_name)
+        return serializer.from_relations(relations)
+
     def to_rows(self) -> Iterable[Tuple[str, str]]:
         serializer = RowSerializer(TreeHierarchyNode, path_name=None)
         return serializer.to_rows(self.root, leaves_only=True)
 
-    def to_image(self, filename=None, **kwargs):
-        exporter = DotExporter(name_factory=lambda n: hex(id(n)),
-                               node_attributes={"label": operator.attrgetter("code")},
-                               **kwargs)
-        return exporter.to_image(self.root, filename)
+    def to_relations(self, child_name="code", parent_name="parent"):
+        serializer = RelationSerializer(TreeHierarchyNode,
+                                        child_name=child_name,
+                                        parent_name=parent_name)
+        return serializer.to_relations(self.root)
 
-    def to_string(self, file=None, **kwargs) -> Optional[str]:
+    def to_image(self, file=None, keep=None, backend="graphviz", **kwargs):
+        node_label = operator.attrgetter("code")
+        if backend == "graphviz":
+            exporter = DotExporter(node_attributes={"label": node_label}, **kwargs)
+        elif backend == "mermaid":
+            exporter = MermaidExporter(node_label=node_label, **kwargs)
+            if not file:
+                raise ValueError("Parameter file is required for mermaid")
+        else:
+            raise ValueError(f"Backend should be graphviz or mermaid, not {backend}")
+        return exporter.to_image(self, file, keep=keep)
+
+    def to_string(self, file=None, keep=None, **kwargs) -> Optional[str]:
         exporter = StringExporter(**kwargs)
-        return exporter.to_string(self.root, file)
+        return exporter.to_string(self.root, file, keep=keep)
 
 
 class TreeHierarchyNode(littletree.BaseNode):

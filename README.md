@@ -45,6 +45,7 @@ print(table_result)
 ```
 
 Change `C:\Users\User\Programs\TauArgus4.2.0b5\TauArgus.exe` to the location where argus is installed.
+See [tutorial](https://github.com/lverweijen/tree/main/tutorial.md) for a general introduction.
 See [Examples](https://github.com/lverweijen/tree/main/examples) for more examples.
 
 ## See also

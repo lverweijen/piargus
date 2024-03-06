@@ -133,7 +133,7 @@ class TreeHierarchy(Hierarchy):
             return self.root.to_image(**kwargs)
 
     def to_string(self, file=None, keep=None, **kwargs) -> Optional[str]:
-        return self.root.to_string(file, keep, **kwargs)
+        return self.root.to_string(file, keep=keep, **kwargs)
 
 
 class TreeHierarchyNode(littletree.Node):

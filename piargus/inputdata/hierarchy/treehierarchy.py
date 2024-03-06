@@ -1,11 +1,9 @@
 import io
-import operator
 import os
 from pathlib import Path
 from typing import Mapping, Sequence, Tuple, Iterable, Optional
 
 import littletree
-from littletree.exporters import DotExporter, StringExporter, MermaidExporter
 from littletree.serializers import RowSerializer, RelationSerializer
 
 from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
@@ -123,24 +121,22 @@ class TreeHierarchy(Hierarchy):
                                         parent_name=parent_name)
         return serializer.to_relations(self.root)
 
-    def to_image(self, file=None, keep=None, backend="graphviz", **kwargs):
-        node_label = operator.attrgetter("code")
-        if backend == "graphviz":
-            exporter = DotExporter(node_attributes={"label": node_label}, **kwargs)
-        elif backend == "mermaid":
-            exporter = MermaidExporter(node_label=node_label, **kwargs)
-            if not file:
-                raise ValueError("Parameter file is required for mermaid")
+    def to_image(self, **kwargs):
+        return self.root.to_image(**kwargs)
+
+    def to_pillow(self, **kwargs):
+        if hasattr(self.root, 'to_pillow'):
+            # Newer versions
+            return self.root.to_pillow(**kwargs)
         else:
-            raise ValueError(f"Backend should be graphviz or mermaid, not {backend}")
-        return exporter.to_image(self, file, keep=keep)
+            # Older versions
+            return self.root.to_image(**kwargs)
 
     def to_string(self, file=None, keep=None, **kwargs) -> Optional[str]:
-        exporter = StringExporter(**kwargs)
-        return exporter.to_string(self.root, file, keep=keep)
+        return self.root.to_string(file, keep, **kwargs)
 
 
-class TreeHierarchyNode(littletree.BaseNode):
+class TreeHierarchyNode(littletree.Node):
     __slots__ = ()
 
     def __init__(self, code=None, children=(), parent=None):

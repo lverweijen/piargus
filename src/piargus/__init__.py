@@ -1,13 +1,13 @@
-from piargus.argusreport import TauArgusException
-from piargus.batchwriter import BatchWriter
-from piargus.constants import *
-from piargus.inputdata import InputData, MetaData, MicroData, TableData, CodeList
-from piargus.inputdata.hierarchy import Hierarchy, FlatHierarchy, TreeHierarchy, \
+from .argusreport import TauArgusException
+from .batchwriter import BatchWriter
+from .constants import *
+from .inputdata import InputData, MetaData, MicroData, TableData, CodeList
+from .inputdata.hierarchy import Hierarchy, FlatHierarchy, TreeHierarchy, \
     TreeHierarchyNode, Node, LevelHierarchy
-from piargus.job import Job, JobSetupError
-from piargus.table import Table, Apriori, TreeRecode
-from piargus.table.safetyrule import *
-from piargus.tauargus import TauArgus
+from .job import Job, JobSetupError
+from .table import Table, Apriori, TreeRecode
+from .table.safetyrule import *
+from .tauargus import TauArgus
 
 __version__ = "1.0.1"
 

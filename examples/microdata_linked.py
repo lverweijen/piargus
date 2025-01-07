@@ -3,21 +3,25 @@ import piargus as pa
 
 
 def main():
-    tau = pa.TauArgus()
+    argus = r"C:\Users\LVWN\Desktop\TauArgus4.2.4b2\TauArgus.exe"
+
+    tau = pa.TauArgus(argus)
     input_data = pa.MicroData(pd.read_csv('data/microdata.csv'))
 
     sbi_table = pa.Table(['symbol'], 'income',
-                         safety_rule=pa.percent_rule(p=10),
-                         suppress_method=pa.MODULAR)
+                         safety_rule=pa.dominance_rule(2, 80),
+                         # suppress_method=pa.MODULAR)
+                         suppress_method=None)
     sbi_regio_table = pa.Table(['symbol', 'regio'], 'income',
-                               safety_rule=pa.percent_rule(p=10),
-                               suppress_method=pa.MODULAR)
+                               safety_rule=pa.dominance_rule(2, 80),
+                               # suppress_method=pa.MODULAR)
+                               suppress_method=None)
     tables = {
         "sbi": sbi_table,
         "sbi x regio": sbi_regio_table,
     }
 
-    job = pa.Job(input_data, tables, directory='tau', name='microdata-linked',
+    job = pa.Job(input_data, tables, directory='tau', name='microdata-linked-together',
                  linked_suppress_method=pa.MODULAR)
     report = tau.run(job)
 

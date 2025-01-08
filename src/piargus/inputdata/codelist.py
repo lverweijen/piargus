@@ -4,7 +4,11 @@ import pandas as pd
 
 
 class CodeList:
-    """Describe a codelist for use with TauArgus"""
+    """Describe a codelist for use with TauArgus.
+
+    It can be used to attach labels to code lists.
+    It only has effect when running TauArgus interactively.
+    """
 
     @classmethod
     def from_cdl(cls, file):

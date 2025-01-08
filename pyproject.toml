@@ -1,3 +1,68 @@
 [build-system]
-requires = ["setuptools>=40.6.0"]
+requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "piargus"
+dynamic = ["version"]
+authors = [
+    {name = "lverweijen", email = "lauwerund@gmail.com"}
+]
+description = "Python wrapper around TauArgus"
+readme = "README.md"
+requires-python = ">= 3.9"
+keywords = [
+    "statistical-disclosure-control",
+    "tau-argus",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: Microsoft :: Windows",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
+license = {text = "Apache License 2.0"}
+dependencies = [
+    "littletree>=0.6.2",
+    "pandas>=1.5",
+]
+
+[project.optional-dependencies]
+export = [
+    "Pillow >= 5.0",
+    "matplotlib >= 3.0",
+    "svglib >= 1.5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/lverweijen/piargus"
+Repository = "https://github.com/lverweijen/piargus"
+Issues = "https://github.com/lverweijen/piargus/issues"
+Changelog = "https://github.com/lverweijen/piargus/blob/main/changes.md"
+
+[tool.ruff]
+line-length = 100
+indent-width = 4
+target-version = "py39"
+src = ["src"]
+
+[tool.ruff.format]
+preview = true
+
+[tool.setuptools_scm]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.2",
+    "sphinx-rtd-theme>=3.0.2",
+    "sphinx>=7.4.7",
+    "myst>=1.0.4",
+    "myst-parser>=3.0.1",
+]

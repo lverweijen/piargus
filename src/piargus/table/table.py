@@ -11,6 +11,11 @@ from ..constants import FREQUENCY_RESPONSE, OPTIMAL
 
 
 class Table:
+    """
+    A Table describes what the protected table should look like.
+
+    Usually there is are a few explanatory columns one one response.
+    """
     def __init__(
         self,
         explanatory: Sequence[str],
@@ -25,9 +30,7 @@ class Table:
         suppress_method_args: Sequence = (),
     ):
         """
-        A Table instance describes the output of the table.
-
-        A simple table can be created from MicroData.
+        Create a new Table
 
         Parameters:
         :param explanatory: List of background variables that explain the response.

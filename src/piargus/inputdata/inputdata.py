@@ -12,6 +12,7 @@ DEFAULT_COLUMN_LENGTH = 20
 
 
 class InputData(metaclass=abc.ABCMeta):
+    """Abstract base class for a dataset that needs to be protected by Tau Argus."""
     def __init__(
         self,
         dataset,

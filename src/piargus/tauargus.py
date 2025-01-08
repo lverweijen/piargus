@@ -9,6 +9,7 @@ from .argusreport import ArgusReport
 
 
 class TauArgus:
+    """Representation of the tau argus program that is run in the background."""
     DEFAULT_LOGBOOK = Path(tempfile.gettempdir()) / 'TauLogbook.txt'
 
     def __init__(self, program: Union[str, Path] = 'TauArgus'):

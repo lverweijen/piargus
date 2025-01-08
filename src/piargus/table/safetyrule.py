@@ -24,6 +24,10 @@ def safety_rule(code, maximum=None, dummy=None):
 
 @safety_rule("NK", maximum=2, dummy="NK(0, 0)")
 def dominance_rule(n=3, k=75):
+    """
+    (N, K)-dominance rule.
+
+    n is the number of contributors to a cell contributing more than k% of the total value of the cel"""
     if n < 1:
         raise ValueError("n should be positive")
     if not (0 <= k <= 100):
@@ -34,6 +38,11 @@ def dominance_rule(n=3, k=75):
 
 @safety_rule("P", maximum=2, dummy="P(0, 0)")
 def percent_rule(p=10, n=1):
+    """
+    P%-rule.
+
+    if x1 can be determined to an accuracy of better than p% of
+    the true value then it is disclosive where x1 is the largest contributor to a cell."""
     if n < 1:
         raise ValueError("n should be positive")
     if not (0 <= p <= 100):
@@ -44,6 +53,7 @@ def percent_rule(p=10, n=1):
 
 @safety_rule("FREQ", maximum=1, dummy="FREQ(0, 0)")
 def frequency_rule(n, safety_range):
+    """Frequency rule."""
     if n < 1:
         raise ValueError("n should be positive")
     if not (0 <= safety_range <= 100):
@@ -54,6 +64,12 @@ def frequency_rule(n, safety_range):
 
 @safety_rule("REQ", maximum=1, dummy="REQ(0, 0, 0)")
 def request_rule(percent1, percent2, safety_margin):
+    """Request rule
+
+    Here, cells are protected only when the largest contributor represents
+    over (for example) 70% of the total and that contributor asked for protection.
+    Therefore, a variable indicating the request is required
+    """
     if not (0 <= percent1 <= 100):
         raise ValueError("percent1 should be a percentage")
     if not (0 <= percent2 <= 100):
@@ -64,22 +80,35 @@ def request_rule(percent1, percent2, safety_margin):
 
 @safety_rule("ZERO", maximum=1)
 def zero_rule(safety_range):
+    """Zero rule
+
+    Whether zero-values are safe.
+    """
     pass  # TODO Unclear from manual how to use safety_range and what to check
     return f"ZERO({safety_range})"
 
 
 @safety_rule("MIS")
 def missing_rule(is_safe=False):
+    """Missing values rule
+
+    Whether missing values are safe.
+    """
     return f"MIS({int(is_safe)})"
 
 
 @safety_rule("WGT")
 def weight_rule(apply_weights=False):
+    """Whether weights should be used in the safety rules."""
     return f"WGT({int(apply_weights)})"
 
 
 @safety_rule("MAN")
 def manual_rule(margin=20):
+    """Manual rule
+
+    A manually supplied safety range
+    """
     if not (0 <= margin <= 100):
         raise ValueError("margin should be a percentage")
 

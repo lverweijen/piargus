@@ -4,6 +4,9 @@ from pathlib import Path
 
 
 class TreeRecode:
+    """
+    Hierarchical codes can be recoded to make the output less detailed.
+    """
     HEADER = "<TREERECODE>"
 
     def __init__(self, codes):

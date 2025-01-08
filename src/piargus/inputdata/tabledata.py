@@ -16,6 +16,9 @@ DEFAULT_STATUS_MARKERS = {
 
 
 class TableData(InputData, Table):
+    """
+    A TableData instance contains data that has already been aggregated.
+    """
     def __init__(
         self,
         dataset,

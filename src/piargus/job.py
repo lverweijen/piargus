@@ -9,6 +9,10 @@ from .utils import slugify
 
 
 class Job:
+    """Representation a data protection task.
+
+    This task can be fed to the tau-argus program.
+    """
     def __init__(
         self,
         input_data: InputData,

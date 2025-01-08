@@ -3,6 +3,9 @@ from pathlib import Path
 
 
 class Apriori:
+    """
+    Apriori can be used to mark cells as safe or to specify that cells should not be suppressed.
+    """
     @classmethod
     def from_hst(cls, file, separator=','):
         """Read from apriori-file (extension .hst)."""

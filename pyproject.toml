@@ -44,8 +44,9 @@ export = [
 [project.urls]
 Homepage = "https://github.com/lverweijen/piargus"
 Repository = "https://github.com/lverweijen/piargus"
+Documentation = "https://lverweijen.github.io/piargus"
 Issues = "https://github.com/lverweijen/piargus/issues"
-Changelog = "https://github.com/lverweijen/piargus/blob/main/changes.md"
+Changelog = "https://lverweijen.github.io/piargus/changes.html
 
 [tool.ruff]
 line-length = 100

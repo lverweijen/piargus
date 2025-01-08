@@ -47,12 +47,78 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#inputdata">InputData</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#hierarchies">Hierarchies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#safety-rule">Safety rule</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#output">Output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#jobs">Jobs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tau-argus">Tau-Argus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-piargus.inputdata">InputData</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.inputdata.CodeList"><code class="docutils literal notranslate"><span class="pre">CodeList</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.inputdata.InputData"><code class="docutils literal notranslate"><span class="pre">InputData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.inputdata.InputData.generate_metadata"><code class="docutils literal notranslate"><span class="pre">InputData.generate_metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.inputdata.InputData.resolve_column_lengths"><code class="docutils literal notranslate"><span class="pre">InputData.resolve_column_lengths()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.inputdata.MetaData"><code class="docutils literal notranslate"><span class="pre">MetaData</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.inputdata.MicroData"><code class="docutils literal notranslate"><span class="pre">MicroData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.inputdata.MicroData.generate_metadata"><code class="docutils literal notranslate"><span class="pre">MicroData.generate_metadata()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.inputdata.TableData"><code class="docutils literal notranslate"><span class="pre">TableData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.inputdata.TableData.generate_metadata"><code class="docutils literal notranslate"><span class="pre">TableData.generate_metadata()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-piargus.inputdata.hierarchy">Hierarchies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.inputdata.hierarchy.FlatHierarchy"><code class="docutils literal notranslate"><span class="pre">FlatHierarchy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.inputdata.hierarchy.LevelHierarchy"><code class="docutils literal notranslate"><span class="pre">LevelHierarchy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.inputdata.hierarchy.TreeHierarchy"><code class="docutils literal notranslate"><span class="pre">TreeHierarchy</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.inputdata.hierarchy.TreeHierarchy.create_node"><code class="docutils literal notranslate"><span class="pre">TreeHierarchy.create_node()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.inputdata.hierarchy.TreeHierarchy.from_relations"><code class="docutils literal notranslate"><span class="pre">TreeHierarchy.from_relations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.inputdata.hierarchy.TreeHierarchy.from_rows"><code class="docutils literal notranslate"><span class="pre">TreeHierarchy.from_rows()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.inputdata.hierarchy.TreeHierarchy.get_node"><code class="docutils literal notranslate"><span class="pre">TreeHierarchy.get_node()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-piargus">Safety rule</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.dominance_rule"><code class="docutils literal notranslate"><span class="pre">dominance_rule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.frequency_rule"><code class="docutils literal notranslate"><span class="pre">frequency_rule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.manual_rule"><code class="docutils literal notranslate"><span class="pre">manual_rule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.missing_rule"><code class="docutils literal notranslate"><span class="pre">missing_rule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.nk_rule"><code class="docutils literal notranslate"><span class="pre">nk_rule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.p_rule"><code class="docutils literal notranslate"><span class="pre">p_rule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.percent_rule"><code class="docutils literal notranslate"><span class="pre">percent_rule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.request_rule"><code class="docutils literal notranslate"><span class="pre">request_rule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.weight_rule"><code class="docutils literal notranslate"><span class="pre">weight_rule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.zero_rule"><code class="docutils literal notranslate"><span class="pre">zero_rule()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-0">Output</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.Apriori"><code class="docutils literal notranslate"><span class="pre">Apriori</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.Apriori.change_cost"><code class="docutils literal notranslate"><span class="pre">Apriori.change_cost()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.Apriori.change_protection_level"><code class="docutils literal notranslate"><span class="pre">Apriori.change_protection_level()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.Apriori.change_status"><code class="docutils literal notranslate"><span class="pre">Apriori.change_status()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.Apriori.from_hst"><code class="docutils literal notranslate"><span class="pre">Apriori.from_hst()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.Apriori.to_hst"><code class="docutils literal notranslate"><span class="pre">Apriori.to_hst()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.Table"><code class="docutils literal notranslate"><span class="pre">Table</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.TreeRecode"><code class="docutils literal notranslate"><span class="pre">TreeRecode</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-1">Jobs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.Job"><code class="docutils literal notranslate"><span class="pre">Job</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.Job.setup"><code class="docutils literal notranslate"><span class="pre">Job.setup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.JobSetupError"><code class="docutils literal notranslate"><span class="pre">JobSetupError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-2">Tau-Argus</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.BatchWriter"><code class="docutils literal notranslate"><span class="pre">BatchWriter</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piargus.TauArgus"><code class="docutils literal notranslate"><span class="pre">TauArgus</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#piargus.TauArgus.run"><code class="docutils literal notranslate"><span class="pre">TauArgus.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
@@ -84,23 +150,321 @@
              
   <section id="api">
 <h1>API<a class="headerlink" href="#api" title="Permalink to this heading"></a></h1>
-<section id="inputdata">
-<h2>InputData<a class="headerlink" href="#inputdata" title="Permalink to this heading"></a></h2>
+<section id="module-piargus.inputdata">
+<span id="inputdata"></span><h2>InputData<a class="headerlink" href="#module-piargus.inputdata" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.inputdata.CodeList">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.inputdata.</span></span><span class="sig-name descname"><span class="pre">CodeList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">codes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/inputdata/codelist.html#CodeList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.CodeList" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Describe a codelist for use with TauArgus.</p>
+<p>It can be used to attach labels to code lists.
+It only has effect when running TauArgus interactively.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.inputdata.InputData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.inputdata.</span></span><span class="sig-name descname"><span class="pre">InputData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hierarchies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Hierarchy</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codelists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#piargus.inputdata.CodeList" title="piargus.inputdata.codelist.CodeList"><span class="pre">CodeList</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_lengths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_codes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/inputdata/inputdata.html#InputData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.InputData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract base class for a dataset that needs to be protected by Tau Argus.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.inputdata.InputData.generate_metadata">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#piargus.inputdata.MetaData" title="piargus.inputdata.metadata.MetaData"><span class="pre">MetaData</span></a></span></span><a class="reference internal" href="_modules/piargus/inputdata/inputdata.html#InputData.generate_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.InputData.generate_metadata" title="Permalink to this definition"></a></dt>
+<dd><p>Generate metadata corresponding to the input data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.inputdata.InputData.resolve_column_lengths">
+<span class="sig-name descname"><span class="pre">resolve_column_lengths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/inputdata/inputdata.html#InputData.resolve_column_lengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.InputData.resolve_column_lengths" title="Permalink to this definition"></a></dt>
+<dd><p>Make sure each column has a length.</p>
+<p>For strings, it will look at hierarchies and codelists or max string.
+For categorical, it will look at the longest label.
+For booleans 1/0 is used with code length of 1.
+For numbers, it will default to 20.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>default</strong> – The length to use for numbers and other datatypes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.inputdata.MetaData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.inputdata.</span></span><span class="sig-name descname"><span class="pre">MetaData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_markers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/inputdata/metadata.html#MetaData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.MetaData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Metadata describing InputData.</p>
+<p>Usually it’s not required for a user to create a MetaData themselves.
+If not provided to job one can be generated from inputdata.
+It’s also possible to call:
+<cite>metadata = inputdata.generate_metadata()</cite>
+Then the resulting object can be modified.</p>
+<p>This class can be used directly when an existing rda file needs to be used.
+An existing file can be loaded by MetaData.from_rda and passed to Job.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.inputdata.MicroData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.inputdata.</span></span><span class="sig-name descname"><span class="pre">MicroData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">('1',</span> <span class="pre">'2')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">holding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/inputdata/microdata.html#MicroData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.MicroData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#piargus.inputdata.InputData" title="piargus.inputdata.inputdata.InputData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputData</span></code></a></p>
+<p>A MicroData instance contains the data at an individual level.</p>
+<p>From such microdata, tabular aggregates can be constructed.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.inputdata.MicroData.generate_metadata">
+<span class="sig-name descname"><span class="pre">generate_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#piargus.inputdata.MetaData" title="piargus.inputdata.metadata.MetaData"><span class="pre">MetaData</span></a></span></span><a class="reference internal" href="_modules/piargus/inputdata/microdata.html#MicroData.generate_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.MicroData.generate_metadata" title="Permalink to this definition"></a></dt>
+<dd><p>Generates a metadata file for free format micro data.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.inputdata.TableData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.inputdata.</span></span><span class="sig-name descname"><span class="pre">TableData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explanatory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shadow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hierarchies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Hierarchy</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_codes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Total'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_contributors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_protection_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_protection_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_indicator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_markers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">safety_rule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Collection</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apriori</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#piargus.Apriori" title="piargus.table.apriori.Apriori"><span class="pre">Apriori</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suppress_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'OPT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suppress_method_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/inputdata/tabledata.html#TableData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.TableData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#piargus.inputdata.InputData" title="piargus.inputdata.inputdata.InputData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputData</span></code></a>, <a class="reference internal" href="#piargus.Table" title="piargus.table.table.Table"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a></p>
+<p>A TableData instance contains data that has already been aggregated.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.inputdata.TableData.generate_metadata">
+<span class="sig-name descname"><span class="pre">generate_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#piargus.inputdata.MetaData" title="piargus.inputdata.metadata.MetaData"><span class="pre">MetaData</span></a></span></span><a class="reference internal" href="_modules/piargus/inputdata/tabledata.html#TableData.generate_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.TableData.generate_metadata" title="Permalink to this definition"></a></dt>
+<dd><p>Generates a metadata file for tabular data.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="hierarchies">
-<h2>Hierarchies<a class="headerlink" href="#hierarchies" title="Permalink to this heading"></a></h2>
+<section id="module-piargus.inputdata.hierarchy">
+<span id="hierarchies"></span><h2>Hierarchies<a class="headerlink" href="#module-piargus.inputdata.hierarchy" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.inputdata.hierarchy.FlatHierarchy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.inputdata.hierarchy.</span></span><span class="sig-name descname"><span class="pre">FlatHierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/inputdata/hierarchy/flathierarchy.html#FlatHierarchy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.hierarchy.FlatHierarchy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Hierarchy</span></code></p>
+<p>Hierarchy where all nodes are the same level.</p>
+<p>This is used as a default when no hierarchy is specified.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.inputdata.hierarchy.LevelHierarchy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.inputdata.hierarchy.</span></span><span class="sig-name descname"><span class="pre">LevelHierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/inputdata/hierarchy/levelhierarchy.html#LevelHierarchy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.hierarchy.LevelHierarchy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Hierarchy</span></code></p>
+<p>Hierarchical code consisting of digits.</p>
+<p>Can be used if the digits of the code make the hierarchy.
+For each hierarchical level the width in the code should be given.
+For example [1, 2, 1] means the code has format “x.yy.z”.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.inputdata.hierarchy.TreeHierarchy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.inputdata.hierarchy.</span></span><span class="sig-name descname"><span class="pre">TreeHierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/inputdata/hierarchy/treehierarchy.html#TreeHierarchy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.hierarchy.TreeHierarchy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Hierarchy</span></code></p>
+<p>A hierarchy where the codes are built as a tree.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.inputdata.hierarchy.TreeHierarchy.create_node">
+<span class="sig-name descname"><span class="pre">create_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TreeHierarchyNode</span></span></span><a class="reference internal" href="_modules/piargus/inputdata/hierarchy/treehierarchy.html#TreeHierarchy.create_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.hierarchy.TreeHierarchy.create_node" title="Permalink to this definition"></a></dt>
+<dd><p>Return single Node, None if it doesn’t exist, ValueError if path not unique.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.inputdata.hierarchy.TreeHierarchy.from_relations">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_relations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">child_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'code'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parent'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/inputdata/hierarchy/treehierarchy.html#TreeHierarchy.from_relations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.hierarchy.TreeHierarchy.from_relations" title="Permalink to this definition"></a></dt>
+<dd><p>Construct from child-parent list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.inputdata.hierarchy.TreeHierarchy.from_rows">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'&#64;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Total'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/inputdata/hierarchy/treehierarchy.html#TreeHierarchy.from_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.hierarchy.TreeHierarchy.from_rows" title="Permalink to this definition"></a></dt>
+<dd><p>Construct from list of (code, parent) tuples.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.inputdata.hierarchy.TreeHierarchy.get_node">
+<span class="sig-name descname"><span class="pre">get_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TreeHierarchyNode</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/piargus/inputdata/hierarchy/treehierarchy.html#TreeHierarchy.get_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.inputdata.hierarchy.TreeHierarchy.get_node" title="Permalink to this definition"></a></dt>
+<dd><p>Return single Node, None if it doesn’t exist, ValueError if path not unique.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="safety-rule">
-<h2>Safety rule<a class="headerlink" href="#safety-rule" title="Permalink to this heading"></a></h2>
+<section id="module-piargus">
+<span id="safety-rule"></span><h2>Safety rule<a class="headerlink" href="#module-piargus" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="piargus.dominance_rule">
+<span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">dominance_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">75</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/safetyrule.html#dominance_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.dominance_rule" title="Permalink to this definition"></a></dt>
+<dd><p>(N, K)-dominance rule.</p>
+<p>n is the number of contributors to a cell contributing more than k% of the total value of the cel</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="piargus.frequency_rule">
+<span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">frequency_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">safety_range</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/safetyrule.html#frequency_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.frequency_rule" title="Permalink to this definition"></a></dt>
+<dd><p>Frequency rule.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="piargus.manual_rule">
+<span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">manual_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/safetyrule.html#manual_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.manual_rule" title="Permalink to this definition"></a></dt>
+<dd><p>Manual rule</p>
+<p>A manually supplied safety range</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="piargus.missing_rule">
+<span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">missing_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_safe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/safetyrule.html#missing_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.missing_rule" title="Permalink to this definition"></a></dt>
+<dd><p>Missing values rule</p>
+<p>Whether missing values are safe.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="piargus.nk_rule">
+<span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">nk_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">75</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#piargus.nk_rule" title="Permalink to this definition"></a></dt>
+<dd><p>(N, K)-dominance rule.</p>
+<p>n is the number of contributors to a cell contributing more than k% of the total value of the cel</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="piargus.p_rule">
+<span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">p_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#piargus.p_rule" title="Permalink to this definition"></a></dt>
+<dd><p>P%-rule.</p>
+<p>if x1 can be determined to an accuracy of better than p% of
+the true value then it is disclosive where x1 is the largest contributor to a cell.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="piargus.percent_rule">
+<span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">percent_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/safetyrule.html#percent_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.percent_rule" title="Permalink to this definition"></a></dt>
+<dd><p>P%-rule.</p>
+<p>if x1 can be determined to an accuracy of better than p% of
+the true value then it is disclosive where x1 is the largest contributor to a cell.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="piargus.request_rule">
+<span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">request_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percent1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percent2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">safety_margin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/safetyrule.html#request_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.request_rule" title="Permalink to this definition"></a></dt>
+<dd><p>Request rule</p>
+<p>Here, cells are protected only when the largest contributor represents
+over (for example) 70% of the total and that contributor asked for protection.
+Therefore, a variable indicating the request is required</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="piargus.weight_rule">
+<span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">weight_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apply_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/safetyrule.html#weight_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.weight_rule" title="Permalink to this definition"></a></dt>
+<dd><p>Whether weights should be used in the safety rules.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="piargus.zero_rule">
+<span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">zero_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">safety_range</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/safetyrule.html#zero_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.zero_rule" title="Permalink to this definition"></a></dt>
+<dd><p>Zero rule</p>
+<p>Whether zero-values are safe.</p>
+</dd></dl>
+
 </section>
-<section id="output">
-<h2>Output<a class="headerlink" href="#output" title="Permalink to this heading"></a></h2>
+<section id="module-0">
+<span id="output"></span><h2>Output<a class="headerlink" href="#module-0" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.Apriori">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">Apriori</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">changes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_trivial</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/apriori.html#Apriori"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.Apriori" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Apriori can be used to mark cells as safe or to specify that cells should not be suppressed.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.Apriori.change_cost">
+<span class="sig-name descname"><span class="pre">change_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/apriori.html#Apriori.change_cost"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.Apriori.change_cost" title="Permalink to this definition"></a></dt>
+<dd><p>Change costs of cell.</p>
+<p>The higher the cost, the less likely this cell will be used for secondary suppression.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.Apriori.change_protection_level">
+<span class="sig-name descname"><span class="pre">change_protection_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protection_level</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/apriori.html#Apriori.change_protection_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.Apriori.change_protection_level" title="Permalink to this definition"></a></dt>
+<dd><p>Change protection level of cell.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.Apriori.change_status">
+<span class="sig-name descname"><span class="pre">change_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/apriori.html#Apriori.change_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.Apriori.change_status" title="Permalink to this definition"></a></dt>
+<dd><p>Change status of cell to status.</p>
+<p>Status can be:
+- S mark safe
+- U mark unsafe
+- P mark protected</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.Apriori.from_hst">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_hst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/apriori.html#Apriori.from_hst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.Apriori.from_hst" title="Permalink to this definition"></a></dt>
+<dd><p>Read from apriori-file (extension .hst).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.Apriori.to_hst">
+<span class="sig-name descname"><span class="pre">to_hst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/apriori.html#Apriori.to_hst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.Apriori.to_hst" title="Permalink to this definition"></a></dt>
+<dd><p>Write to hst-file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.Table">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">Table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">explanatory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'&lt;freq&gt;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shadow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">safety_rule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Collection</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SafetyRule</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apriori</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#piargus.Apriori" title="piargus.table.apriori.Apriori"><span class="pre">Apriori</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#piargus.TreeRecode" title="piargus.table.treerecode.TreeRecode"><span class="pre">TreeRecode</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suppress_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'OPT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suppress_method_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/table.html#Table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.Table" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Table describes what the protected table should look like.</p>
+<p>Usually there is are a few explanatory columns one one response.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.TreeRecode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">TreeRecode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">codes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/table/treerecode.html#TreeRecode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.TreeRecode" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Hierarchical codes can be recoded to make the output less detailed.</p>
+</dd></dl>
+
 </section>
-<section id="jobs">
-<h2>Jobs<a class="headerlink" href="#jobs" title="Permalink to this heading"></a></h2>
+<section id="module-1">
+<span id="jobs"></span><h2>Jobs<a class="headerlink" href="#module-1" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.Job">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">Job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#piargus.inputdata.InputData" title="piargus.inputdata.inputdata.InputData"><span class="pre">InputData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#piargus.Table" title="piargus.table.table.Table"><span class="pre">Table</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#piargus.Table" title="piargus.table.table.Table"><span class="pre">Table</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#piargus.inputdata.MetaData" title="piargus.inputdata.metadata.MetaData"><span class="pre">MetaData</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linked_suppress_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linked_suppress_method_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logbook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interactive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/job.html#Job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.Job" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Representation a data protection task.</p>
+<p>This task can be fed to the tau-argus program.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.Job.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/job.html#Job.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.Job.setup" title="Permalink to this definition"></a></dt>
+<dd><p>Generate all files required for TauArgus to run.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="piargus.JobSetupError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">JobSetupError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problems</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/job.html#JobSetupError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.JobSetupError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
 </section>
-<section id="tau-argus">
-<h2>Tau-Argus<a class="headerlink" href="#tau-argus" title="Permalink to this heading"></a></h2>
+<section id="module-2">
+<span id="tau-argus"></span><h2>Tau-Argus<a class="headerlink" href="#module-2" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.BatchWriter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">BatchWriter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/batchwriter.html#BatchWriter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.BatchWriter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Helper to write a batch file for use with TauArgus.</p>
+<p>Usually the heavy work can be done by creating a Job.
+However, this class can still be used for direct low-level control.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="piargus.TauArgus">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">piargus.</span></span><span class="sig-name descname"><span class="pre">TauArgus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">program</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'TauArgus'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/piargus/tauargus.html#TauArgus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.TauArgus" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Representation of the tau argus program that is run in the background.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="piargus.TauArgus.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_or_job</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArgusReport</span></span></span><a class="reference internal" href="_modules/piargus/tauargus.html#TauArgus.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#piargus.TauArgus.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run either a batch file or a job.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 

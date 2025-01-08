@@ -1,0 +1,296 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>piargus.table.safetyrule &mdash; PiArgus  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PiArgus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changes.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PiArgus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">piargus.table.safetyrule</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for piargus.table.safetyrule</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">TypedDict</span>
+
+
+<span class="k">def</span> <span class="nf">safety_rule</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator to add metadata to safety rule.</span>
+
+<span class="sd">    A safety rule is a function returning a string.</span>
+<span class="sd">    Because of how the batch api works some metadata is useful.</span>
+
+<span class="sd">    :param code: Code used by batch file</span>
+<span class="sd">    :param maximum: How often the rule can be applied. The rule can be used this many times</span>
+<span class="sd">    on the individual level and this many times on the holding level.</span>
+<span class="sd">    :param dummy: If the rule can be set on holding level, use dummy to fill individual level slots.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">accept_function</span><span class="p">(</span><span class="n">safety_function</span><span class="p">):</span>
+        <span class="n">safety_function</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="n">safety_function</span><span class="o">.</span><span class="n">maximum</span> <span class="o">=</span> <span class="n">maximum</span>
+        <span class="n">safety_function</span><span class="o">.</span><span class="n">dummy</span> <span class="o">=</span> <span class="n">dummy</span>
+        <span class="k">return</span> <span class="n">safety_function</span>
+
+    <span class="k">return</span> <span class="n">accept_function</span>
+
+
+<div class="viewcode-block" id="dominance_rule"><a class="viewcode-back" href="../../../api.html#piargus.dominance_rule">[docs]</a><span class="nd">@safety_rule</span><span class="p">(</span><span class="s2">&quot;NK&quot;</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="s2">&quot;NK(0, 0)&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">dominance_rule</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">75</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    (N, K)-dominance rule.</span>
+
+<span class="sd">    n is the number of contributors to a cell contributing more than k% of the total value of the cel&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n should be positive&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;k should be a percentage&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;NK</span><span class="si">{</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="percent_rule"><a class="viewcode-back" href="../../../api.html#piargus.percent_rule">[docs]</a><span class="nd">@safety_rule</span><span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="s2">&quot;P(0, 0)&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">percent_rule</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    P%-rule.</span>
+
+<span class="sd">    if x1 can be determined to an accuracy of better than p% of</span>
+<span class="sd">    the true value then it is disclosive where x1 is the largest contributor to a cell.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n should be positive&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;p should be a percentage&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;P</span><span class="si">{</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="frequency_rule"><a class="viewcode-back" href="../../../api.html#piargus.frequency_rule">[docs]</a><span class="nd">@safety_rule</span><span class="p">(</span><span class="s2">&quot;FREQ&quot;</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="s2">&quot;FREQ(0, 0)&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">frequency_rule</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">safety_range</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Frequency rule.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n should be positive&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">safety_range</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;safety_range should be a percentage&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;FREQ</span><span class="si">{</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">safety_range</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="request_rule"><a class="viewcode-back" href="../../../api.html#piargus.request_rule">[docs]</a><span class="nd">@safety_rule</span><span class="p">(</span><span class="s2">&quot;REQ&quot;</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="s2">&quot;REQ(0, 0, 0)&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">request_rule</span><span class="p">(</span><span class="n">percent1</span><span class="p">,</span> <span class="n">percent2</span><span class="p">,</span> <span class="n">safety_margin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Request rule</span>
+
+<span class="sd">    Here, cells are protected only when the largest contributor represents</span>
+<span class="sd">    over (for example) 70% of the total and that contributor asked for protection.</span>
+<span class="sd">    Therefore, a variable indicating the request is required</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">percent1</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;percent1 should be a percentage&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">percent2</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;percent2 should be a percentage&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;REQ</span><span class="si">{</span><span class="n">percent1</span><span class="p">,</span><span class="w"> </span><span class="n">percent2</span><span class="p">,</span><span class="w"> </span><span class="n">safety_margin</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="zero_rule"><a class="viewcode-back" href="../../../api.html#piargus.zero_rule">[docs]</a><span class="nd">@safety_rule</span><span class="p">(</span><span class="s2">&quot;ZERO&quot;</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">zero_rule</span><span class="p">(</span><span class="n">safety_range</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Zero rule</span>
+
+<span class="sd">    Whether zero-values are safe.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>  <span class="c1"># TODO Unclear from manual how to use safety_range and what to check</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ZERO(</span><span class="si">{</span><span class="n">safety_range</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+
+
+<div class="viewcode-block" id="missing_rule"><a class="viewcode-back" href="../../../api.html#piargus.missing_rule">[docs]</a><span class="nd">@safety_rule</span><span class="p">(</span><span class="s2">&quot;MIS&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">missing_rule</span><span class="p">(</span><span class="n">is_safe</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Missing values rule</span>
+
+<span class="sd">    Whether missing values are safe.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;MIS(</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">is_safe</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+
+
+<div class="viewcode-block" id="weight_rule"><a class="viewcode-back" href="../../../api.html#piargus.weight_rule">[docs]</a><span class="nd">@safety_rule</span><span class="p">(</span><span class="s2">&quot;WGT&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">weight_rule</span><span class="p">(</span><span class="n">apply_weights</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether weights should be used in the safety rules.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;WGT(</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">apply_weights</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+
+
+<div class="viewcode-block" id="manual_rule"><a class="viewcode-back" href="../../../api.html#piargus.manual_rule">[docs]</a><span class="nd">@safety_rule</span><span class="p">(</span><span class="s2">&quot;MAN&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">manual_rule</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manual rule</span>
+
+<span class="sd">    A manually supplied safety range</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">margin</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;margin should be a percentage&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;MAN(</span><span class="si">{</span><span class="n">margin</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+
+
+<span class="n">RULES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">dominance_rule</span><span class="p">,</span>
+    <span class="n">percent_rule</span><span class="p">,</span>
+    <span class="n">frequency_rule</span><span class="p">,</span>
+    <span class="n">request_rule</span><span class="p">,</span>
+    <span class="n">zero_rule</span><span class="p">,</span>
+    <span class="n">missing_rule</span><span class="p">,</span>
+    <span class="n">weight_rule</span><span class="p">,</span>
+    <span class="n">manual_rule</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># Aliases for consistency with τ-argus-api</span>
+<span class="n">nk_rule</span> <span class="o">=</span> <span class="n">dominance_rule</span>
+<span class="n">p_rule</span> <span class="o">=</span> <span class="n">percent_rule</span>
+
+
+<span class="k">class</span> <span class="nc">SafetyRule</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">individual</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">holding</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+
+
+<span class="k">def</span> <span class="nf">make_safety_rule</span><span class="p">(</span>
+    <span class="n">rule</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">SafetyRule</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">individual</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">holding</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct a safety rule from individual and holding parts.</span>
+
+<span class="sd">    Dummy elements are inserted when necessary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">rule</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">individual</span> <span class="ow">or</span> <span class="n">holding</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Function should either be called with 1 positional &quot;</span>
+                            <span class="s2">&quot;or 2 keyword arguments.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">rule</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">make_safety_rule</span><span class="p">(</span><span class="o">**</span><span class="n">rule</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_split_rule</span><span class="p">(</span><span class="n">rule</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">individual</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">individual</span> <span class="o">=</span> <span class="n">_split_rule</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">holding</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">holding</span> <span class="o">=</span> <span class="n">_split_rule</span><span class="p">(</span><span class="n">holding</span><span class="p">)</span>
+
+    <span class="n">dummy</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">RULES</span><span class="p">:</span>
+        <span class="n">individual_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">individual</span> <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">code</span><span class="p">))</span>
+        <span class="n">holding_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">holding</span> <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">code</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">rule</span><span class="o">.</span><span class="n">maximum</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">individual_count</span><span class="p">,</span> <span class="n">holding_count</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">rule</span><span class="o">.</span><span class="n">maximum</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rule </span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2"> can only appear </span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">maximum</span><span class="si">}</span><span class="s2"> times.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">rule</span><span class="o">.</span><span class="n">dummy</span> <span class="ow">and</span> <span class="n">holding_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">n_dummies</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">maximum</span> <span class="o">-</span> <span class="n">individual_count</span>
+                <span class="n">dummy</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">n_dummies</span> <span class="o">*</span> <span class="p">[</span><span class="n">rule</span><span class="o">.</span><span class="n">dummy</span><span class="p">])</span>
+
+    <span class="n">safety_rule_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span> <span class="o">+</span> <span class="n">dummy</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">holding</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">safety_rule_list</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_split_rule</span><span class="p">(</span><span class="n">rule</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split a safety rule into parts.</span>
+
+<span class="sd">    &gt;&gt;&gt; _split_rule([&quot;P(1)|NK(3, 7)&quot;, &quot;FREQ(1)|NK(3, 7)&quot;, &quot;ZERO(5)&quot;, [&quot; P(1,2)&quot;, &quot;MIS(1) &quot;]])</span>
+<span class="sd">    [&#39;P(1)&#39;, &#39;NK(3, 7)&#39;, &#39;FREQ(1)&#39;, &#39;NK(3, 7)&#39;, &#39;ZERO(5)&#39;, &#39;P(1,2)&#39;, &#39;MIS(1)&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">part</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">part</span> <span class="k">for</span> <span class="n">subrule</span> <span class="ow">in</span> <span class="n">rule</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">_split_rule</span><span class="p">(</span><span class="n">subrule</span><span class="p">)]</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Laurent Verweijen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

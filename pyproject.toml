@@ -46,7 +46,7 @@ Homepage = "https://github.com/lverweijen/piargus"
 Repository = "https://github.com/lverweijen/piargus"
 Documentation = "https://lverweijen.github.io/piargus"
 Issues = "https://github.com/lverweijen/piargus/issues"
-Changelog = "https://lverweijen.github.io/piargus/changes.html
+Changelog = "https://lverweijen.github.io/piargus/changes.html"
 
 [tool.ruff]
 line-length = 100
@@ -66,4 +66,5 @@ dev = [
     "sphinx>=7.4.7",
     "myst>=1.0.4",
     "myst-parser>=3.0.1",
+    "build>=1.2.2.post1",
 ]

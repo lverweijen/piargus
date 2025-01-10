@@ -9,7 +9,7 @@ from .outputspec.safetyrule import *
 from .result import TauArgusException, ArgusReport, TableResult
 from .tauargus import TauArgus
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 __all__ = [
     "Apriori",

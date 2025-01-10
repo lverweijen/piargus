@@ -4,10 +4,15 @@ import pandas as pd
 
 
 class CodeList:
-    """Describe a codelist for use with TauArgus"""
+    """Describe a codelist for use with TauArgus.
+
+    It can be used to attach labels to code lists.
+    It only has effect when running TauArgus interactively.
+    """
 
     @classmethod
     def from_cdl(cls, file):
+        """Read cdl file."""
         df = pd.read_csv(file, index_col=0, header=None)
         codelist = CodeList(df.iloc[:, 0])
         if isinstance(file, (str, Path)):
@@ -16,6 +21,7 @@ class CodeList:
         return codelist
 
     def __init__(self, codes):
+        """Create a codelist."""
         if hasattr(codes, 'keys'):
             self._codes = pd.Series(codes)
         else:
@@ -31,9 +37,11 @@ class CodeList:
         return self.to_cdl()
 
     def __getitem__(self, key):
+        """Get label of a code."""
         return self._codes[key]
 
     def __setitem__(self, key, value):
+        """Set label of a code."""
         self._codes[key] = value
 
     def __iter__(self):
@@ -53,10 +61,12 @@ class CodeList:
         return self._codes.keys()
 
     def iter_codes(self):
+        """Iterate through codes."""
         for code in self._codes.index:
             yield code
 
     def to_cdl(self, file=None, length=0):
+        """Store codelist in cdl file."""
         codes = self._codes.copy()
         codes.index = codes.index.str.rjust(length)
         result = codes.to_csv(file, header=False)

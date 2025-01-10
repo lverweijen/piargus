@@ -1,28 +1,31 @@
-from piargus.argusreport import TauArgusException
-from piargus.batchwriter import BatchWriter
-from piargus.constants import *
-from piargus.inputdata import InputData, MetaData, MicroData, TableData, CodeList
-from piargus.inputdata.hierarchy import Hierarchy, FlatHierarchy, TreeHierarchy, \
+from .batchwriter import BatchWriter
+from .constants import *
+from .inputspec import InputData, MetaData, MicroData, TableData, CodeList
+from .inputspec.hierarchy import Hierarchy, FlatHierarchy, TreeHierarchy, \
     TreeHierarchyNode, Node, LevelHierarchy
-from piargus.job import Job, JobSetupError
-from piargus.table import Table, Apriori, TreeRecode
-from piargus.table.safetyrule import *
-from piargus.tauargus import TauArgus
+from .job import Job, JobSetupError
+from .outputspec import Table, Apriori, TreeRecode
+from .outputspec.safetyrule import *
+from .result import TauArgusException, ArgusReport, TableResult
+from .tauargus import TauArgus
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 __all__ = [
     "Apriori",
+    "TauArgus",
     "TauArgusException",
     "BatchWriter",
     "CodeList",
     "TreeRecode",
+    "Job",
+    "JobSetupError",
+
+    # Inputdata
     "InputData",
     "MetaData",
     "MicroData",
     "TableData",
-    "Job",
-    "JobSetupError",
 
     # Hierarchy
     "Hierarchy",
@@ -44,8 +47,13 @@ __all__ = [
     "manual_rule",
     "p_rule",
     "nk_rule",
+
+    # Table
     "Table",
-    "TauArgus",
+
+    # Result
+    "ArgusReport",
+    "TableResult",
 
     # Constants
     "SAFE",

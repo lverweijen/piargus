@@ -1,3 +1,5 @@
+# Changelog #
+
 ## Version 1.0.0 ##
 
 - Add alias `Node` for `TreeHierarchyNode`.

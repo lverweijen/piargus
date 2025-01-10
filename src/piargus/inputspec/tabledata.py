@@ -6,7 +6,7 @@ from .hierarchy import Hierarchy
 from .inputdata import InputData
 from .metadata import MetaData
 from ..constants import SAFE, UNSAFE, PROTECTED, OPTIMAL
-from ..table import Table, Apriori
+from ..outputspec import Table, Apriori
 
 DEFAULT_STATUS_MARKERS = {
     "SAFE": SAFE,
@@ -16,6 +16,9 @@ DEFAULT_STATUS_MARKERS = {
 
 
 class TableData(InputData, Table):
+    """
+    A TableData instance contains data that has already been aggregated.
+    """
     def __init__(
         self,
         dataset,

@@ -1,6 +1,6 @@
 import pandas as pd
 
-from ..constants import SAFE, UNSAFE, PROTECTED, SUPPRESSED, EMPTY
+from piargus.constants import SAFE, UNSAFE, PROTECTED, SUPPRESSED, EMPTY
 
 
 STATUS_CODES = {
@@ -13,6 +13,7 @@ STATUS_CODES = {
 
 
 class TableResult:
+    """Resulting table after protection."""
     def __init__(self, df, response):
         self._df = df
         self._response = response

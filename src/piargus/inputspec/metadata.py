@@ -15,9 +15,9 @@ class MetaData:
     Metadata describing InputData.
 
     Usually it's not required for a user to create a MetaData themselves.
-    If not provided to job one can be generated from inputdata.
+    If not provided to job one can be generated from inputspec.
     It's also possible to call:
-    `metadata = inputdata.generate_metadata()`
+    `metadata = inputspec.generate_metadata()`
     Then the resulting object can be modified.
 
     This class can be used directly when an existing rda file needs to be used.
@@ -73,6 +73,7 @@ class MetaData:
         return self.to_rda()
 
     def __getitem__(self, key):
+        """Get metadata of a specific column."""
         return self._columns[key]
 
     def __contains__(self, item):
@@ -83,6 +84,7 @@ class MetaData:
         self._columns[key].name = key
 
     def to_rda(self, file=None):
+        """Save metadata to rda-file."""
         if file is None:
             buffer = io.StringIO()
             self.to_rda(buffer)
@@ -102,6 +104,7 @@ class MetaData:
 
 
 class Column:
+    """Metadata specific to a column."""
     def __init__(self, name=None, length=None, missing=None):
         if missing is None:
             missing = set()
@@ -112,9 +115,11 @@ class Column:
         self._data = dict()
 
     def __getitem__(self, key):
+        """Get a column attribute."""
         return self._data.get(key)
 
     def __setitem__(self, key, value):
+        """Set a column attribute."""
         self._data[key] = value
 
     def __str__(self):

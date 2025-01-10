@@ -4,6 +4,9 @@ from pathlib import Path
 
 
 class TreeRecode:
+    """
+    Hierarchical codes can be recoded to make the output less detailed.
+    """
     HEADER = "<TREERECODE>"
 
     def __init__(self, codes):
@@ -12,6 +15,7 @@ class TreeRecode:
 
     @classmethod
     def from_grc(cls, file):
+        """Load from grc file."""
         if isinstance(file, (str, Path)):
             with open(file) as reader:
                 graph_recode = cls.from_grc(reader)
@@ -26,6 +30,7 @@ class TreeRecode:
         return cls(codes)
 
     def to_grc(self, file=None, length=0):
+        """Write to grc file."""
         if file is None:
             file = io.StringIO(newline=os.linesep)
             self.to_grc(file, length)

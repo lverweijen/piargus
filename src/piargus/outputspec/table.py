@@ -1,16 +1,20 @@
-import warnings
 from typing import Union, Optional, Sequence, Collection, Iterable, Any, Mapping
 
 import pandas as pd
 
 from .apriori import Apriori
 from .safetyrule import make_safety_rule, SafetyRule
-from .tableresult import TableResult
+from ..result.tableresult import TableResult
 from .treerecode import TreeRecode
 from ..constants import FREQUENCY_RESPONSE, OPTIMAL
 
 
 class Table:
+    """
+    A Table describes what the protected table should look like.
+
+    Usually there is are a few explanatory columns one one response.
+    """
     def __init__(
         self,
         explanatory: Sequence[str],
@@ -25,9 +29,7 @@ class Table:
         suppress_method_args: Sequence = (),
     ):
         """
-        A Table instance describes the output of the table.
-
-        A simple table can be created from MicroData.
+        Create a new Table
 
         Parameters:
         :param explanatory: List of background variables that explain the response.
@@ -89,6 +91,7 @@ class Table:
 
     @property
     def safety_rule(self) -> str:
+        """What safety rule applies to this table."""
         return self._safety_rule
 
     @safety_rule.setter
@@ -97,6 +100,7 @@ class Table:
 
     @property
     def apriori(self):
+        """Apriori settings of this table."""
         return self._apriori
 
     @apriori.setter
@@ -106,6 +110,7 @@ class Table:
         self._apriori = value
 
     def load_result(self) -> TableResult:
+        """After tau argus has run, this obtains the protected data."""
         if self.response == FREQUENCY_RESPONSE:
             response = 'Freq'
         else:

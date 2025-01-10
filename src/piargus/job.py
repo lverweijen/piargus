@@ -3,12 +3,16 @@ from tempfile import TemporaryDirectory
 from typing import Optional, Union, Mapping, Hashable, Iterable, Sequence, Any
 
 from .batchwriter import BatchWriter
-from .inputdata import InputData, TableData, MetaData
-from .table import Table, TreeRecode
-from .utils import slugify
+from .inputspec import InputData, TableData, MetaData
+from .outputspec import Table, TreeRecode
+from .helpers import slugify
 
 
 class Job:
+    """Representation a data protection task.
+
+    This task can be fed to the tau-argus program.
+    """
     def __init__(
         self,
         input_data: InputData,
@@ -74,6 +78,7 @@ class Job:
 
     @property
     def name(self):
+        """Name of the job."""
         return self._name
 
     @name.setter
@@ -84,6 +89,7 @@ class Job:
 
     @property
     def directory(self):
+        """Directory to put files."""
         return self._directory
 
     @directory.setter
@@ -97,6 +103,7 @@ class Job:
 
     @property
     def input_data(self) -> InputData:
+        """Inputdata for job."""
         return self._input_data
 
     @input_data.setter
@@ -107,6 +114,7 @@ class Job:
 
     @property
     def tables(self) -> Mapping[Hashable, Table]:
+        """Which tables to generate based on input data.."""
         return self._tables
 
     @tables.setter
@@ -118,10 +126,18 @@ class Job:
 
     @property
     def batch_filepath(self):
+        """Where the batch file will be stored (read-only).
+
+        This is derived from name and directory.
+        """
         return self.directory / f'{self.name}.arb'
 
     @property
     def logbook_filepath(self):
+        """Where the logfile will be stored (read-only).
+
+        This is derived automatically from name and directory.
+        """
         if self.logbook is True:
             logbook = self.directory / f'{self.name}_logbook.txt'
         else:
@@ -276,6 +292,7 @@ class Job:
 
 
 class JobSetupError(Exception):
+    """Exception to raise when the problem specification is wrong."""
     def __init__(self, problems):
         self.problems = problems
 

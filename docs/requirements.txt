@@ -1,0 +1,6 @@
+sphinx-rtd-theme>=3.0.2
+myst-parser>=3.0.1
+myst>=1.0.4
+sphinxcontrib-mermaid>=1.0.0
+pandas>=1.5
+littletree>=0.6.2

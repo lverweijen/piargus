@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>piargus.inputdata.tabledata &mdash; PiArgus  documentation</title>
+  <title>piargus.inputspec.tabledata &mdash; PiArgus  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
@@ -62,7 +62,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">piargus.inputdata.tabledata</li>
+      <li class="breadcrumb-item active">piargus.inputspec.tabledata</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -71,7 +71,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for piargus.inputdata.tabledata</h1><div class="highlight"><pre>
+  <h1>Source code for piargus.inputspec.tabledata</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Collection</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
@@ -80,7 +80,7 @@
 <span class="kn">from</span> <span class="nn">.inputdata</span> <span class="kn">import</span> <span class="n">InputData</span>
 <span class="kn">from</span> <span class="nn">.metadata</span> <span class="kn">import</span> <span class="n">MetaData</span>
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">SAFE</span><span class="p">,</span> <span class="n">UNSAFE</span><span class="p">,</span> <span class="n">PROTECTED</span><span class="p">,</span> <span class="n">OPTIMAL</span>
-<span class="kn">from</span> <span class="nn">..table</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Apriori</span>
+<span class="kn">from</span> <span class="nn">..outputspec</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Apriori</span>
 
 <span class="n">DEFAULT_STATUS_MARKERS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;SAFE&quot;</span><span class="p">:</span> <span class="n">SAFE</span><span class="p">,</span>
@@ -89,7 +89,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="TableData"><a class="viewcode-back" href="../../../api.html#piargus.inputdata.TableData">[docs]</a><span class="k">class</span> <span class="nc">TableData</span><span class="p">(</span><span class="n">InputData</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
+<div class="viewcode-block" id="TableData"><a class="viewcode-back" href="../../../api.html#piargus.inputspec.TableData">[docs]</a><span class="k">class</span> <span class="nc">TableData</span><span class="p">(</span><span class="n">InputData</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A TableData instance contains data that has already been aggregated.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -173,7 +173,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">status_indicator</span> <span class="o">=</span> <span class="n">status_indicator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">status_markers</span> <span class="o">=</span> <span class="n">status_markers</span>
 
-<div class="viewcode-block" id="TableData.generate_metadata"><a class="viewcode-back" href="../../../api.html#piargus.inputdata.TableData.generate_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">generate_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetaData</span><span class="p">:</span>
+<div class="viewcode-block" id="TableData.generate_metadata"><a class="viewcode-back" href="../../../api.html#piargus.inputspec.TableData.generate_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">generate_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetaData</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a metadata file for tabular data.&quot;&quot;&quot;</span>
         <span class="n">metadata</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">generate_metadata</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
@@ -205,11 +205,11 @@
 
         <span class="k">return</span> <span class="n">metadata</span></div>
 
-    <span class="k">def</span> <span class="nf">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">na_rep</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="TableData.to_csv"><a class="viewcode-back" href="../../../api.html#piargus.inputspec.TableData.to_csv">[docs]</a>    <span class="k">def</span> <span class="nf">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">na_rep</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">na_rep</span><span class="o">=</span><span class="n">na_rep</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="k">return</span> <span class="n">result</span></div></div>
 </pre></div>
 
            </div>

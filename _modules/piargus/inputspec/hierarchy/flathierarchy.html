@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>piargus.inputdata.hierarchy.levelhierarchy &mdash; PiArgus  documentation</title>
+  <title>piargus.inputspec.hierarchy.flathierarchy &mdash; PiArgus  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
@@ -62,7 +62,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">piargus.inputdata.hierarchy.levelhierarchy</li>
+      <li class="breadcrumb-item active">piargus.inputspec.hierarchy.flathierarchy</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -71,32 +71,26 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for piargus.inputdata.hierarchy.levelhierarchy</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.hierarchy</span> <span class="kn">import</span> <span class="n">Hierarchy</span><span class="p">,</span> <span class="n">DEFAULT_TOTAL_CODE</span>
+  <h1>Source code for piargus.inputspec.hierarchy.flathierarchy</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.hierarchy</span> <span class="kn">import</span> <span class="n">DEFAULT_TOTAL_CODE</span><span class="p">,</span> <span class="n">Hierarchy</span>
 
 
-<div class="viewcode-block" id="LevelHierarchy"><a class="viewcode-back" href="../../../../api.html#piargus.inputdata.hierarchy.LevelHierarchy">[docs]</a><span class="k">class</span> <span class="nc">LevelHierarchy</span><span class="p">(</span><span class="n">Hierarchy</span><span class="p">):</span>
+<div class="viewcode-block" id="FlatHierarchy"><a class="viewcode-back" href="../../../../api.html#piargus.inputspec.hierarchy.FlatHierarchy">[docs]</a><span class="k">class</span> <span class="nc">FlatHierarchy</span><span class="p">(</span><span class="n">Hierarchy</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Hierarchical code consisting of digits.</span>
+<span class="sd">    Hierarchy where all nodes are the same level.</span>
 
-<span class="sd">    Can be used if the digits of the code make the hierarchy.</span>
-<span class="sd">    For each hierarchical level the width in the code should be given.</span>
-<span class="sd">    For example [1, 2, 1] means the code has format &quot;x.yy.z&quot;.</span>
+<span class="sd">    This is used as a default when no hierarchy is specified.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;levels&quot;</span><span class="p">,</span> <span class="s2">&quot;total_code&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;total_code&quot;</span>
 
-    <span class="n">is_hierarchical</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">is_hierarchical</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">total_code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_TOTAL_CODE</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">level</span><span class="p">)</span> <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">]</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">total_code</span><span class="o">=</span><span class="n">DEFAULT_TOTAL_CODE</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a FlatHierarchy.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_code</span> <span class="o">=</span> <span class="n">total_code</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="si">}</span><span class="s2">, total_code=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_code</span><span class="si">}</span><span class="s2">)&quot;</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">code_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(total_code=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_code</span><span class="si">}</span><span class="s2">)&quot;</span></div>
 </pre></div>
 
            </div>

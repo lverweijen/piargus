@@ -1,0 +1,175 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>piargus.result.tableresult &mdash; PiArgus  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PiArgus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changes.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PiArgus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">piargus.result.tableresult</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for piargus.result.tableresult</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">piargus.constants</span> <span class="kn">import</span> <span class="n">SAFE</span><span class="p">,</span> <span class="n">UNSAFE</span><span class="p">,</span> <span class="n">PROTECTED</span><span class="p">,</span> <span class="n">SUPPRESSED</span><span class="p">,</span> <span class="n">EMPTY</span>
+
+
+<span class="n">STATUS_CODES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">SAFE</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="n">UNSAFE</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span>
+    <span class="n">PROTECTED</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+    <span class="n">SUPPRESSED</span><span class="p">:</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span>
+    <span class="n">EMPTY</span><span class="p">:</span> <span class="p">[</span><span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">],</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="TableResult"><a class="viewcode-back" href="../../../api.html#piargus.TableResult">[docs]</a><span class="k">class</span> <span class="nc">TableResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resulting table after protection.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="n">response</span>
+
+<div class="viewcode-block" id="TableResult.unsafe"><a class="viewcode-back" href="../../../api.html#piargus.TableResult.unsafe">[docs]</a>    <span class="k">def</span> <span class="nf">unsafe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the unsafe original response.</span>
+
+<span class="sd">        :returns: The raw unprotected totals as a series.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TableResult.status"><a class="viewcode-back" href="../../../api.html#piargus.TableResult.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the status of each response.</span>
+
+<span class="sd">        :param recode: If True, readable codes will be returned.</span>
+<span class="sd">        S - safe</span>
+<span class="sd">        P - protected</span>
+<span class="sd">        U - primary unsafe</span>
+<span class="sd">        M - secondary unsafe</span>
+<span class="sd">        Z - empty</span>
+<span class="sd">        Otherwise raw status codes from Tau-Argus are returned. See the documentation of Tau-Argus.</span>
+<span class="sd">        :returns: Status for each combination.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">status_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="s1">&#39;Status&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">recode</span><span class="p">:</span>
+            <span class="n">status_code</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">status_num</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;status&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">code</span><span class="p">,</span> <span class="n">nums</span> <span class="ow">in</span> <span class="n">STATUS_CODES</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">status_code</span><span class="p">[</span><span class="n">status_num</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">nums</span><span class="p">)]</span> <span class="o">=</span> <span class="n">code</span>
+            <span class="k">return</span> <span class="n">status_code</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">status_num</span></div>
+
+<div class="viewcode-block" id="TableResult.safe"><a class="viewcode-back" href="../../../api.html#piargus.TableResult.safe">[docs]</a>    <span class="k">def</span> <span class="nf">safe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unsafe_marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the (safe) totals of the response.</span>
+
+<span class="sd">        :param unsafe_marker: The marker to shield unsafe values</span>
+<span class="sd">        :returns: The totals of the response as a Series</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">safe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="s1">&#39;Status&#39;</span><span class="p">]</span>
+        <span class="n">suppress</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">STATUS_CODES</span><span class="p">[</span><span class="n">UNSAFE</span><span class="p">])</span> <span class="o">|</span> <span class="n">status</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">STATUS_CODES</span><span class="p">[</span><span class="n">SUPPRESSED</span><span class="p">])</span>
+        <span class="n">safe</span><span class="p">[</span><span class="n">suppress</span><span class="p">]</span> <span class="o">=</span> <span class="n">unsafe_marker</span>
+        <span class="k">return</span> <span class="n">safe</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataframe</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<div class="viewcode-block" id="TableResult.dataframe"><a class="viewcode-back" href="../../../api.html#piargus.TableResult.dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Combines safe, status and unsafe in a dataframe.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+            <span class="s1">&#39;safe&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">safe</span><span class="p">(),</span>
+            <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">(),</span>
+            <span class="s1">&#39;unsafe&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsafe</span><span class="p">(),</span>
+        <span class="p">})</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Laurent Verweijen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

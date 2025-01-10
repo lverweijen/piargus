@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Union, Sequence
 
 from .batchwriter import BatchWriter
-from .argusreport import ArgusReport
+from .result import ArgusReport
 
 
 class TauArgus:

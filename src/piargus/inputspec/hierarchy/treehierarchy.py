@@ -18,6 +18,7 @@ class TreeHierarchy(Hierarchy):
     is_hierarchical = True
 
     def __init__(self, tree=None, *, total_code: str = DEFAULT_TOTAL_CODE, indent='@'):
+        """Create a tree hierarchy."""
         if not isinstance(tree, TreeHierarchyNode):
             tree = TreeHierarchyNode(total_code, tree)
         self.root = tree
@@ -40,6 +41,7 @@ class TreeHierarchy(Hierarchy):
 
     @property
     def total_code(self) -> str:
+        """The code used as a total."""
         return self.root.code
 
     @total_code.setter
@@ -47,11 +49,17 @@ class TreeHierarchy(Hierarchy):
         self.root.code = value
 
     def get_node(self, path) -> Optional["TreeHierarchyNode"]:
-        """Return single Node, None if it doesn't exist, ValueError if path not unique."""
+        """Obtain a node within the hierarchy.
+
+        Return single Node, None if it doesn't exist, ValueError if path not unique."""
         return self.root.path.get(path)
 
     def create_node(self, path) -> "TreeHierarchyNode":
-        """Return single Node, None if it doesn't exist, ValueError if path not unique."""
+        """Create a node within the hierarchy.
+
+        The newly created node is returned.
+        If the node already existed, the existing one is returned.
+        """
         return self.root.path.create(path)
 
     @property
@@ -71,6 +79,7 @@ class TreeHierarchy(Hierarchy):
 
     @classmethod
     def from_hrc(cls, file, indent='@', total_code=DEFAULT_TOTAL_CODE):
+        """Create hierarchy from a hrc-file."""
         if isinstance(file, (str, Path)):
             with open(file) as reader:
                 hierarchy = cls.from_hrc(reader, indent, total_code)
@@ -82,6 +91,7 @@ class TreeHierarchy(Hierarchy):
         return cls(root, indent=indent)
 
     def to_hrc(self, file=None, length=0):
+        """Write hierarchy to a hrc-file."""
         if file is None:
             file = io.StringIO(newline=os.linesep)
             self.to_hrc(file, length)
@@ -122,9 +132,11 @@ class TreeHierarchy(Hierarchy):
         return serializer.to_relations(self.root)
 
     def to_image(self, **kwargs):
+        """Export the hierarchy file as an image."""
         return self.root.to_image(**kwargs)
 
     def to_pillow(self, **kwargs):
+        """Export the hierarchy file as a Pillow image."""
         if hasattr(self.root, 'to_pillow'):
             # Newer versions
             return self.root.to_pillow(**kwargs)
@@ -151,6 +163,7 @@ class TreeHierarchyNode(littletree.Node):
 
     @property
     def code(self):
+        """Which code belongs to this node."""
         return self.identifier
 
     @code.setter

@@ -6,6 +6,7 @@ END_MARKER = "End of TauArgus run"
 
 
 class ArgusReport:
+    """Report of argus run."""
     def __init__(self, returncode: int, batch_file=None, logbook_file=None, workdir=None):
         self.returncode = returncode
         self.batch_file = str(batch_file)

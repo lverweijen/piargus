@@ -6,7 +6,7 @@ from .hierarchy import Hierarchy
 from .inputdata import InputData
 from .metadata import MetaData
 from ..constants import SAFE, UNSAFE, PROTECTED, OPTIMAL
-from ..table import Table, Apriori
+from ..outputspec import Table, Apriori
 
 DEFAULT_STATUS_MARKERS = {
     "SAFE": SAFE,

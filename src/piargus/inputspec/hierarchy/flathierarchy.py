@@ -12,6 +12,7 @@ class FlatHierarchy(Hierarchy):
     is_hierarchical = False
 
     def __init__(self, *, total_code=DEFAULT_TOTAL_CODE):
+        """Create a FlatHierarchy."""
         self.total_code = total_code
 
     def __repr__(self):

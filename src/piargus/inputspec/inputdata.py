@@ -62,6 +62,7 @@ class InputData(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def to_csv(self, target):
+        """Save data to a file in the csv-format which tau-argus requires."""
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -106,6 +107,7 @@ class InputData(metaclass=abc.ABCMeta):
 
     @property
     def hierarchies(self):
+        """The hierarchies attached to input data."""
         return self._hierarchies
 
     @hierarchies.setter
@@ -115,6 +117,7 @@ class InputData(metaclass=abc.ABCMeta):
 
     @property
     def codelists(self):
+        """The codelists attached to input data."""
         return self._codelists
 
     @codelists.setter

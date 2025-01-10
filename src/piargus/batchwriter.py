@@ -1,6 +1,6 @@
 from .constants import FREQUENCY_RESPONSE
-from .table.safetyrule import make_safety_rule
-from .utils import format_argument
+from .outputspec.safetyrule import make_safety_rule
+from .helpers import format_argument
 
 
 class BatchWriter:
@@ -22,19 +22,30 @@ class BatchWriter:
         return command, arg
 
     def logbook(self, log_file):
+        """Write LOGBOOK to batch file."""
         self.write_command('LOGBOOK', format_argument(log_file))
 
     def open_microdata(self, microdata):
+        """Write OPENMICRODATA to batch file."""
         return self.write_command("OPENMICRODATA", format_argument(microdata))
 
     def open_tabledata(self, tabledata):
+        """Write OPENTABLEDATA to batch file."""
         return self.write_command("OPENTABLEDATA", format_argument(tabledata))
 
     def open_metadata(self, metadata):
+        """Write METADATA to batch file."""
         return self.write_command("OPENMETADATA", format_argument(metadata))
 
-    def specify_table(self, explanatory, response=FREQUENCY_RESPONSE, shadow=None, cost=None,
-                      labda=None):
+    def specify_table(
+        self,
+        explanatory,
+        response=FREQUENCY_RESPONSE,
+        shadow=None,
+        cost=None,
+        labda=None
+    ):
+        """Write SPECIFYTABLE to batch file."""
         explanatory_str = "".join([format_argument(v) for v in explanatory])
         response_str = format_argument(response)
         shadow_str = format_argument(shadow)
@@ -45,15 +56,18 @@ class BatchWriter:
         return self.write_command('SPECIFYTABLE', options)
 
     def read_microdata(self):
+        """Write READMICRODATA to batch file."""
         return self.write_command("READMICRODATA")
 
     def read_table(self, compute_totals=None):
+        """Write READTABLE to batch file."""
         if compute_totals is None:
             return self.write_command("READTABLE")
         else:
             return self.write_command("READTABLE", int(compute_totals))
 
     def apriori(self, filename, table, separator=',', ignore_error=False, expand_trivial=True):
+        """Write APRIORI to batch file."""
         filename = format_argument(filename)
         table = format_argument(table)
         separator = format_argument(separator)
@@ -63,6 +77,7 @@ class BatchWriter:
         return self.write_command("APRIORI", arg)
 
     def recode(self, table, variable, file_or_treelevel):
+        """Write RECODE to batch file."""
         table = format_argument(table)
         variable = format_argument(variable)
         file_or_treelevel = format_argument(file_or_treelevel)
@@ -70,14 +85,17 @@ class BatchWriter:
         return self.write_command("RECODE", arg)
 
     def safety_rule(self, rule="", /, *, individual="", holding=""):
+        """Write SAFETYRULE to batch file."""
         rule = make_safety_rule(rule, individual=individual, holding=holding)
         return self.write_command('SAFETYRULE', rule)
 
     def suppress(self, method, table, *method_args):
+        """Write SUPPRESS to batch file."""
         args = ",".join(map(format_argument, [table, *method_args]))
         return self.write_command('SUPPRESS', f"{method}({args})")
 
     def write_table(self, table, kind, options, filename):
+        """Write WRITETABLE to batch file."""
         if hasattr(options, 'items'):
             options = "".join([k + {True: "+", False: "-"}[v] for k, v in options.items()])
 
@@ -85,10 +103,13 @@ class BatchWriter:
         return self.write_command('WRITETABLE', result)
 
     def version_info(self, filename):
+        """Write VERSIONINFO to batch file."""
         return self.write_command("VERSIONINFO", format_argument(filename))
 
     def go_interactive(self):
+        """Write GOINTERACTIVE to batch file."""
         return self.write_command("GOINTERACTIVE")
 
     def clear(self):
+        """Write CLEAR to batch file."""
         return self.write_command("CLEAR")

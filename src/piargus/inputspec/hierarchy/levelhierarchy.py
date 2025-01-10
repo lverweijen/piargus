@@ -14,6 +14,7 @@ class LevelHierarchy(Hierarchy):
     is_hierarchical = True
 
     def __init__(self, levels, *, total_code: str = DEFAULT_TOTAL_CODE):
+        """Create a tree hierarchy."""
         self.levels = [int(level) for level in levels]
         self.total_code = total_code
 

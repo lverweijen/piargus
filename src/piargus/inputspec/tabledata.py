@@ -58,14 +58,14 @@ class TableData(InputData, Table):
         :param total_codes: Codes within explanatory that are used for the totals.
         :param frequency: Column containing number of contributors to this cell.
         :param top_contributors: The columns containing top contributions for dominance rule.
-        The columns should be in the same order as they appear in the dataset.
-        The first of the these columns should describe the highest contribution,
-        the second column the second-highest contribution.
+            The columns should be in the same order as they appear in the dataset.
+            The first of the these columns should describe the highest contribution,
+            the second column the second-highest contribution.
         :param lower_protection_level: Column that denotes the level below which values are unsafe.
         :param upper_protection_level: Column that denotes the level above which values are unsafe.
         :param status_indicator: Column indicating the status of cells.
         :param status_markers: The meaning of each status.
-        Should be dictionary mapping "SAFE", "UNSAFE" and "STATUS" to a code indicating status.
+            Should be dictionary mapping "SAFE", "UNSAFE" and "STATUS" to a code indicating status.
         :param kwargs: See InputData
         """
 

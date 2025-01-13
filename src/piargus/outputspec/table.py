@@ -31,42 +31,40 @@ class Table:
         """
         Create a new Table
 
-        Parameters:
         :param explanatory: List of background variables that explain the response.
-        Will be set as a Dataframe-index.
+            Will be set as a Dataframe-index.
         :param response: The column that needs to be explained.
         :param shadow: The column that is used for the safety rules. Default: response.
         :param cost: The column that contains the cost of suppressing a cell.
-        Set to 1 to minimise the number of cells suppressed (although this might suppress totals).
-        Default: response.
-        :param labda: If set to a value > 0, a box-cox transformation is applied on the cost
-        variable.
-        If set to 0, a log transformation is applied on the cost.
-        Default: 1.
+            Set to 1 to minimise the number of cells suppressed (although this might suppress totals).
+            Default: response.
+        :param labda: If set to a value > 0, a box-cox transformation is applied on the cost variable.
+            If set to 0, a log transformation is applied on the cost.
+            Default: 1.
         :param safety_rule: A set of safety rules on individual level.
-        Can be supplied as:
-        - str where parts are separated by |
-        - A sequence of parts
-        - A dict with keys {"individual": x "holding": y} with separate rules on individual and
-        holding level .
-        Each part can be:
-        - "P(p, n=1)": p% rule
-        - "NK(n, k)": (n, k)-dominance rule
-        - "ZERO(safety_range)": Zero rule
-        - "FREQ(minfreq, safety_range)": Frequency rule
-        - "REQ(percentage_1, percentage_2, safety_margin)": Request rule
-        See the Tau-Argus manual for details on those rules.
-        :param apriori: Apriori file to change parameters
+            Can be supplied as:
+                * str where parts are separated by |
+                * A sequence of parts
+                * A dict with keys {"individual": x "holding": y} with separate rules on individual and
+                holding level.
+            Each part can be:
+                * "P(p, n=1)": p% rule
+                * "NK(n, k)": (n, k)-dominance rule
+                * "ZERO(safety_range)": Zero rule
+                * "FREQ(minfreq, safety_range)": Frequency rule
+                * "REQ(percentage_1, percentage_2, safety_margin)": Request rule
+            See the Tau-Argus manual for details on those rules.
+        :param apriori: Apriori file to change parameters.
         :param suppress_method: Method to use for secondary suppression.
-        Options are:
-        - `GHMITER` ("GH"): Hypercube
-        - `MODULAR` ("MOD"): Modular
-        - `OPTIMAL` ("OPT"): Optimal [default]
-        - `NETWORK` ("NET"): Network
-        - `ROUNDING` ("RND"): Controlled rounding
-        - `TABULAR_ADJUSTMENT` ("CTA"): Controlled Tabular Adjustment
-        - None: No secondary suppression is applied
-        See the Tau-Argus manual for details on those rules.
+            Options are:
+                * `GHMITER` ("GH"): Hypercube
+                * `MODULAR` ("MOD"): Modular
+                * `OPTIMAL` ("OPT"): Optimal [default]
+                * `NETWORK` ("NET"): Network
+                * `ROUNDING` ("RND"): Controlled rounding
+                * `TABULAR_ADJUSTMENT` ("CTA"): Controlled Tabular Adjustment
+                * None: No secondary suppression is applied
+            See the Tau-Argus manual for details on those rules.
         :param suppress_method_args: Parameters to pass to suppress_method.
         """
 

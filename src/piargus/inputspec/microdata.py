@@ -30,10 +30,11 @@ class MicroData(InputData):
         :param weight: Column that contains the sampling weight of this record.
         :param request: Column that indicates if a respondent asks for protection.
         :param request_values: Parameters that indicate if request is asked.
-        Two different request values can be specified for two different levels in the request_rule.
+            Two different request values can be specified for two different levels in the request_rule.
         :param holding: Column containing the group identifier.
         :param args: See InputData.
         :param kwargs: See InputData.
+
         See the Tau-Argus documentation for more details on these parameters.
         """
         super().__init__(dataset, **kwargs)

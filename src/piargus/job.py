@@ -39,15 +39,14 @@ class Job:
         the existing file is used. If modifications are made to the metadata, then the user
         should call metadata.to_rda() first.
 
-        :param input_data: The source from which to generate tables. Needs to be either
-        MicroData or TableData.
+        :param input_data: The source from which to generate tables.
+            Needs to be either MicroData or TableData.
         :param tables: The tables to be generated. Can be omitted if input_data is TableData.
         :param metadata: The metadata of input_data. If omitted, it will be derived from input_data.
         :param linked_suppress_method: Method to use for linked suppression.
-        Options are:
-        - `GHMITER` ("GH"): Hypercube
-        - `MODULAR` ("MOD"): Modular
-        Warning: The Tau-Argus manual doesn't document this. Therefore, usage is not recommended.
+            Options are:
+                * `GHMITER` ("GH"): Hypercube
+                * `MODULAR` ("MOD"): Modular
         :param linked_suppress_method_args: Parameters to pass to suppress_method.
         :param directory: Where to write tau-argus files.
         :param name: Name from which to derive the name of some temporary files.

@@ -19,12 +19,20 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.viewcode',
     'myst_parser',
+    'sphinxcontrib.mermaid',
 ]
 
 templates_path = ['_templates']
 exclude_patterns = []
 
-
+# Make sure __init__ is always documented.
+autodoc_default_options = {
+    # 'members': True,
+    'member-order': 'bysource',
+    'special-members': '__init__',
+    # 'undoc-members': True,
+    # 'exclude-members': '__weakref__'
+}
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

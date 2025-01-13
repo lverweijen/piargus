@@ -1,0 +1,201 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hierarchies &mdash; PiArgus  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PiArgus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="userguide.html">User guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Hierarchies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flathierarchy">FlatHierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#levelhierarchy">LevelHierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#treehierarchy">TreeHierarchy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PiArgus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="userguide.html">User guide</a></li>
+      <li class="breadcrumb-item active">Hierarchies</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hierarchies.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hierarchies">
+<h1>Hierarchies<a class="headerlink" href="#hierarchies" title="Permalink to this heading"></a></h1>
+<p>For explanatory variables, it is recommended to supply a hierarchy.
+There are 3 kinds of hierarchy supported by PiArgus.</p>
+<section id="flathierarchy">
+<h2>FlatHierarchy<a class="headerlink" href="#flathierarchy" title="Permalink to this heading"></a></h2>
+<p>This is the default if no hierarchy is supplied.
+All labels are of the same level with a single total.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">piargus</span> <span class="k">as</span> <span class="nn">pa</span>
+
+<span class="n">datacol</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">]</span>
+<span class="n">hierarchy</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">FlatHierarchy</span><span class="p">(</span><span class="n">total_code</span><span class="o">=</span><span class="s2">&quot;Total&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<pre  class="mermaid">
+        graph LR;
+Total --&gt; A;
+Total --&gt; B;
+Total --&gt; C;
+    </pre></section>
+<section id="levelhierarchy">
+<h2>LevelHierarchy<a class="headerlink" href="#levelhierarchy" title="Permalink to this heading"></a></h2>
+<p>A level hierarchy is useful when the hierarchy is encoded within the code itself.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">piargus</span> <span class="k">as</span> <span class="nn">pa</span>
+
+<span class="n">datacol</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;11123&quot;</span><span class="p">,</span> <span class="s2">&quot;11234&quot;</span><span class="p">,</span> <span class="s2">&quot;23456&quot;</span><span class="p">]</span>
+<span class="n">hierarchy</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">LevelHierarchy</span><span class="p">(</span><span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">total_code</span><span class="o">=</span><span class="s2">&quot;Total&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<pre  class="mermaid">
+        graph LR;
+Total --&gt; 11;
+Total --&gt; 23;
+11 --&gt; 123;
+11 --&gt; 234;
+23 --&gt; 456;
+    </pre></section>
+<section id="treehierarchy">
+<h2>TreeHierarchy<a class="headerlink" href="#treehierarchy" title="Permalink to this heading"></a></h2>
+<p>For complex hierarchies, a TreeHierarchy can be used.
+These are typically stored in a hrc-file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">piargus</span> <span class="k">as</span> <span class="nn">pa</span>
+
+<span class="n">datacol</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PV20&quot;</span><span class="p">,</span> <span class="s2">&quot;PV21&quot;</span><span class="p">,</span> <span class="s2">&quot;PV22&quot;</span><span class="p">]</span>
+<span class="n">hierarchy</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">TreeHierarchy</span><span class="o">.</span><span class="n">from_hrc</span><span class="p">(</span><span class="s2">&quot;provinces.hrc&quot;</span><span class="p">,</span> <span class="n">total_code</span><span class="o">=</span><span class="s2">&quot;NL01&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<pre  class="mermaid">
+        graph LR;
+NL01 --&gt; LD01;
+NL01 --&gt; LD02;
+LD01 --&gt; PV20;
+LD01 --&gt; PV21;
+LD02 --&gt; PV22;
+    </pre><p>The file provinces.hrc may look like this:</p>
+<div class="highlight-hrc notranslate"><div class="highlight"><pre><span></span>LD01
+@PV20
+@PV21
+LD02
+@PV22
+</pre></div>
+</div>
+<p>It can also be created programmatically:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">piargus</span> <span class="k">as</span> <span class="nn">pa</span>
+
+<span class="n">hierarchy</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">TreeHierarchy</span><span class="p">(</span><span class="n">total_code</span><span class="o">=</span><span class="s2">&quot;NL01&quot;</span><span class="p">)</span>
+<span class="n">hierarchy</span><span class="o">.</span><span class="n">create_node</span><span class="p">([</span><span class="s2">&quot;NL01&quot;</span><span class="p">,</span> <span class="s2">&quot;LD01&quot;</span><span class="p">,</span> <span class="s2">&quot;PV20&quot;</span><span class="p">])</span>
+<span class="n">hierarchy</span><span class="o">.</span><span class="n">create_node</span><span class="p">([</span><span class="s2">&quot;NL01&quot;</span><span class="p">,</span> <span class="s2">&quot;LD01&quot;</span><span class="p">,</span> <span class="s2">&quot;PV21&quot;</span><span class="p">])</span>
+<span class="n">hierarchy</span><span class="o">.</span><span class="n">create_node</span><span class="p">([</span><span class="s2">&quot;NL01&quot;</span><span class="p">,</span> <span class="s2">&quot;LD02&quot;</span><span class="p">,</span> <span class="s2">&quot;PV22&quot;</span><span class="p">])</span>
+<span class="n">hierarchy</span><span class="o">.</span><span class="n">to_hrc</span><span class="p">(</span><span class="s1">&#39;provinces.hrc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Laurent Verweijen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

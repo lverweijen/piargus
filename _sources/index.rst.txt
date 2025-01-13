@@ -16,8 +16,7 @@ It's also recommended to read the `TauArgus manual <https://research.cbs.nl/casc
    :maxdepth: 2
    :caption: Contents:
 
-   installation
-   tutorial
+   userguide
    api
    changes
 

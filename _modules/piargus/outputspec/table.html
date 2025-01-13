@@ -15,6 +15,14 @@
       <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=b3ba4146"></script>
       <script src="../../../_static/doctools.js?v=888ff710"></script>
       <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -41,8 +49,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html">User guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changes.html">Changelog</a></li>
 </ul>
@@ -89,7 +96,7 @@
 
 <span class="sd">    Usually there is are a few explanatory columns one one response.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="Table.__init__"><a class="viewcode-back" href="../../../api.html#piargus.outputspec.Table.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">explanatory</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">response</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">FREQUENCY_RESPONSE</span><span class="p">,</span>
@@ -105,42 +112,40 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a new Table</span>
 
-<span class="sd">        Parameters:</span>
 <span class="sd">        :param explanatory: List of background variables that explain the response.</span>
-<span class="sd">        Will be set as a Dataframe-index.</span>
+<span class="sd">            Will be set as a Dataframe-index.</span>
 <span class="sd">        :param response: The column that needs to be explained.</span>
 <span class="sd">        :param shadow: The column that is used for the safety rules. Default: response.</span>
 <span class="sd">        :param cost: The column that contains the cost of suppressing a cell.</span>
-<span class="sd">        Set to 1 to minimise the number of cells suppressed (although this might suppress totals).</span>
-<span class="sd">        Default: response.</span>
-<span class="sd">        :param labda: If set to a value &gt; 0, a box-cox transformation is applied on the cost</span>
-<span class="sd">        variable.</span>
-<span class="sd">        If set to 0, a log transformation is applied on the cost.</span>
-<span class="sd">        Default: 1.</span>
+<span class="sd">            Set to 1 to minimise the number of cells suppressed (although this might suppress totals).</span>
+<span class="sd">            Default: response.</span>
+<span class="sd">        :param labda: If set to a value &gt; 0, a box-cox transformation is applied on the cost variable.</span>
+<span class="sd">            If set to 0, a log transformation is applied on the cost.</span>
+<span class="sd">            Default: 1.</span>
 <span class="sd">        :param safety_rule: A set of safety rules on individual level.</span>
-<span class="sd">        Can be supplied as:</span>
-<span class="sd">        - str where parts are separated by |</span>
-<span class="sd">        - A sequence of parts</span>
-<span class="sd">        - A dict with keys {&quot;individual&quot;: x &quot;holding&quot;: y} with separate rules on individual and</span>
-<span class="sd">        holding level .</span>
-<span class="sd">        Each part can be:</span>
-<span class="sd">        - &quot;P(p, n=1)&quot;: p% rule</span>
-<span class="sd">        - &quot;NK(n, k)&quot;: (n, k)-dominance rule</span>
-<span class="sd">        - &quot;ZERO(safety_range)&quot;: Zero rule</span>
-<span class="sd">        - &quot;FREQ(minfreq, safety_range)&quot;: Frequency rule</span>
-<span class="sd">        - &quot;REQ(percentage_1, percentage_2, safety_margin)&quot;: Request rule</span>
-<span class="sd">        See the Tau-Argus manual for details on those rules.</span>
-<span class="sd">        :param apriori: Apriori file to change parameters</span>
+<span class="sd">            Can be supplied as:</span>
+<span class="sd">                * str where parts are separated by |</span>
+<span class="sd">                * A sequence of parts</span>
+<span class="sd">                * A dict with keys {&quot;individual&quot;: x &quot;holding&quot;: y} with separate rules on individual and</span>
+<span class="sd">                holding level.</span>
+<span class="sd">            Each part can be:</span>
+<span class="sd">                * &quot;P(p, n=1)&quot;: p% rule</span>
+<span class="sd">                * &quot;NK(n, k)&quot;: (n, k)-dominance rule</span>
+<span class="sd">                * &quot;ZERO(safety_range)&quot;: Zero rule</span>
+<span class="sd">                * &quot;FREQ(minfreq, safety_range)&quot;: Frequency rule</span>
+<span class="sd">                * &quot;REQ(percentage_1, percentage_2, safety_margin)&quot;: Request rule</span>
+<span class="sd">            See the Tau-Argus manual for details on those rules.</span>
+<span class="sd">        :param apriori: Apriori file to change parameters.</span>
 <span class="sd">        :param suppress_method: Method to use for secondary suppression.</span>
-<span class="sd">        Options are:</span>
-<span class="sd">        - `GHMITER` (&quot;GH&quot;): Hypercube</span>
-<span class="sd">        - `MODULAR` (&quot;MOD&quot;): Modular</span>
-<span class="sd">        - `OPTIMAL` (&quot;OPT&quot;): Optimal [default]</span>
-<span class="sd">        - `NETWORK` (&quot;NET&quot;): Network</span>
-<span class="sd">        - `ROUNDING` (&quot;RND&quot;): Controlled rounding</span>
-<span class="sd">        - `TABULAR_ADJUSTMENT` (&quot;CTA&quot;): Controlled Tabular Adjustment</span>
-<span class="sd">        - None: No secondary suppression is applied</span>
-<span class="sd">        See the Tau-Argus manual for details on those rules.</span>
+<span class="sd">            Options are:</span>
+<span class="sd">                * `GHMITER` (&quot;GH&quot;): Hypercube</span>
+<span class="sd">                * `MODULAR` (&quot;MOD&quot;): Modular</span>
+<span class="sd">                * `OPTIMAL` (&quot;OPT&quot;): Optimal [default]</span>
+<span class="sd">                * `NETWORK` (&quot;NET&quot;): Network</span>
+<span class="sd">                * `ROUNDING` (&quot;RND&quot;): Controlled rounding</span>
+<span class="sd">                * `TABULAR_ADJUSTMENT` (&quot;CTA&quot;): Controlled Tabular Adjustment</span>
+<span class="sd">                * None: No secondary suppression is applied</span>
+<span class="sd">            See the Tau-Argus manual for details on those rules.</span>
 <span class="sd">        :param suppress_method_args: Parameters to pass to suppress_method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -161,7 +166,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">apriori</span> <span class="o">=</span> <span class="n">apriori</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recodes</span> <span class="o">=</span> <span class="n">recodes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">suppress_method</span> <span class="o">=</span> <span class="n">suppress_method</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">suppress_method_args</span> <span class="o">=</span> <span class="n">suppress_method_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">suppress_method_args</span> <span class="o">=</span> <span class="n">suppress_method_args</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">safety_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

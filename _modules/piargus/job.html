@@ -15,6 +15,14 @@
       <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=b3ba4146"></script>
       <script src="../../_static/doctools.js?v=888ff710"></script>
       <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -41,8 +49,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">User guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changes.html">Changelog</a></li>
 </ul>
@@ -87,7 +94,7 @@
 
 <span class="sd">    This task can be fed to the tau-argus program.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="Job.__init__"><a class="viewcode-back" href="../../api.html#piargus.Job.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_data</span><span class="p">:</span> <span class="n">InputData</span><span class="p">,</span>
         <span class="n">tables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="n">Hashable</span><span class="p">,</span> <span class="n">Table</span><span class="p">],</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Table</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -113,15 +120,14 @@
 <span class="sd">        the existing file is used. If modifications are made to the metadata, then the user</span>
 <span class="sd">        should call metadata.to_rda() first.</span>
 
-<span class="sd">        :param input_data: The source from which to generate tables. Needs to be either</span>
-<span class="sd">        MicroData or TableData.</span>
+<span class="sd">        :param input_data: The source from which to generate tables.</span>
+<span class="sd">            Needs to be either MicroData or TableData.</span>
 <span class="sd">        :param tables: The tables to be generated. Can be omitted if input_data is TableData.</span>
 <span class="sd">        :param metadata: The metadata of input_data. If omitted, it will be derived from input_data.</span>
 <span class="sd">        :param linked_suppress_method: Method to use for linked suppression.</span>
-<span class="sd">        Options are:</span>
-<span class="sd">        - `GHMITER` (&quot;GH&quot;): Hypercube</span>
-<span class="sd">        - `MODULAR` (&quot;MOD&quot;): Modular</span>
-<span class="sd">        Warning: The Tau-Argus manual doesn&#39;t document this. Therefore, usage is not recommended.</span>
+<span class="sd">            Options are:</span>
+<span class="sd">                * `GHMITER` (&quot;GH&quot;): Hypercube</span>
+<span class="sd">                * `MODULAR` (&quot;MOD&quot;): Modular</span>
 <span class="sd">        :param linked_suppress_method_args: Parameters to pass to suppress_method.</span>
 <span class="sd">        :param directory: Where to write tau-argus files.</span>
 <span class="sd">        :param name: Name from which to derive the name of some temporary files.</span>
@@ -145,7 +151,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">interactive</span> <span class="o">=</span> <span class="n">interactive</span>
 
         <span class="k">if</span> <span class="n">setup</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
@@ -367,8 +373,8 @@
 
 <div class="viewcode-block" id="JobSetupError"><a class="viewcode-back" href="../../api.html#piargus.JobSetupError">[docs]</a><span class="k">class</span> <span class="nc">JobSetupError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception to raise when the problem specification is wrong.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problems</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">problems</span> <span class="o">=</span> <span class="n">problems</span>
+<div class="viewcode-block" id="JobSetupError.__init__"><a class="viewcode-back" href="../../api.html#piargus.JobSetupError.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problems</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">problems</span> <span class="o">=</span> <span class="n">problems</span></div>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">problem_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">problem</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">problem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">problems</span><span class="p">])</span>

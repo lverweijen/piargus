@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial &mdash; PiArgus  documentation</title>
+  <title>Getting started &mdash; PiArgus  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -46,13 +46,22 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="userguide.html">User guide</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Getting started</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#loading-data">Loading data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#starting-from-microdata">Starting from microdata</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#starting-from-tabular-data">Starting from tabular data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#starting-from-microdata">Starting from Microdata</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#setting-up-a-table">Setting up a Table</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-the-job">Running the Job</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#interpreting-status-codes">Interpreting Status codes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#starting-from-tabledata">Starting from TableData</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="hierarchies.html">Hierarchies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apriori.html">Apriori</a></li>
+<li class="toctree-l2"><a class="reference internal" href="suppression.html">Safety methods and suppression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tauargus.html">TauArgus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="result.html">Result analysis</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
@@ -74,7 +83,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="userguide.html">User guide</a></li>
-      <li class="breadcrumb-item active">Tutorial</li>
+      <li class="breadcrumb-item active">Getting started</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/tutorial.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -84,35 +93,34 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="tutorial">
-<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading"></a></h1>
-<p>Make sure to install piargus and pandas (dependency).
-If you have both installed, make sure to import them:</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
+<p>Ensure that piargus and TauArgus are installed.
+If both are installed, you can start by importing piargus along with pandas:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">piargus</span> <span class="k">as</span> <span class="nn">pa</span>
 </pre></div>
 </div>
 <section id="loading-data">
 <h2>Loading data<a class="headerlink" href="#loading-data" title="Permalink to this heading"></a></h2>
-<p>You should initially get your data in the form of a pandas dataframe.
-The easiest way to do this is by <code class="docutils literal notranslate"><span class="pre">pd.read_csv()</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;dataset.csv&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">input_df</span><span class="p">)</span>  <span class="c1"># To see if it looks correct.</span>
+<p>There are two primary ways to use piargus:
+starting from <strong>microdata</strong> or <strong>table data</strong>.
+In both cases, your data must be in the form of a pandas <code class="docutils literal notranslate"><span class="pre">Dataframe</span></code>.
+If your data is stored in a CSV file, it can be loaded using <code class="docutils literal notranslate"><span class="pre">pd.read_csv()</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data.csv&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Consult the <a class="reference external" href="https://pandas.pydata.org/docs/reference/io.html">pandas reference</a> for more options.</p>
-<p>It’s possible to work on microdata or tabledata.
-Depending on your choice, continue in the appropriate section below.</p>
+<p>For more options to load data, consult the <a class="reference external" href="https://pandas.pydata.org/docs/reference/io.html">pandas documentation</a>.</p>
 </section>
 <section id="starting-from-microdata">
-<h2>Starting from microdata<a class="headerlink" href="#starting-from-microdata" title="Permalink to this heading"></a></h2>
-<p>First convert <code class="docutils literal notranslate"><span class="pre">input_df</span></code> to a microdata-object:</p>
+<h2>Starting from Microdata<a class="headerlink" href="#starting-from-microdata" title="Permalink to this heading"></a></h2>
+<p>First, convert your <code class="docutils literal notranslate"><span class="pre">input_df</span></code> into a microdata-object:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_data</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">MicroData</span><span class="p">(</span><span class="n">input_df</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If one of more of the columns is hierarchical, it is important to specify this.
-In this example, it is assumed regio is hierarchical and its hierarchy is stored in a file “regio.hrc”.
-Depending on your data, there can also be other considerations that you may need to apply.</p>
+<p>If any columns are hierarchical, specify them.
+For example, if <code class="docutils literal notranslate"><span class="pre">regio</span></code> is hierarchical and its hierarchy is stored in a file <code class="docutils literal notranslate"><span class="pre">regio.hrc</span></code>,
+you can load the hierarchy as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">regio_hierarchy</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">TreeHierarchy</span><span class="o">.</span><span class="n">load_hrc</span><span class="p">(</span><span class="s2">&quot;regio.hrc&quot;</span><span class="p">)</span>
 
 <span class="n">input_data</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">MicroData</span><span class="p">(</span>
@@ -121,19 +129,20 @@ Depending on your data, there can also be other considerations that you may need
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Now, we want to set up a table to generate.
-We want the table to use <code class="docutils literal notranslate"><span class="pre">sbi</span></code> and <code class="docutils literal notranslate"><span class="pre">regio</span></code> as independent variables and <code class="docutils literal notranslate"><span class="pre">income</span></code> as response variable.
-As primary suppression we will use the <a class="reference external" href="https://link.springer.com/chapter/10.1007/978-3-642-33627-0_1">p%-rule</a>.
-For secondary suppression, we will use <code class="docutils literal notranslate"><span class="pre">optimal</span></code>.
-This algorithm is generally slow for bigger datasets, but minimizes the suppression cost when the data is small.
-By default the suppression cost is the sum of the values, but this can be configured by a parameter <code class="docutils literal notranslate"><span class="pre">cost</span></code>.</p>
+<section id="setting-up-a-table">
+<h3>Setting up a Table<a class="headerlink" href="#setting-up-a-table" title="Permalink to this heading"></a></h3>
+<p>Set up a table with <code class="docutils literal notranslate"><span class="pre">sbi</span></code> and <code class="docutils literal notranslate"><span class="pre">regio</span></code> as explanatory variables and <code class="docutils literal notranslate"><span class="pre">income</span></code> as the response variable.
+Use the <a class="reference external" href="https://link.springer.com/chapter/10.1007/978-3-642-33627-0_1">p%-rule</a> as a safety rule and <code class="docutils literal notranslate"><span class="pre">OPTIMAL</span></code> as a method for secondary suppression:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">output_table</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="n">explanatory</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sbi&#39;</span><span class="p">,</span> <span class="s1">&#39;regio&#39;</span><span class="p">],</span>
                         <span class="n">reponse</span><span class="o">=</span><span class="s1">&#39;income&#39;</span><span class="p">,</span>
                         <span class="n">safety_rule</span><span class="o">=</span><span class="s2">&quot;P(10)&quot;</span><span class="p">,</span>
                         <span class="n">suppression_method</span><span class="o">=</span><span class="n">pa</span><span class="o">.</span><span class="n">OPTIMAL</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Now we can set up a job and run the problem:</p>
+</section>
+<section id="running-the-job">
+<h3>Running the Job<a class="headerlink" href="#running-the-job" title="Permalink to this heading"></a></h3>
+<p>To run the table generation job with <code class="docutils literal notranslate"><span class="pre">TauArgus</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tau</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">TauArgus</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&lt;Insert path to argus.exe here&gt;&#39;</span><span class="p">)</span>
 <span class="n">job</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Job</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="p">[</span><span class="n">output_table</span><span class="p">],</span> <span class="n">directory</span><span class="o">=</span><span class="s1">&#39;tau&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-microdata&quot;</span><span class="p">)</span>
 <span class="n">report</span> <span class="o">=</span> <span class="n">tau</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
@@ -145,8 +154,7 @@ By default the suppression cost is the sum of the values, but this can be config
 <span class="n">table_result</span><span class="o">.</span><span class="n">dataframe</span><span class="p">()</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;output/microdata_result.csv&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>And we’re mostly done.
-Output will look something like this:</p>
+<p>The output will look like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">ArgusReport</span><span class="o">&gt;</span>
 <span class="n">status</span><span class="p">:</span> <span class="n">success</span> <span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;</span>
 <span class="n">batch_file</span><span class="p">:</span> <span class="n">tau</span>\<span class="n">basic</span><span class="o">-</span><span class="n">example</span><span class="o">.</span><span class="n">arb</span>
@@ -186,7 +194,9 @@ Output will look something like this:</p>
        <span class="n">ExampleCity</span>       <span class="n">x</span>      <span class="n">U</span>   <span class="mf">73.40</span>
 </pre></div>
 </div>
-<p>The status can be interpreted as follows:</p>
+</section>
+<section id="interpreting-status-codes">
+<h3>Interpreting Status codes<a class="headerlink" href="#interpreting-status-codes" title="Permalink to this heading"></a></h3>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Status</p></th>
@@ -211,11 +221,11 @@ Output will look something like this:</p>
 </tr>
 </tbody>
 </table>
-<p>So nearly everything but the total has been suppressed.</p>
 </section>
-<section id="starting-from-tabular-data">
-<h2>Starting from tabular data<a class="headerlink" href="#starting-from-tabular-data" title="Permalink to this heading"></a></h2>
-<p>First convert <code class="docutils literal notranslate"><span class="pre">input_df</span></code> to a tabledata-object:</p>
+</section>
+<section id="starting-from-tabledata">
+<h2>Starting from TableData<a class="headerlink" href="#starting-from-tabledata" title="Permalink to this heading"></a></h2>
+<p>To work with tabular data, convert <code class="docutils literal notranslate"><span class="pre">input_df</span></code> into a <code class="docutils literal notranslate"><span class="pre">TableData</span></code> object:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_data</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">TableData</span><span class="p">(</span>
     <span class="n">input_df</span><span class="p">,</span>
     <span class="n">explanatory</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;activity&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">],</span>
@@ -225,8 +235,7 @@ Output will look something like this:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>The additional parameters to TableData are the same as those to Table when supplying microdata.
-More parameters can be set:</p>
+<p>You can also specify additional parameters to <code class="docutils literal notranslate"><span class="pre">TableData</span></code>:</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
@@ -249,7 +258,7 @@ More parameters can be set:</p>
 </tr>
 </tbody>
 </table>
-<p>Now to run this:</p>
+<p>To run the data protection job:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Job</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="s1">&#39;tau&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my-table-data&#39;</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">tau</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
 <span class="n">table_result</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">load_result</span><span class="p">()</span>

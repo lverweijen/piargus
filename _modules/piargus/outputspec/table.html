@@ -94,7 +94,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Table describes what the protected table should look like.</span>
 
-<span class="sd">    Usually there is are a few explanatory columns one one response.</span>
+<span class="sd">    Usually there are a few explanatory columns and one response.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Table.__init__"><a class="viewcode-back" href="../../../api.html#piargus.outputspec.Table.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -126,14 +126,15 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">            Can be supplied as:</span>
 <span class="sd">                * str where parts are separated by |</span>
 <span class="sd">                * A sequence of parts</span>
-<span class="sd">                * A dict with keys {&quot;individual&quot;: x &quot;holding&quot;: y} with separate rules on individual and</span>
-<span class="sd">                holding level.</span>
+<span class="sd">                * A dict with keys {&quot;individual&quot;: x &quot;holding&quot;: y} with separate rules on individual and holding level.</span>
+
 <span class="sd">            Each part can be:</span>
 <span class="sd">                * &quot;P(p, n=1)&quot;: p% rule</span>
 <span class="sd">                * &quot;NK(n, k)&quot;: (n, k)-dominance rule</span>
 <span class="sd">                * &quot;ZERO(safety_range)&quot;: Zero rule</span>
 <span class="sd">                * &quot;FREQ(minfreq, safety_range)&quot;: Frequency rule</span>
 <span class="sd">                * &quot;REQ(percentage_1, percentage_2, safety_margin)&quot;: Request rule</span>
+
 <span class="sd">            See the Tau-Argus manual for details on those rules.</span>
 <span class="sd">        :param apriori: Apriori file to change parameters.</span>
 <span class="sd">        :param suppress_method: Method to use for secondary suppression.</span>
@@ -145,6 +146,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">                * `ROUNDING` (&quot;RND&quot;): Controlled rounding</span>
 <span class="sd">                * `TABULAR_ADJUSTMENT` (&quot;CTA&quot;): Controlled Tabular Adjustment</span>
 <span class="sd">                * None: No secondary suppression is applied</span>
+
 <span class="sd">            See the Tau-Argus manual for details on those rules.</span>
 <span class="sd">        :param suppress_method_args: Parameters to pass to suppress_method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

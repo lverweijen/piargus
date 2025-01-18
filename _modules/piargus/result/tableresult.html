@@ -110,12 +110,14 @@ window.addEventListener("load", () => mermaid.run());
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the status of each response.</span>
 
 <span class="sd">        :param recode: If True, readable codes will be returned.</span>
-<span class="sd">        S - safe</span>
-<span class="sd">        P - protected</span>
-<span class="sd">        U - primary unsafe</span>
-<span class="sd">        M - secondary unsafe</span>
-<span class="sd">        Z - empty</span>
-<span class="sd">        Otherwise raw status codes from Tau-Argus are returned. See the documentation of Tau-Argus.</span>
+<span class="sd">            The following codes are used by default:</span>
+<span class="sd">                * `S`: safe</span>
+<span class="sd">                * `P`: protected</span>
+<span class="sd">                * `U`: primary unsafe</span>
+<span class="sd">                * `M`: secondary unsafe</span>
+<span class="sd">                * `Z`: empty</span>
+
+<span class="sd">            Otherwise, raw status codes from Tau-Argus are returned. See the documentation of Tau-Argus.</span>
 <span class="sd">        :returns: Status for each combination.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">status_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="s1">&#39;Status&#39;</span><span class="p">]</span>

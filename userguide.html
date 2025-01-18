@@ -46,8 +46,12 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">User guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">Getting started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hierarchies.html">Hierarchies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apriori.html">Apriori</a></li>
+<li class="toctree-l2"><a class="reference internal" href="suppression.html">Safety methods and suppression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tauargus.html">TauArgus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="result.html">Result analysis</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
@@ -83,16 +87,57 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Getting started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#loading-data">Loading data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#starting-from-microdata">Starting from microdata</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#starting-from-tabular-data">Starting from tabular data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#starting-from-microdata">Starting from Microdata</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#setting-up-a-table">Setting up a Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#running-the-job">Running the Job</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#interpreting-status-codes">Interpreting Status codes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#starting-from-tabledata">Starting from TableData</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="hierarchies.html">Hierarchies</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="hierarchies.html#flathierarchy">FlatHierarchy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hierarchies.html#levelhierarchy">LevelHierarchy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="hierarchies.html#treehierarchy">TreeHierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hierarchies.html#treehierarchy">TreeHierarchy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hierarchies.html#creating-a-treehierarchy-programmatically">Creating a TreeHierarchy programmatically</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hierarchies.html#attaching-a-hierarchy-to-inputdata">Attaching a hierarchy to inputdata</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apriori.html">Apriori</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="apriori.html#use-an-existing-file">Use an existing file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apriori.html#create-an-apriori-file-programmatically">Create an apriori file programmatically</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apriori.html#attaching-apriori-to-a-table">Attaching apriori to a table</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="suppression.html">Safety methods and suppression</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="suppression.html#safety-rules">Safety rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="suppression.html#suppression-methods">Suppression methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="suppression.html#specifying-rules">Specifying rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="suppression.html#disclaimer">Disclaimer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tauargus.html">TauArgus</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tauargus.html#running-jobs">Running jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tauargus.html#running-batch-files">Running batch files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="result.html">Result analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="result.html#working-directory">Working directory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="result.html#report">Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="result.html#table-result">Table result</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="result.html#tableresult-methods">TableResult methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="result.html#unsafe"><code class="docutils literal notranslate"><span class="pre">unsafe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="result.html#safe-unsafe-marker-x"><code class="docutils literal notranslate"><span class="pre">safe(unsafe_marker='X')</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="result.html#status"><code class="docutils literal notranslate"><span class="pre">status()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

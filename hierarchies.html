@@ -27,8 +27,8 @@ window.addEventListener("load", () => mermaid.run());
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API" href="api.html" />
-    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
+    <link rel="next" title="Apriori" href="apriori.html" />
+    <link rel="prev" title="Getting started" href="tutorial.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -54,13 +54,21 @@ window.addEventListener("load", () => mermaid.run());
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="userguide.html">User guide</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">Getting started</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Hierarchies</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#flathierarchy">FlatHierarchy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#levelhierarchy">LevelHierarchy</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#treehierarchy">TreeHierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#treehierarchy">TreeHierarchy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#creating-a-treehierarchy-programmatically">Creating a TreeHierarchy programmatically</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#attaching-a-hierarchy-to-inputdata">Attaching a hierarchy to inputdata</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="apriori.html">Apriori</a></li>
+<li class="toctree-l2"><a class="reference internal" href="suppression.html">Safety methods and suppression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tauargus.html">TauArgus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="result.html">Result analysis</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
@@ -92,20 +100,21 @@ window.addEventListener("load", () => mermaid.run());
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="hierarchies">
+  <section class="tex2jax_ignore mathjax_ignore" id="hierarchies">
 <h1>Hierarchies<a class="headerlink" href="#hierarchies" title="Permalink to this heading"></a></h1>
-<p>For explanatory variables, it is recommended to supply a hierarchy.
-There are 3 kinds of hierarchy supported by PiArgus.</p>
+<p>Hierarchies are important for explanatory variables.
+There are three types supported by PiArgus.</p>
 <section id="flathierarchy">
 <h2>FlatHierarchy<a class="headerlink" href="#flathierarchy" title="Permalink to this heading"></a></h2>
-<p>This is the default if no hierarchy is supplied.
-All labels are of the same level with a single total.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">FlatHierarchy</span></code> is used by default if no hierarchy is specified.
+All codes add up to a single total.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">piargus</span> <span class="k">as</span> <span class="nn">pa</span>
 
 <span class="n">datacol</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">]</span>
 <span class="n">hierarchy</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">FlatHierarchy</span><span class="p">(</span><span class="n">total_code</span><span class="o">=</span><span class="s2">&quot;Total&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>This creates a simple structure where all values are aggregated into one total.</p>
 <pre  class="mermaid">
         graph LR;
 Total --&gt; A;
@@ -114,13 +123,15 @@ Total --&gt; C;
     </pre></section>
 <section id="levelhierarchy">
 <h2>LevelHierarchy<a class="headerlink" href="#levelhierarchy" title="Permalink to this heading"></a></h2>
-<p>A level hierarchy is useful when the hierarchy is encoded within the code itself.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">LevelHierarchy</span></code> is used when the hierarchical relationships are encoded directly within the data.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">piargus</span> <span class="k">as</span> <span class="nn">pa</span>
 
 <span class="n">datacol</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;11123&quot;</span><span class="p">,</span> <span class="s2">&quot;11234&quot;</span><span class="p">,</span> <span class="s2">&quot;23456&quot;</span><span class="p">]</span>
 <span class="n">hierarchy</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">LevelHierarchy</span><span class="p">(</span><span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">total_code</span><span class="o">=</span><span class="s2">&quot;Total&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>In this example, the first two digits represent a higher-level grouping,
+and the next 3 digits represent a more detailed level within that group.</p>
 <pre  class="mermaid">
         graph LR;
 Total --&gt; 11;
@@ -131,14 +142,14 @@ Total --&gt; 23;
     </pre></section>
 <section id="treehierarchy">
 <h2>TreeHierarchy<a class="headerlink" href="#treehierarchy" title="Permalink to this heading"></a></h2>
-<p>For complex hierarchies, a TreeHierarchy can be used.
-These are typically stored in a hrc-file.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">TreeHierarchy</span></code> is used for complex hierarchies, typically stored in <code class="docutils literal notranslate"><span class="pre">.hrc</span></code> files.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">piargus</span> <span class="k">as</span> <span class="nn">pa</span>
 
 <span class="n">datacol</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PV20&quot;</span><span class="p">,</span> <span class="s2">&quot;PV21&quot;</span><span class="p">,</span> <span class="s2">&quot;PV22&quot;</span><span class="p">]</span>
 <span class="n">hierarchy</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">TreeHierarchy</span><span class="o">.</span><span class="n">from_hrc</span><span class="p">(</span><span class="s2">&quot;provinces.hrc&quot;</span><span class="p">,</span> <span class="n">total_code</span><span class="o">=</span><span class="s2">&quot;NL01&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>These hierarchies have a tree-like structure.</p>
 <pre  class="mermaid">
         graph LR;
 NL01 --&gt; LD01;
@@ -146,24 +157,31 @@ NL01 --&gt; LD02;
 LD01 --&gt; PV20;
 LD01 --&gt; PV21;
 LD02 --&gt; PV22;
-    </pre><p>The file provinces.hrc may look like this:</p>
-<div class="highlight-hrc notranslate"><div class="highlight"><pre><span></span>LD01
-@PV20
-@PV21
-LD02
-@PV22
-</pre></div>
-</div>
-<p>It can also be created programmatically:</p>
+    </pre><section id="creating-a-treehierarchy-programmatically">
+<h3>Creating a TreeHierarchy programmatically<a class="headerlink" href="#creating-a-treehierarchy-programmatically" title="Permalink to this heading"></a></h3>
+<p>You can also create a TreeHierarchy programmatically, without relying on an external <code class="docutils literal notranslate"><span class="pre">.hrc</span></code> file.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">piargus</span> <span class="k">as</span> <span class="nn">pa</span>
 
 <span class="n">hierarchy</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">TreeHierarchy</span><span class="p">(</span><span class="n">total_code</span><span class="o">=</span><span class="s2">&quot;NL01&quot;</span><span class="p">)</span>
-<span class="n">hierarchy</span><span class="o">.</span><span class="n">create_node</span><span class="p">([</span><span class="s2">&quot;NL01&quot;</span><span class="p">,</span> <span class="s2">&quot;LD01&quot;</span><span class="p">,</span> <span class="s2">&quot;PV20&quot;</span><span class="p">])</span>
-<span class="n">hierarchy</span><span class="o">.</span><span class="n">create_node</span><span class="p">([</span><span class="s2">&quot;NL01&quot;</span><span class="p">,</span> <span class="s2">&quot;LD01&quot;</span><span class="p">,</span> <span class="s2">&quot;PV21&quot;</span><span class="p">])</span>
-<span class="n">hierarchy</span><span class="o">.</span><span class="n">create_node</span><span class="p">([</span><span class="s2">&quot;NL01&quot;</span><span class="p">,</span> <span class="s2">&quot;LD02&quot;</span><span class="p">,</span> <span class="s2">&quot;PV22&quot;</span><span class="p">])</span>
+<span class="n">hierarchy</span><span class="o">.</span><span class="n">create_node</span><span class="p">([</span><span class="s2">&quot;LD01&quot;</span><span class="p">,</span> <span class="s2">&quot;PV20&quot;</span><span class="p">])</span>
+<span class="n">hierarchy</span><span class="o">.</span><span class="n">create_node</span><span class="p">([</span><span class="s2">&quot;LD01&quot;</span><span class="p">,</span> <span class="s2">&quot;PV21&quot;</span><span class="p">])</span>
+<span class="n">hierarchy</span><span class="o">.</span><span class="n">create_node</span><span class="p">([</span><span class="s2">&quot;LD02&quot;</span><span class="p">,</span> <span class="s2">&quot;PV22&quot;</span><span class="p">])</span>
 <span class="n">hierarchy</span><span class="o">.</span><span class="n">to_hrc</span><span class="p">(</span><span class="s1">&#39;provinces.hrc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+</section>
+<section id="attaching-a-hierarchy-to-inputdata">
+<h2>Attaching a hierarchy to inputdata<a class="headerlink" href="#attaching-a-hierarchy-to-inputdata" title="Permalink to this heading"></a></h2>
+<p>To apply a hierarchy to your data, simply pass the hierarchy as part of the
+<code class="docutils literal notranslate"><span class="pre">MicroData</span></code> or <code class="docutils literal notranslate"><span class="pre">TableData</span></code> constructor:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">piargus</span> <span class="k">as</span> <span class="nn">pa</span>
+
+<span class="n">pa</span><span class="o">.</span><span class="n">MicroData</span><span class="p">(</span><span class="n">data_df</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>
+             <span class="n">hierarchies</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;region&quot;</span><span class="p">:</span> <span class="n">region_hierarchy</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>This will apply the specified <code class="docutils literal notranslate"><span class="pre">region_hierarchy</span></code> to the <code class="docutils literal notranslate"><span class="pre">region</span></code> column in your data.</p>
 </section>
 </section>
 
@@ -171,8 +189,8 @@ LD02
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Getting started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apriori.html" class="btn btn-neutral float-right" title="Apriori" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

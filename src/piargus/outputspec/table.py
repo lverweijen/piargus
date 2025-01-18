@@ -13,7 +13,7 @@ class Table:
     """
     A Table describes what the protected table should look like.
 
-    Usually there is are a few explanatory columns one one response.
+    Usually there are a few explanatory columns and one response.
     """
     def __init__(
         self,
@@ -45,14 +45,15 @@ class Table:
             Can be supplied as:
                 * str where parts are separated by |
                 * A sequence of parts
-                * A dict with keys {"individual": x "holding": y} with separate rules on individual and
-                holding level.
+                * A dict with keys {"individual": x "holding": y} with separate rules on individual and holding level.
+
             Each part can be:
                 * "P(p, n=1)": p% rule
                 * "NK(n, k)": (n, k)-dominance rule
                 * "ZERO(safety_range)": Zero rule
                 * "FREQ(minfreq, safety_range)": Frequency rule
                 * "REQ(percentage_1, percentage_2, safety_margin)": Request rule
+
             See the Tau-Argus manual for details on those rules.
         :param apriori: Apriori file to change parameters.
         :param suppress_method: Method to use for secondary suppression.
@@ -64,6 +65,7 @@ class Table:
                 * `ROUNDING` ("RND"): Controlled rounding
                 * `TABULAR_ADJUSTMENT` ("CTA"): Controlled Tabular Adjustment
                 * None: No secondary suppression is applied
+
             See the Tau-Argus manual for details on those rules.
         :param suppress_method_args: Parameters to pass to suppress_method.
         """

@@ -1,7 +1,7 @@
-# Tutorial
+# Getting started
 
-Make sure to install piargus and pandas (dependency).
-If you have both installed, make sure to import them:
+Ensure that piargus and TauArgus are installed.
+If both are installed, you can start by importing piargus along with pandas:
 
 ```python
 import pandas as pd
@@ -10,28 +10,28 @@ import piargus as pa
 
 ## Loading data
 
-You should initially get your data in the form of a pandas dataframe.
-The easiest way to do this is by `pd.read_csv()`.
+There are two primary ways to use piargus:
+starting from **microdata** or **table data**.
+In both cases, your data must be in the form of a pandas `Dataframe`.
+If your data is stored in a CSV file, it can be loaded using `pd.read_csv()`.
 
 ```python
-input_df = pd.read_csv('dataset.csv')
-print(input_df)  # To see if it looks correct.
+input_df = pd.read_csv('data.csv')
 ```
-Consult the [pandas reference](https://pandas.pydata.org/docs/reference/io.html) for more options.
 
-It's possible to work on microdata or tabledata.
-Depending on your choice, continue in the appropriate section below.
+For more options to load data, consult the [pandas documentation](https://pandas.pydata.org/docs/reference/io.html).
 
-## Starting from microdata
+## Starting from Microdata
 
-First convert `input_df` to a microdata-object:
+First, convert your `input_df` into a microdata-object:
+
 ```python
 input_data = pa.MicroData(input_df)
 ```
 
-If one of more of the columns is hierarchical, it is important to specify this.
-In this example, it is assumed regio is hierarchical and its hierarchy is stored in a file "regio.hrc".
-Depending on your data, there can also be other considerations that you may need to apply.
+If any columns are hierarchical, specify them.
+For example, if `regio` is hierarchical and its hierarchy is stored in a file `regio.hrc`,
+you can load the hierarchy as follows:
 
 ```python
 regio_hierarchy = pa.TreeHierarchy.load_hrc("regio.hrc")
@@ -42,12 +42,10 @@ input_data = pa.MicroData(
 )
 ```
 
-Now, we want to set up a table to generate.
-We want the table to use `sbi` and `regio` as independent variables and `income` as response variable.
-As primary suppression we will use the [p%-rule](https://link.springer.com/chapter/10.1007/978-3-642-33627-0_1).
-For secondary suppression, we will use `optimal`.
-This algorithm is generally slow for bigger datasets, but minimizes the suppression cost when the data is small.
-By default the suppression cost is the sum of the values, but this can be configured by a parameter `cost`.
+### Setting up a Table
+
+Set up a table with `sbi` and `regio` as explanatory variables and `income` as the response variable.
+Use the [p%-rule](https://link.springer.com/chapter/10.1007/978-3-642-33627-0_1) as a safety rule and `OPTIMAL` as a method for secondary suppression:
 
 ```python
 output_table = pa.Table(explanatory=['sbi', 'regio'],
@@ -56,7 +54,10 @@ output_table = pa.Table(explanatory=['sbi', 'regio'],
                         suppression_method=pa.OPTIMAL)
 ```
 
-Now we can set up a job and run the problem:
+### Running the Job
+
+To run the table generation job with `TauArgus`:
+
 ```python
 tau = pa.TauArgus(r'<Insert path to argus.exe here>')
 job = pa.Job(input_data, [output_table], directory='tau', name="my-microdata")
@@ -69,8 +70,7 @@ print(table_result)
 table_result.dataframe().to_csv('output/microdata_result.csv')
 ```
 
-And we're mostly done.
-Output will look something like this:
+The output will look like this:
 
 ```
 <ArgusReport>
@@ -112,7 +112,7 @@ C      Total             x      M  121.84
        ExampleCity       x      U   73.40
 ```
 
-The status can be interpreted as follows:
+### Interpreting Status codes
 
 | Status | Meaning                         |
 |--------|---------------------------------|
@@ -122,11 +122,10 @@ The status can be interpreted as follows:
 | M      | Unsafe by secondary suppression |
 | Z      | Empty cell                      |
 
-So nearly everything but the total has been suppressed.
+## Starting from TableData
 
-## Starting from tabular data
+To work with tabular data, convert `input_df` into a `TableData` object:
 
-First convert `input_df` to a tabledata-object:
 ```python
 input_data = pa.TableData(
     input_df,
@@ -137,8 +136,7 @@ input_data = pa.TableData(
 )
 ```
 
-The additional parameters to TableData are the same as those to Table when supplying microdata.
-More parameters can be set:
+You can also specify additional parameters to `TableData`:
 
 | Parameter          | Meaning                                         | Example                   |
 |--------------------|-------------------------------------------------|---------------------------|
@@ -146,7 +144,7 @@ More parameters can be set:
 | `frequency`        | Column with number of contributors to response. | `"n_obs"`                 |
 | `top_contributors` | Columns with top contributors.                  | `["max", "max2", "max3"]` |
 
-Now to run this:
+To run the data protection job:
 
 ```python
 job = pa.Job(table, directory='tau', name='my-table-data')

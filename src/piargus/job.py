@@ -47,6 +47,7 @@ class Job:
             Options are:
                 * `GHMITER` ("GH"): Hypercube
                 * `MODULAR` ("MOD"): Modular
+
         :param linked_suppress_method_args: Parameters to pass to suppress_method.
         :param directory: Where to write tau-argus files.
         :param name: Name from which to derive the name of some temporary files.

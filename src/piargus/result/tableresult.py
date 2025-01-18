@@ -29,12 +29,14 @@ class TableResult:
         """Return the status of each response.
 
         :param recode: If True, readable codes will be returned.
-        S - safe
-        P - protected
-        U - primary unsafe
-        M - secondary unsafe
-        Z - empty
-        Otherwise raw status codes from Tau-Argus are returned. See the documentation of Tau-Argus.
+            The following codes are used by default:
+                * `S`: safe
+                * `P`: protected
+                * `U`: primary unsafe
+                * `M`: secondary unsafe
+                * `Z`: empty
+
+            Otherwise, raw status codes from Tau-Argus are returned. See the documentation of Tau-Argus.
         :returns: Status for each combination.
         """
         status_num = self._df['Status']

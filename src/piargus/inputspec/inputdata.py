@@ -30,7 +30,7 @@ class InputData(metaclass=abc.ABCMeta):
         :param codelists: Codelists (dicts) for categorical data in the dataset.
         :param column_lengths: For each column the length.
         :param total_codes: Codes within explanatory that are used for the totals.
-        The lengths can also be derived by calling resolve_column_lengths.
+            The lengths can also be derived by calling resolve_column_lengths.
         """
 
         if hierarchies is None:

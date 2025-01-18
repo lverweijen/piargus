@@ -40,7 +40,7 @@ autodoc_default_options = {
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
-myst_enable_extensions = ["colon_fence"]
+myst_enable_extensions = ["colon_fence", "dollarmath"]
 
 # Code is in src. Make sure sphinx can find it
 import sys

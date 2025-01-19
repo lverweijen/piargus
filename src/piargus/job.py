@@ -2,10 +2,11 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional, Union, Mapping, Hashable, Iterable, Sequence, Any
 
+from . import TreeHierarchy
 from .batchwriter import BatchWriter
-from .inputspec import InputData, TableData, MetaData
-from .outputspec import Table, TreeRecode
 from .helpers import slugify
+from .inputspec import InputData, TableData
+from .outputspec import Table, TreeRecode
 
 
 class Job:
@@ -18,7 +19,6 @@ class Job:
         input_data: InputData,
         tables: Optional[Union[Mapping[Hashable, Table], Iterable[Table]]] = None,
         *,
-        metadata: Optional[MetaData] = None,
         linked_suppress_method: Optional[str] = None,
         linked_suppress_method_args: Sequence[Any] = (),
         directory: Optional[Union[str, Path]] = None,
@@ -42,7 +42,6 @@ class Job:
         :param input_data: The source from which to generate tables.
             Needs to be either MicroData or TableData.
         :param tables: The tables to be generated. Can be omitted if input_data is TableData.
-        :param metadata: The metadata of input_data. If omitted, it will be derived from input_data.
         :param linked_suppress_method: Method to use for linked suppression.
             Options are:
                 * `GHMITER` ("GH"): Hypercube
@@ -63,7 +62,6 @@ class Job:
         self.directory = directory
         self.input_data = input_data
         self.tables = tables
-        self.metadata = metadata
         self.linked_suppress_method = linked_suppress_method
         self.linked_suppress_method_args = linked_suppress_method_args
         self.name = name
@@ -114,7 +112,7 @@ class Job:
 
     @property
     def tables(self) -> Mapping[Hashable, Table]:
-        """Which tables to generate based on input data.."""
+        """Which tables to generate based on input data."""
         return self._tables
 
     @tables.setter
@@ -174,30 +172,25 @@ class Job:
         name = f"{self.name}_{type(self.input_data).__name__.casefold()}"
         default = self.directory / 'input' / f"{name}.csv"
         if not self.input_data.filepath:
-            self.input_data.to_csv(default)
+            self.input_data.write_data(default)
 
     def _setup_metadata(self):
-        if not self.metadata:
-            self.metadata = self.input_data.generate_metadata()
-
         name = f"{self.name}_{type(self.input_data).__name__.casefold()}"
         default = self.directory / 'input' / f"{name}.rda"
-        if not self.metadata.filepath:
-            self.metadata.to_rda(default)
+        if not self.input_data.filepath_metadata:
+            self.input_data.write_metadata(default)
 
     def _setup_hierarchies(self):
-        self.input_data.resolve_column_lengths()
-        for col, hierarchy in self.input_data.hierarchies.items():
-            if hasattr(hierarchy, 'filepath') and not hierarchy.filepath:
-                default = self.directory / 'input' / f'{col}_hierarchy.hrc'
-                hierarchy.to_hrc(default, length=self.input_data.column_lengths[col])
+        for name, col in self.input_data.items():
+            if isinstance(col.hierarchy, TreeHierarchy) and not col.hierarchy.filepath:
+                default = self.directory / 'input' / f'{name}_hierarchy.hrc'
+                col.hierarchy.to_hrc(default, length=col.code_length)
 
     def _setup_codelists(self):
-        self.input_data.resolve_column_lengths()
-        for col, codelist in self.input_data.codelists.items():
-            if not codelist.filepath:
-                default = self.directory / 'input' / f'{col}_codelist.cdl'
-                codelist.to_cdl(default, length=self.input_data.column_lengths[col])
+        for name, col in self.input_data.items():
+            if col.codelist and not col.codelist.filepath:
+                default = self.directory / 'input' / f'{name}_codelist.cdl'
+                col.hierarchy.to_cdl(default, length=col.code_length)
 
     def _setup_tables(self):
         for t_name, table in self.tables.items():
@@ -214,7 +207,7 @@ class Job:
                 if isinstance(recode, TreeRecode) and recode.filepath is None:
                     tablename = f'{self.name}_{slugify(t_name)}'
                     default = self.directory / 'input' / f"{tablename}_{col}_recode.grc"
-                    recode.to_grc(default, length=self.input_data.column_lengths[col])
+                    recode.to_grc(default, length=self.input_data[col].code_length)
 
     def _setup_batch(self):
         with open(self.batch_filepath, 'w') as batch:
@@ -225,7 +218,7 @@ class Job:
             else:
                 writer.open_microdata(self.input_data)
 
-            writer.open_metadata(self.metadata)
+            writer.open_metadata(self.input_data.filepath_metadata)
 
             for table in self.tables.values():
                 writer.specify_table(table.explanatory, table.response, table.shadow, table.cost,
@@ -267,25 +260,16 @@ class Job:
         problems = []
         for table in self.tables.values():
             for var in table.find_variables():
-                if var not in self.input_data.dataset.columns:
-                    problems.append(f"Variable {var} not present in input_data")
-                elif self.metadata is not None:
-                    if var not in self.metadata:
-                        problems.append(f"Variable {var} not present in metadata.")
+                if var not in self.input_data:
+                    problems.append(f"Variable {var} not present in input_data.")
 
             for var in table.find_variables(categorical=True, numeric=False):
-                if var in self.metadata:
-                    if not self.metadata[var]["RECODABLE"] or self.metadata[var]["RECODEABLE"]:
-                        problems.append(f"Variable {var} not recodable")
-                else:
-                    problems.append(f"Variable {var} not in metadata")
+                if var in self.input_data and not self.input_data[var].recodable:
+                    problems.append(f"Variable {var} not recodable. Add a hierarchy or total_code to resolve.")
 
             for var in table.find_variables(categorical=False, numeric=True):
-                if var in self.metadata:
-                    if not self.metadata[var]["NUMERIC"]:
+                if var in self.input_data and not self.input_data[var].is_numeric:
                         problems.append(f"Variable {var} not numeric.")
-                else:
-                    problems.append(f"Variable {var} not in metadata")
 
         if problems:
             raise JobSetupError(problems)

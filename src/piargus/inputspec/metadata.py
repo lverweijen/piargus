@@ -53,7 +53,7 @@ class MetaData:
                 else:
                     metadata.status_markers[variable] = value
             else:
-                column = Column(head, *arguments)
+                column = MetaColumn(head, *arguments)
                 metadata[head] = column
 
         return metadata
@@ -103,7 +103,7 @@ class MetaData:
             file.writelines(str(column) + '\n' for column in self._columns.values())
 
 
-class Column:
+class MetaColumn:
     """Metadata specific to a column."""
     def __init__(self, name=None, length=None, missing=None):
         if missing is None:

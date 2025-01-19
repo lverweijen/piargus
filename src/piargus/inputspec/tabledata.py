@@ -1,10 +1,8 @@
-from pathlib import Path
 from typing import Dict, Collection
 from typing import Optional, Sequence, Iterable, Union, Any
 
 from .hierarchy import Hierarchy
 from .inputdata import InputData
-from .metadata import MetaData
 from ..constants import SAFE, UNSAFE, PROTECTED, OPTIMAL
 from ..outputspec import Table, Apriori
 
@@ -29,7 +27,7 @@ class TableData(InputData, Table):
         labda: Optional[int] = None,
         *,
         hierarchies: Dict[str, Hierarchy] = None,
-        total_codes: Union[str, Dict[str, str]] = 'Total',
+        total_codes: Union[str, Dict[str, str]] = None,
         frequency: Optional[str] = None,
         top_contributors: Sequence[str] = (),
         lower_protection_level: Optional[str] = None,
@@ -80,13 +78,6 @@ class TableData(InputData, Table):
                        suppress_method=suppress_method,
                        suppress_method_args=suppress_method_args)
 
-        if isinstance(total_codes, str):
-            total_code = total_codes
-            total_codes = {}
-            for col in self.explanatory:
-                if not hierarchies or col not in hierarchies:
-                    total_codes[col] = total_code
-
         InputData.__init__(self, dataset, hierarchies=hierarchies, total_codes=total_codes, **kwargs)
 
         if status_markers is None:
@@ -99,40 +90,28 @@ class TableData(InputData, Table):
         self.status_indicator = status_indicator
         self.status_markers = status_markers
 
-    def generate_metadata(self) -> MetaData:
+    def _write_data(self, file=None):
+        return self._dataset.to_csv(file, index=False, header=False, na_rep="")
+
+    def _write_metadata(self, file):
         """Generates a metadata file for tabular data."""
-        metadata = super().generate_metadata()
-        for col in self.dataset.columns:
-            metacol = metadata[col]
 
-            if col in {self.response, self.shadow, self.cost,
-                       self.lower_protection_level, self.upper_protection_level}:
-                metacol['NUMERIC'] = True
-            if col in self.hierarchies:
-                metacol["RECODABLE"] = True
-                metacol.set_hierarchy(self.hierarchies[col])
-            if col in self.codelists:
-                metacol["RECODABLE"] = True
-                metacol.set_codelist(self.codelists[col])
+        file.write(f'\t<SEPARATOR> ,\n')
 
-            if col in self.explanatory:
-                metacol["RECODABLE"] = True
-            elif col in self.top_contributors:
-                metacol["MAXSCORE"] = True
-            elif col == self.lower_protection_level:
-                metacol['LOWERPL'] = True
-            elif col == self.upper_protection_level:
-                metacol['UPPERPL'] = True
-            elif col == self.frequency:
-                metacol['FREQUENCY'] = True
-            elif col == self.status_indicator:
-                metacol['STATUS'] = True
-                metadata.status_markers = self.status_markers
+        if self.status_indicator:
+            for status, marker in self.status_markers.items():
+                file.write(f'\t<{status}> {marker}\n')
 
-        return metadata
+        for name, col in self._columns.items():
+            col.write_metadata(file)
 
-    def to_csv(self, file=None, na_rep=""):
-        result = self.dataset.to_csv(file, index=False, header=False, na_rep=na_rep)
-        if isinstance(file, (str, Path)):
-            self.filepath = Path(file)
-        return result
+            if name in self.top_contributors:
+                file.write("<\tMAXSCORE>\n")
+            if name == self.lower_protection_level:
+                file.write('\t<LOWERPL>\n')
+            if name == self.upper_protection_level:
+                file.write('\t<UPPERPL>\n')
+            if name == self.frequency:
+                file.write('\t<FREQUENCY>\n')
+            if name == self.status_indicator:
+                file.write('\t<STATUS>\n')

@@ -1,9 +1,7 @@
-from pathlib import Path
 from typing import Optional, Sequence, Any
 
-from pandas.core.dtypes.common import is_bool_dtype, is_numeric_dtype, is_float_dtype
+from pandas.core.dtypes.common import is_bool_dtype
 
-from .metadata import MetaData
 from .inputdata import InputData
 
 
@@ -25,6 +23,7 @@ class MicroData(InputData):
         **kwargs
     ):
         """
+        Initialize MicroData.
 
         :param dataset: The dataset (pd.DataFrame) containing the microdata.
         :param weight: Column that contains the sampling weight of this record.
@@ -43,41 +42,26 @@ class MicroData(InputData):
         self.request_values = request_values
         self.holding = holding
 
-    def generate_metadata(self) -> MetaData:
-        """Generates a metadata file for free format micro data."""
-        metadata = super().generate_metadata()
-        for col in self.dataset.columns:
-            metacol = metadata[col]
-            col_dtype = self.dataset[col].dtype
-            metacol['NUMERIC'] = is_numeric_dtype(col_dtype)
-            metacol['RECODABLE'] = True
-            if is_float_dtype(col_dtype):
-                metacol['DECIMALS'] = 10
-
-            if col in self.hierarchies:
-                metacol.set_hierarchy(self.hierarchies[col])
-
-            if col in self.codelists:
-                metacol.set_codelist(self.codelists[col])
-
-        if self.weight is not None:
-            metadata[self.weight]["WEIGHT"] = True
-
-        if self.request is not None:
-            metadata[self.request]["REQUEST"] = ' '.join([f'"{v}"' for v in self.request_values])
-
-        if self.holding is not None:
-            metadata[self.holding]["HOLDING"] = True
-
-        return metadata
-
-    def to_csv(self, file=None, na_rep=""):
-        dataset = self.dataset.copy(deep=False)
-        for col in self.dataset.columns:
+    def _write_data(self, file):
+        dataset = self._dataset.copy(deep=False)
+        for col in self._dataset.columns:
             if is_bool_dtype(col):
                 dataset[col] = dataset[col].astype(int)
 
-        result = dataset.to_csv(file, index=False, header=False, na_rep=na_rep)
-        if isinstance(file, (str, Path)):
-            self.filepath = Path(file)
+        result = dataset.to_csv(file, index=False, header=False, na_rep="")
         return result
+
+    def _write_metadata(self, file):
+        file.write(f'\t<SEPARATOR> ,\n')
+        for name, col in self._columns.items():
+            col.write_metadata(file)
+
+            if name == self.weight:
+                file.write("\t<WEIGHT>\n")
+
+            if name == self.request:
+                request_str = ' '.join([f'"{v}"' for v in self.request_values])
+                file.write(f"\t<REQUEST> {request_str}\n")
+
+            if name == self.holding:
+                file.write("\t<HOLDING>\n")

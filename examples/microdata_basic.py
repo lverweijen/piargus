@@ -3,12 +3,16 @@ import piargus as pa
 
 
 def main():
-    tau = pa.TauArgus()
     input_data = pa.MicroData(pd.read_csv('data/microdata.csv'))
-    output_table = pa.Table(['symbol', 'regio'], 'income',
-                            safety_rule=pa.percent_rule(p=10),
-                            suppress_method=pa.OPTIMAL)
-    job = pa.Job(input_data, [output_table], directory='tau', name='basic-example')
+    input_data['symbol'].total_code = 'Total'
+    input_data['regio'].total_code = 'NL'
+
+    output_table = pa.Table(['symbol', 'regio'], 'income')
+    output_table.safety_rule = pa.percent_rule(p=10)
+    output_table.suppress_method = pa.OPTIMAL
+
+    tau = pa.TauArgus()
+    job = pa.Job(input_data, [output_table], directory='tau-new', name='basic-example-new')
     report = tau.run(job)
     table_result = output_table.load_result()
 

@@ -52,9 +52,9 @@ class MicroData(InputData):
         return result
 
     def _write_metadata(self, file):
-        file.write(f'\t<SEPARATOR> ,\n')
+        file.write(f'\t<SEPARATOR> {self.separator}\n')
         for name, col in self._columns.items():
-            col.write_metadata(file)
+            col.write_metadata(file, include_length=True)
 
             if name == self.weight:
                 file.write("\t<WEIGHT>\n")

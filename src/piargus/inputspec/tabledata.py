@@ -16,6 +16,10 @@ DEFAULT_STATUS_MARKERS = {
 class TableData(InputData, Table):
     """
     A TableData instance contains data that has already been aggregated.
+
+    It can be used for tables that are unprotected or partially protected.
+    If it's already partially protected, this can be indicated by `status_indicator`.
+    Most of the parameters are already explained either in InputData or in Table.
     """
     def __init__(
         self,
@@ -41,11 +45,7 @@ class TableData(InputData, Table):
         **kwargs
     ):
         """
-        A TableData instance contains data which has already been aggregated.
-
-        It can be used for tables that are unprotected or partially protected.
-        If it's already partially protected, this can be indicated by `status_indicator`.
-        Most of the parameters are already explained either in InputData or in Table.
+        Initialize a TableData instance.
 
         :param dataset: The dataset containing the table. This dataset should include totals.
         :param explanatory: See Table.
@@ -96,14 +96,14 @@ class TableData(InputData, Table):
     def _write_metadata(self, file):
         """Generates a metadata file for tabular data."""
 
-        file.write(f'\t<SEPARATOR> ,\n')
+        file.write(f'\t<SEPARATOR> {self.separator}\n')
 
         if self.status_indicator:
             for status, marker in self.status_markers.items():
                 file.write(f'\t<{status}> {marker}\n')
 
         for name, col in self._columns.items():
-            col.write_metadata(file)
+            col.write_metadata(file, include_length=False)
 
             if name in self.top_contributors:
                 file.write("<\tMAXSCORE>\n")

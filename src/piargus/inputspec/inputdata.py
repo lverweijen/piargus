@@ -17,6 +17,8 @@ DEFAULT_COLUMN_LENGTH = 20
 
 class InputData(Mapping, metaclass=abc.ABCMeta):
     """Abstract base class for a dataset that needs to be protected by Tau Argus."""
+    separator = ','
+
     def __init__(
         self,
         dataset,
@@ -70,30 +72,41 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
     def __getitem__(self, col: str) -> "InputColumn":
         return self._columns[col]
 
-    def write_data(self, path: os.PathLike):
-        """Save data to a file in the csv-format which tau-argus requires."""
-        with open(path, "w", newline='') as writer:
-            self._write_data(writer)
+    def write_data(self, path: os.PathLike | TextIO | None):
+        """Save data to a file in the format which tau-argus requires."""
 
-        if isinstance(path, PathLike):
+        if not path:
+            txt = io.StringIO()
+            self._write_data(txt)
+            return txt.getvalue()
+        elif isinstance(path, os.PathLike):
+            with open(path, "w", newline='') as writer:
+                self._write_data(writer)
             self.filepath = Path(path)
+        else:
+            self._write_data(path)
 
-    def write_metadata(self, path: os.PathLike | io.FileIO):
-        """Save data to a file in the csv-format which tau-argus requires."""
-        with open(path, "w") as writer:
-            self._write_metadata(writer)
+    def write_metadata(self, path: os.PathLike | TextIO | None):
+        """Save metadata to a file in the format which tau-argus requires."""
 
-        if isinstance(path, PathLike):
+        if not path:
+            txt = io.StringIO()
+            self._write_metadata(txt)
+            return txt.getvalue()
+        elif isinstance(path, os.PathLike):
+            with open(path, "w", newline='') as writer:
+                self._write_metadata(writer)
             self.filepath_metadata = Path(path)
+        else:
+            self._write_metadata(path)
 
     @abc.abstractmethod
     def _write_data(self, file: TextIO):
-        """Save data to a file in the csv-format which tau-argus requires."""
+        pass
 
     @abc.abstractmethod
     def _write_metadata(self, path: TextIO):
-        """Save data to a file in the csv-format which tau-argus requires."""
-
+        pass
 
 
 class InputColumn:
@@ -108,10 +121,12 @@ class InputColumn:
 
     @property
     def name(self):
+        """Name of column."""
         return self._data.name
 
     @property
     def hierarchy(self) -> Optional[Hierarchy]:
+        """Hierarchy of column."""
         if self.recodable:
             return self._hierarchy
         else:
@@ -130,6 +145,7 @@ class InputColumn:
 
     @property
     def total_code(self) -> Optional[str]:
+        """Total code of column."""
         if self.recodable:
             return self.hierarchy.total_code
         else:
@@ -178,6 +194,7 @@ class InputColumn:
 
     @property
     def code_length(self):
+        """Length of code in column."""
         length = self._codelength
         if not length:
             if hasattr(self.hierarchy, "code_length"):
@@ -207,12 +224,14 @@ class InputColumn:
     def code_length(self):
         self._codelength = None
 
-    def write_metadata(self, file):
+    def write_metadata(self, file, include_length):
+        """Write metadata related to this column."""
+        header = [self.name]
+        if include_length:
+            header.append(str(self.code_length))
         if self.missing:
-            missing_str = ' '.join(map(str, self.missing))
-            file.write(f"{self.name} {self.code_length} {missing_str}\n")
-        else:
-            file.write(f"{self.name} {self.code_length}\n")
+            header.append(' '.join(map(str, self.missing)))
+        file.write(" ".join(header) + "\n")
 
         if self.is_numeric:
             file.write("\t<NUMERIC>\n")

@@ -100,13 +100,15 @@ class Table:
         self._safety_rule = make_safety_rule(rule)
 
     @property
-    def apriori(self):
+    def apriori(self) -> Apriori:
         """Apriori settings of this table."""
         return self._apriori
 
     @apriori.setter
     def apriori(self, value):
-        if not isinstance(value, Apriori):
+        if isinstance(value, os.PathLike):
+            value = Apriori.from_hst(value)
+        elif not isinstance(value, Apriori):
             value = Apriori(value)
         self._apriori = value
 

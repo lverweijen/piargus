@@ -21,11 +21,11 @@ class Apriori:
             last_element = elements[-1].casefold().strip()
             butlast_element = elements[-2].casefold().strip()
             if last_element in set("spu"):
-                apriori.change_status(elements[:-1], last_element)
+                apriori.set_status(elements[:-1], last_element)
             elif butlast_element == 'c':
-                apriori.change_cost(elements[:-2], last_element)
+                apriori.set_cost(elements[:-2], last_element)
             elif butlast_element == 'pl':
-                apriori.change_protection_level(elements[:-2], last_element)
+                apriori.set_protection_level(elements[:-2], last_element)
             else:
                 raise Exception(f"Neither {last_element} nor {butlast_element} contains a valid apriori-code.")
 
@@ -63,7 +63,7 @@ class Apriori:
 
         self.changes.append(change)
 
-    def change_status(self, cell, status):
+    def set_status(self, cell, status):
         """
         Change status of cell to status.
 
@@ -78,7 +78,7 @@ class Apriori:
 
         self._add_change(cell, status)
 
-    def change_cost(self, cell, cost):
+    def set_cost(self, cell, cost):
         """
         Change costs of cell.
 
@@ -86,7 +86,7 @@ class Apriori:
         """
         self._add_change(cell, 'C', int(cost))
 
-    def change_protection_level(self, cell, protection_level):
+    def set_protection_level(self, cell, protection_level):
         """Change protection level of cell."""
         self._add_change(cell, 'PL', int(protection_level))
 

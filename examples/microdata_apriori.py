@@ -8,10 +8,10 @@ def main():
     input_data = pa.MicroData(input_df)
 
     apriori = pa.Apriori(expand_trivial=True)
-    apriori.change_status(['A', 'ExampleDam'], pa.SAFE)
-    apriori.change_status(['A', 'ExampleCity'], pa.SAFE)
-    apriori.change_cost(['C', 'ExampleDam'], 10)
-    apriori.change_protection_level(['C', 'ExampleCity'], 5)
+    apriori.set_status(['A', 'ExampleDam'], pa.SAFE)
+    apriori.set_status(['A', 'ExampleCity'], pa.SAFE)
+    apriori.set_cost(['C', 'ExampleDam'], 10)
+    apriori.set_protection_level(['C', 'ExampleCity'], 5)
 
     tables = [pa.Table(['symbol', 'regio'], 'income',
                        safety_rule={'NK(3,70)', 'FREQ(3,20)', 'ZERO(20)'},

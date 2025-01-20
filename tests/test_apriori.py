@@ -8,9 +8,9 @@ class AprioriTest(TestCase):
     def test_to_hst(self):
         apriori = Apriori()
 
-        apriori.change_status(['A', '3'], 'S')
-        apriori.change_cost(['A', '3'], 5)
-        apriori.change_protection_level(['A', '3'], 20)
+        apriori.set_status(['A', '3'], 'S')
+        apriori.set_cost(['A', '3'], 5)
+        apriori.set_protection_level(['A', '3'], 20)
 
         result = apriori.to_hst()
         expected = ("A,3,s\n"

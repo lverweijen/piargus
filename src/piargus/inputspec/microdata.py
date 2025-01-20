@@ -1,7 +1,5 @@
 from typing import Optional, Sequence, Any
 
-from pandas.core.dtypes.common import is_bool_dtype
-
 from .inputdata import InputData
 
 
@@ -41,15 +39,6 @@ class MicroData(InputData):
         self.request = request
         self.request_values = request_values
         self.holding = holding
-
-    def _write_data(self, file):
-        dataset = self._dataset.copy(deep=False)
-        for col in self._dataset.columns:
-            if is_bool_dtype(col):
-                dataset[col] = dataset[col].astype(int)
-
-        result = dataset.to_csv(file, index=False, header=False, na_rep="")
-        return result
 
     def _write_metadata(self, file):
         file.write(f'\t<SEPARATOR> {self.separator}\n')

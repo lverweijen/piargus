@@ -11,6 +11,7 @@ from pandas.core.dtypes.common import is_string_dtype, is_bool_dtype, is_numeric
 
 from .codelist import CodeList
 from .hierarchy import FlatHierarchy, Hierarchy, LevelHierarchy, TreeHierarchy
+from ..recode import Recoder, recode
 
 DEFAULT_COLUMN_LENGTH = 20
 
@@ -72,19 +73,16 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
     def __getitem__(self, col: str) -> "InputColumn":
         return self._columns[col]
 
+    def get_dataset(self) -> pd.DataFrame:
+        """Get original data back."""
+        return pd.DataFrame({name: col.get_data() for name, col in self._columns.items()})
+
     def write_data(self, path: os.PathLike | TextIO | None):
         """Save data to a file in the format which tau-argus requires."""
-
-        if not path:
-            txt = io.StringIO()
-            self._write_data(txt)
-            return txt.getvalue()
-        elif isinstance(path, os.PathLike):
-            with open(path, "w", newline='') as writer:
-                self._write_data(writer)
+        if isinstance(path, os.PathLike):
             self.filepath = Path(path)
-        else:
-            self._write_data(path)
+
+        return self.get_dataset().to_csv(path, index=False, header=False, na_rep="")
 
     def write_metadata(self, path: os.PathLike | TextIO | None):
         """Save metadata to a file in the format which tau-argus requires."""
@@ -101,10 +99,6 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
             self._write_metadata(path)
 
     @abc.abstractmethod
-    def _write_data(self, file: TextIO):
-        pass
-
-    @abc.abstractmethod
     def _write_metadata(self, path: TextIO):
         pass
 
@@ -118,6 +112,14 @@ class InputColumn:
         self._decimals = 15
         self._codelength = None
         self.missing = set()
+
+    def get_data(self) -> pd.Series:
+        """Return data in this column."""
+        d = self._data
+        if is_bool_dtype(d.dtype):
+            return d.astype(int)
+        else:
+            return d
 
     @property
     def name(self):
@@ -256,3 +258,11 @@ class InputColumn:
                     file.write(f"\t<HIERLEADSTRING> {indent}\n")
                 case unknown_hierarchy:
                     raise TypeError(f"Unsupported Hierarchy-type: {type(unknown_hierarchy)}")
+
+    def recode(self, recoder: Recoder) -> None:
+        """Recode data in this column using recoder.
+
+        This is done in place.
+        Some recoders may require hierarchy to be set first.
+        """
+        self._data = recode(self._data, recoder, self.hierarchy)

@@ -6,16 +6,18 @@ from typing import Any, Optional, TextIO
 import numpy as np
 import pandas as pd
 
-from piargus import Hierarchy, TreeHierarchy
+from .inputspec.hierarchy import Hierarchy, TreeHierarchy
 
 from abstracttree import MaxDepth
 
-__all__ = ["recode", "read_grc"]
+__all__ = ["recode", "read_grc", "Recoder"]
+
+Recoder = Sequence | Mapping[Any, Sequence | slice] | int | os.PathLike
 
 
 def recode(
     data: pd.Series,
-    recoder: Sequence | Mapping[Any, Sequence | slice] | int | os.PathLike,
+    recoder: Recoder,
     hierarchy: Optional[Hierarchy] = None,
 ) -> pd.Series:
     """Recode a pandas Series.
@@ -56,7 +58,7 @@ def _recode_tree(data, recoder: Sequence | int, hierarchy: TreeHierarchy):
     return data.map(mapping)
 
 
-def _preprocess_mapping(recoder: Mapping[Any, Sequence | slice]) -> Mapping[Any, Sequence[slice]]:
+def _preprocess_mapping(recoder: Recoder) -> Mapping[Any, Sequence[slice]]:
     result = {}
     for group, items in recoder.items():
         if isinstance(items, slice):

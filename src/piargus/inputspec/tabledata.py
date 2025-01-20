@@ -90,9 +90,6 @@ class TableData(InputData, Table):
         self.status_indicator = status_indicator
         self.status_markers = status_markers
 
-    def _write_data(self, file=None):
-        return self._dataset.to_csv(file, index=False, header=False, na_rep="")
-
     def _write_metadata(self, file):
         """Generates a metadata file for tabular data."""
 

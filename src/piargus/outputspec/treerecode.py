@@ -12,7 +12,7 @@ class TreeRecode:
     """
     HEADER = "<TREERECODE>"
 
-    def __init__(self, codes: "TreeRecode" | os.PathLike | Sequence[str]):
+    def __init__(self, codes:  "os.PathLike | Sequence[str] | TreeRecode"):
         if isinstance(codes, TreeRecode):
             self.codes = codes.codes
             self.filepath = codes.filepath

@@ -1,3 +1,4 @@
+import os
 from typing import Union, Optional, Sequence, Collection, Iterable, Any, Mapping
 
 import pandas as pd
@@ -24,7 +25,7 @@ class Table:
         labda: int = None,
         safety_rule: Union[str, Collection[str], SafetyRule] = (),
         apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
-        recode: Mapping[str, Union[int, TreeRecode]] = None,
+        recodes: Mapping[str, Union[int, TreeRecode]] = None,
         suppress_method: Optional[str] = OPTIMAL,
         suppress_method_args: Sequence = (),
     ):
@@ -70,12 +71,12 @@ class Table:
         :param suppress_method_args: Parameters to pass to suppress_method.
         """
 
-        if recode:
-            recode = {col: (recoding if isinstance(recoding, (int, TreeRecode))
+        if recodes:
+            recodes = {col: (recoding if isinstance(recoding, (int, TreeRecode))
                             else TreeRecode(recoding))
-                      for col, recoding in recode.items()}
+                       for col, recoding in recodes.items()}
         else:
-            recode = dict()
+            recodes = dict()
 
         self.explanatory = explanatory
         self.response = response
@@ -85,7 +86,7 @@ class Table:
         self.filepath_out = None
         self.safety_rule = safety_rule
         self.apriori = apriori
-        self.recode = recode
+        self.recodes = recodes
         self.suppress_method = suppress_method
         self.suppress_method_args = suppress_method_args
 
@@ -122,7 +123,7 @@ class Table:
     def find_variables(self, categorical=True, numeric=True):
         if categorical:
             yield from self.explanatory
-            yield from self.recode.keys()
+            yield from self.recodes.keys()
 
         if numeric:
             if self.response != FREQUENCY_RESPONSE:

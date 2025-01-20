@@ -19,7 +19,7 @@ def main():
     )
     output_table = pa.Table(['symbol', 'regio'], 'income',
                             safety_rule={pa.p_rule(3)},
-                            recode={"regio": ["Example", "Empty"], "symbol": 1})
+                            recodes={"regio": ["Example", "Empty"], "symbol": 1})
 
     job = pa.Job(input_data, [output_table], directory='tau', name='recode-example')
     report = tau.run(job)

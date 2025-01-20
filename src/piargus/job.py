@@ -203,7 +203,7 @@ class Job:
                 default = self.directory / 'input' / f'{tablename}_apriori.hst'
                 table.apriori.to_hst(default)
 
-            for col, recode in table.recode.items():
+            for col, recode in table.recodes.items():
                 if isinstance(recode, TreeRecode) and recode.filepath is None:
                     tablename = f'{self.name}_{slugify(t_name)}'
                     default = self.directory / 'input' / f"{tablename}_{col}_recode.grc"
@@ -240,7 +240,7 @@ class Job:
                         expand_trivial=table.apriori.expand_trivial,
                     )
 
-                for variable, recode in table.recode.items():
+                for variable, recode in table.recodes.items():
                     writer.recode(t_index, variable, recode)
 
                 if table.suppress_method:

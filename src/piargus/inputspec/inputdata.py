@@ -146,30 +146,25 @@ class InputColumn:
 
     @property
     def codelist(self) -> Optional[CodeList]:
+        """Codelist of column."""
         return self._codelist
 
     @codelist.setter
-    def codelist(self, value: CodeList | os.PathLike):
-        if isinstance(value, CodeList):
-            codelist = value
-        elif isinstance(value, os.PathLike):
-            path = Path(value)
-            if path.suffix == ".cdl":
-                codelist = CodeList.from_cdl(path)
-            else:
-                raise ValueError("Not a .cdl file")
+    def codelist(self, value: Mapping[str, str] | os.PathLike | None):
+        if value is None:
+            self._codelist = None
         else:
-            raise TypeError("A codelist was expected")
-
-        self._codelist = codelist
+            self._codelist = CodeList(value)
 
     @property
     def is_numeric(self) -> bool:
+        """Whether column is numeric."""
         return is_numeric_dtype(self._data.dtype)
 
     @property
     def decimals(self) -> Optional[int]:
-        if is_float_dtype(self._data):
+        """How many decimal places column has."""
+        if is_float_dtype(self._data.dtype):
             return self._decimals
         else:
             return None

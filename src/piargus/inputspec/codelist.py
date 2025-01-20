@@ -1,9 +1,11 @@
+import os
+from collections.abc import Mapping, MutableMapping
 from pathlib import Path
 
 import pandas as pd
 
 
-class CodeList:
+class CodeList(MutableMapping):
     """Describe a codelist for use with TauArgus.
 
     It can be used to attach labels to code lists.
@@ -13,22 +15,30 @@ class CodeList:
     @classmethod
     def from_cdl(cls, file):
         """Read cdl file."""
-        df = pd.read_csv(file, index_col=0, header=None)
-        codelist = CodeList(df.iloc[:, 0])
-        if isinstance(file, (str, Path)):
-            codelist.filepath = Path(file)
+        if isinstance(file, os.PathLike):
+            return cls(file)
 
-        return codelist
-
-    def __init__(self, codes):
+    def __init__(self, codes: Mapping[str, str] | os.PathLike):
         """Create a codelist."""
-        if hasattr(codes, 'keys'):
-            self._codes = pd.Series(codes)
-        else:
-            self._codes = pd.Series(codes, index=codes)
+        match codes:
+            case CodeList():
+                self._codes = codes._codes
+                self.file = codes.filepath
+            case Mapping():
+                self._codes = pd.Series(codes)
+                self.filepath = None
+            case os.PathLike():
+                codes = Path(codes)
+                if codes.suffix == ".cdl":
+                    df = pd.read_csv(codes, index_col=0, header=None)
+                    self._codes = CodeList(df.iloc[:, 0])
+                    self.filepath = Path(codes)
+                else:
+                    raise ValueError("Not a .cdl file")
+            case _:
+                raise TypeError("Codelist should be a mapping or .cdl file")
 
         self._codes.index = self._codes.index.astype(str)
-        self.filepath = None
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.to_dict()})"
@@ -44,6 +54,12 @@ class CodeList:
         """Set label of a code."""
         self._codes[key] = value
 
+    def __delitem__(self, key, /):
+        del self._codes[key]
+
+    def __len__(self):
+        return len(self._codes)
+
     def __iter__(self):
         return iter(self.keys())
 
@@ -55,15 +71,10 @@ class CodeList:
 
     @property
     def code_length(self) -> int:
-        return max(map(len, self.iter_codes()))
+        return max(map(len, self.keys()))
 
     def keys(self):
         return self._codes.keys()
-
-    def iter_codes(self):
-        """Iterate through codes."""
-        for code in self._codes.index:
-            yield code
 
     def to_cdl(self, file=None, length=0):
         """Store codelist in cdl file."""

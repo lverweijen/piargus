@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from typing import Sequence
 
 DEFAULT_TOTAL_CODE = "Total"
@@ -16,7 +18,7 @@ class Hierarchy:
             return super().__new__(cls)
 
     @classmethod
-    def _create_child_object(cls, hierarchy, total_code=DEFAULT_TOTAL_CODE):
+    def _create_child_object(cls, value):
         """
         Create either CodeHierarchy or ThreeHierarchy.
 
@@ -27,11 +29,19 @@ class Hierarchy:
         from .flathierarchy import FlatHierarchy
         from .treehierarchy import TreeHierarchy
 
-        if isinstance(hierarchy, Hierarchy):
-            return hierarchy
-        elif hierarchy is None:
-            return FlatHierarchy(total_code=total_code)
-        elif isinstance(hierarchy, Sequence) and all(isinstance(x, int) for x in hierarchy):
-            return LevelHierarchy(hierarchy, total_code=total_code)
+        if not value:
+            hierarchy = FlatHierarchy()
+        elif isinstance(value, Hierarchy):
+            hierarchy = value
+        elif isinstance(value, Sequence):
+            hierarchy = LevelHierarchy(value)
+        elif isinstance(value, os.PathLike):
+            path = Path(value)
+            if path.suffix == ".hrc":
+                hierarchy = TreeHierarchy.from_hrc(path)
+            else:
+                raise ValueError("hierarchy path should end in .hrc")
         else:
-            return TreeHierarchy(hierarchy, total_code=total_code)
+            raise TypeError("Should be passed a Hierarchy.")
+
+        return hierarchy

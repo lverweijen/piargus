@@ -2,7 +2,6 @@ import abc
 import io
 import os
 from collections.abc import Sequence, MutableMapping, Mapping
-from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, TextIO
 
@@ -43,25 +42,8 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
         self.filepath = None
         self.filepath_metadata = None
 
-        self.init_columns(
-            dataset,
-            hierarchies=hierarchies,
-            codelists=codelists,
-            column_lengths=column_lengths,
-            total_codes=total_codes
-        )
-
-    def init_columns(
-        self,
-        data: pd.DataFrame,
-        *,
-        hierarchies: Dict[str, Hierarchy] = None,
-        codelists: Dict[str, CodeList] = None,
-        column_lengths: Dict[str, int] = None,
-        total_codes: Dict[str, str] = None,
-    ):
-        for col, value in data.items():
-            self._columns[col] = InputColumn(value)
+        for col, data in dataset.items():
+            self._columns[col] = InputColumn(data)
 
         if hierarchies:
             for col, hierarchy in hierarchies.items():
@@ -137,25 +119,10 @@ class InputColumn:
 
     @hierarchy.setter
     def hierarchy(self, value: Hierarchy | Sequence[int] | os.PathLike):
-        if value is None:
-            self._hierarchy = FlatHierarchy()
-            return
-        else:
-            if isinstance(value, Hierarchy):
-                hierarchy = value
-            elif isinstance(value, Sequence):
-                hierarchy = LevelHierarchy(value)
-            elif isinstance(value, os.PathLike):
-                path = Path(value)
-                if path.suffix == ".hrc":
-                    hierarchy = TreeHierarchy.from_hrc(path)
-                else:
-                    raise ValueError("hierarchy path should end in .hrc")
-            else:
-                raise TypeError("Should be passed a Hierarchy.")
-
+        if value:
             self.recodable = True
-            self._hierarchy = hierarchy
+
+        self._hierarchy = Hierarchy(value)
 
     @hierarchy.deleter
     def hierarchy(self):
@@ -171,7 +138,7 @@ class InputColumn:
     @total_code.setter
     def total_code(self, value: str):
         if value is None:
-            self.total_code = "Total"
+            self._hierarchy.total_code = "Total"
             return
 
         self.recodable = True

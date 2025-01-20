@@ -19,8 +19,13 @@ class TreeHierarchy(Hierarchy):
 
     def __init__(self, tree=None, *, total_code: str = DEFAULT_TOTAL_CODE, indent='@'):
         """Create a tree hierarchy."""
-        if not isinstance(tree, TreeHierarchyNode):
-            tree = TreeHierarchyNode(total_code, tree)
+
+        if tree:
+            if not isinstance(tree, TreeHierarchyNode):
+                tree = tree.transform(lambda o: TreeHierarchyNode(o.identifier))
+        else:
+            tree = TreeHierarchyNode(total_code)
+
         self.root = tree
         self.indent = indent
         self.filepath = None
@@ -154,11 +159,7 @@ class TreeHierarchyNode(littletree.Node):
     def __init__(self, code=None, children=(), parent=None):
         if code is None:
             code = DEFAULT_TOTAL_CODE
-        if isinstance(children, Mapping):
-            children = [TreeHierarchyNode(code=k, children=v) for k, v in children.items()]
-        elif isinstance(children, Sequence):
-            children = [child if isinstance(child, TreeHierarchyNode) else TreeHierarchyNode(child)
-                        for child in children]
+
         super().__init__(identifier=str(code), children=children, parent=parent)
 
     @property

@@ -88,6 +88,7 @@ class Table:
         self.recodes = recodes
         self.suppress_method = suppress_method
         self.suppress_method_args = suppress_method_args
+        self._result = None
 
     @property
     def safety_rule(self) -> str:
@@ -111,6 +112,14 @@ class Table:
             value = Apriori(value)
         self._apriori = value
 
+    @property
+    def result(self) -> TableResult:
+        """Lazy property to load and obtain the result after TauArgus has run."""
+        r = self._result
+        if not r:
+            r = self.load_result()
+        return r
+
     def load_result(self) -> TableResult:
         """After tau argus has run, this obtains the protected data."""
         if self.response == FREQUENCY_RESPONSE:
@@ -119,7 +128,9 @@ class Table:
             response = self.response
 
         df = pd.read_csv(self.filepath_out, index_col=self.explanatory)
-        return TableResult(df, response)
+        self._result = TableResult(df, response)
+        return self._result
+
 
     def find_variables(self, categorical=True, numeric=True):
         if categorical:

@@ -1,13 +1,95 @@
 import io
 import os
+import re
 from pathlib import Path
-from typing import Mapping, Sequence, Tuple, Iterable, Optional
+from typing import Sequence, Optional, Iterable, Tuple
 
 import littletree
 from littletree.serializers import RowSerializer, RelationSerializer
 
-from .hierarchy import Hierarchy, DEFAULT_TOTAL_CODE
-from .hrcserializer import HRCSerializer
+DEFAULT_TOTAL_CODE = "Total"
+
+
+class Hierarchy:
+    __slots__ = ()
+
+    is_hierarchical: bool = None
+    total_code: str
+
+    def __new__(cls, *args, **kwargs):
+        if cls is Hierarchy:
+            return cls._create_child_object(*args, **kwargs)
+        else:
+            return super().__new__(cls)
+
+    @classmethod
+    def _create_child_object(cls, value):
+        """
+        Create either CodeHierarchy or ThreeHierarchy.
+
+        It's usually better to create one of those directly.
+        """
+        # Prevent circular imports
+
+        if not value:
+            hierarchy = FlatHierarchy()
+        elif isinstance(value, Hierarchy):
+            hierarchy = value
+        elif isinstance(value, Sequence):
+            hierarchy = LevelHierarchy(value)
+        elif isinstance(value, os.PathLike):
+            path = Path(value)
+            if path.suffix == ".hrc":
+                hierarchy = TreeHierarchy.from_hrc(path)
+            else:
+                raise ValueError("hierarchy path should end in .hrc")
+        else:
+            raise TypeError("Should be passed a Hierarchy.")
+
+        return hierarchy
+
+
+class FlatHierarchy(Hierarchy):
+    """
+    Hierarchy where all nodes are the same level.
+
+    This is used as a default when no hierarchy is specified.
+    """
+    __slots__ = "total_code"
+
+    is_hierarchical = False
+
+    def __init__(self, *, total_code=DEFAULT_TOTAL_CODE):
+        """Create a FlatHierarchy."""
+        self.total_code = total_code
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}(total_code={self.total_code})"
+
+
+class LevelHierarchy(Hierarchy):
+    """
+    Hierarchical code consisting of digits.
+
+    Can be used if the digits of the code make the hierarchy.
+    For each hierarchical level the width in the code should be given.
+    For example [1, 2, 1] means the code has format "x.yy.z".
+    """
+    __slots__ = "levels", "total_code"
+
+    is_hierarchical = True
+
+    def __init__(self, levels, *, total_code: str = DEFAULT_TOTAL_CODE):
+        """Create a tree hierarchy."""
+        self.levels = [int(level) for level in levels]
+        self.total_code = total_code
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.levels}, total_code={self.total_code})"
+
+    @property
+    def code_length(self) -> int:
+        return sum(self.levels)
 
 
 class TreeHierarchy(Hierarchy):
@@ -153,6 +235,37 @@ class TreeHierarchy(Hierarchy):
         return self.root.to_string(file, keep=keep, **kwargs)
 
 
+class HRCSerializer:
+    def __init__(self, node_factory, indent='@', length=0):
+        self.node_factory = node_factory
+        self.indent = indent
+        self.length = length
+
+    def from_hrc(self, file, root=None):
+        pattern = re.compile(rf"^(?P<prefix>({re.escape(self.indent)})*)(?P<code>.*)")
+
+        if root is None:
+            root = self.node_factory()
+        stack = [root]
+
+        for line in file:
+            match = pattern.match(line)
+            prefix, code = match['prefix'], match['code']
+            depth = len(prefix) // len(self.indent)
+            node = stack[depth][code] = self.node_factory()
+
+            # Place node as last item on index depth + 1
+            del stack[depth + 1:]
+            stack.append(node)
+
+        return root
+
+    def to_hrc(self, root, file):
+        indent, length = self.indent, self.length
+        for node, item in root.iter_descendants(with_item=True):
+            file.write((item.depth - 1) * indent + str(node.identifier).rjust(length) + "\n")
+
+
 class TreeHierarchyNode(littletree.Node):
     __slots__ = ()
 
@@ -181,5 +294,4 @@ class TreeHierarchyNode(littletree.Node):
         return self.code
 
 
-# Alias for easier use
 Node = TreeHierarchyNode

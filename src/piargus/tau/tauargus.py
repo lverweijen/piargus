@@ -4,8 +4,8 @@ import tempfile
 from pathlib import Path
 from typing import Union, Sequence
 
+from .argusreport import ArgusReport
 from .batchwriter import BatchWriter
-from .result import ArgusReport
 
 
 class TauArgus:

@@ -1,13 +1,9 @@
-from .batchwriter import BatchWriter
 from .constants import *
 from .inputspec import InputData, MicroData, TableData, CodeList
-from .inputspec.hierarchy import Hierarchy, FlatHierarchy, TreeHierarchy, \
-    TreeHierarchyNode, Node, LevelHierarchy
-from .job import Job, JobSetupError
-from .outputspec import Table, Apriori
+from .inputspec.hierarchy import FlatHierarchy, LevelHierarchy, TreeHierarchy, Hierarchy, TreeHierarchyNode, Node
+from .outputspec import Table, Apriori, TableResult
 from .outputspec.safetyrule import *
-from .result import TauArgusException, ArgusReport, TableResult
-from .tauargus import TauArgus
+from .tau import Job, JobSetupError, TauArgus, TauArgusException, ArgusReport, BatchWriter
 
 __version__ = "1.0.3"
 
@@ -19,21 +15,10 @@ __all__ = [
     "CodeList",
     "Job",
     "JobSetupError",
-
-    # Inputdata
     "InputData",
-    "MicroData",
-    "TableData",
-
-    # Hierarchy
-    "Hierarchy",
-    "FlatHierarchy",
     "TreeHierarchy",
-    "TreeHierarchyNode",
-    "Node",
-    "LevelHierarchy",
-
-    # Safety rules
+    "Hierarchy",
+    "Table",
     "SafetyRule",
     "dominance_rule",
     "percent_rule",
@@ -45,15 +30,8 @@ __all__ = [
     "manual_rule",
     "p_rule",
     "nk_rule",
-
-    # Table
-    "Table",
-
-    # Result
     "ArgusReport",
     "TableResult",
-
-    # Constants
     "SAFE",
     "UNSAFE",
     "PROTECTED",

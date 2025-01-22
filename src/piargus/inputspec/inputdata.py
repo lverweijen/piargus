@@ -1,9 +1,9 @@
 import abc
 import io
 import os
-from collections.abc import Sequence, MutableMapping, Mapping
+from collections.abc import Mapping, Sequence, Collection, Iterable, MutableMapping
 from pathlib import Path
-from typing import Dict, Optional, TextIO
+from typing import Optional, TextIO, Any, Union
 
 import pandas as pd
 from pandas.core.dtypes.common import is_string_dtype, is_bool_dtype, is_numeric_dtype, \
@@ -11,8 +11,15 @@ from pandas.core.dtypes.common import is_string_dtype, is_bool_dtype, is_numeric
 
 from .codelist import CodeList
 from .hierarchy import FlatHierarchy, Hierarchy, LevelHierarchy, TreeHierarchy
+from ..constants import OPTIMAL, SAFE, UNSAFE, PROTECTED
+from ..outputspec import Table, Apriori
 
 DEFAULT_COLUMN_LENGTH = 20
+DEFAULT_STATUS_MARKERS = {
+    "SAFE": SAFE,
+    "UNSAFE": UNSAFE,
+    "PROTECT": PROTECTED,
+}
 
 
 class InputData(Mapping, metaclass=abc.ABCMeta):
@@ -24,10 +31,10 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
         dataset,
         metadata: os.PathLike = None,
         *,
-        hierarchies: Dict[str, Hierarchy] = None,
-        codelists: Dict[str, CodeList] = None,
-        column_lengths: Dict[str, int] = None,
-        total_codes: Dict[str, str] = None,
+        hierarchies: Mapping[str, Hierarchy] = None,
+        codelists: Mapping[str, CodeList] = None,
+        column_lengths: Mapping[str, int] = None,
+        total_codes: Mapping[str, str] = None,
     ):
         """
         Abstract class for input data. Either initialize MicroData or TableData.
@@ -76,7 +83,7 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
 
     def get_dataset(self) -> pd.DataFrame:
         """Get original data back."""
-        return pd.DataFrame({name: col.get_data() for name, col in self._columns.items()})
+        return pd.DataFrame({name: col.data for name, col in self._columns.items()})
 
     def write_data(self, path: os.PathLike | TextIO | None):
         """Save data to a file in the format which tau-argus requires."""
@@ -107,6 +114,9 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
 class InputColumn:
     """A single column of InputData."""
     def __init__(self, data: pd.Series):
+        if is_bool_dtype(data.dtype):
+            data = data.astype(int)
+
         self._data = data
         self.recodable: bool = False
         self._hierarchy = FlatHierarchy()
@@ -115,13 +125,10 @@ class InputColumn:
         self._codelength = None
         self.missing = set()
 
-    def get_data(self) -> pd.Series:
+    @property
+    def data(self) -> pd.Series:
         """Return data in this column."""
-        d = self._data
-        if is_bool_dtype(d.dtype):
-            return d.astype(int)
-        else:
-            return d
+        return self._data
 
     @property
     def name(self):
@@ -260,3 +267,157 @@ class InputColumn:
                     file.write(f"\t<HIERLEADSTRING> {indent}\n")
                 case unknown_hierarchy:
                     raise TypeError(f"Unsupported Hierarchy-type: {type(unknown_hierarchy)}")
+
+
+class MicroData(InputData):
+    """
+    A MicroData instance contains the data at an individual level.
+
+    From such microdata, tabular aggregates can be constructed.
+    """
+
+    def __init__(
+        self,
+        dataset,
+        *,
+        weight: Optional[str] = None,
+        request: Optional[str] = None,
+        request_values: Sequence[Any] = ("1", "2"),
+        holding: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        Initialize MicroData.
+
+        :param dataset: The dataset (pd.DataFrame) containing the microdata.
+        :param weight: Column that contains the sampling weight of this record.
+        :param request: Column that indicates if a respondent asks for protection.
+        :param request_values: Parameters that indicate if request is asked.
+            Two different request values can be specified for two different levels in the request_rule.
+        :param holding: Column containing the group identifier.
+        :param args: See InputData.
+        :param kwargs: See InputData.
+
+        See the Tau-Argus documentation for more details on these parameters.
+        """
+        super().__init__(dataset, **kwargs)
+        self.weight = weight
+        self.request = request
+        self.request_values = request_values
+        self.holding = holding
+
+    def _write_metadata(self, file):
+        file.write(f'\t<SEPARATOR> {self.separator}\n')
+        for name, col in self._columns.items():
+            col.write_metadata(file, include_length=True)
+
+            if name == self.weight:
+                file.write("\t<WEIGHT>\n")
+
+            if name == self.request:
+                request_str = ' '.join([f'"{v}"' for v in self.request_values])
+                file.write(f"\t<REQUEST> {request_str}\n")
+
+            if name == self.holding:
+                file.write("\t<HOLDING>\n")
+
+
+class TableData(InputData, Table):
+    """
+    A TableData instance contains data that has already been aggregated.
+
+    It can be used for tables that are unprotected or partially protected.
+    If it's already partially protected, this can be indicated by `status_indicator`.
+    Most of the parameters are already explained either in InputData or in Table.
+    """
+    def __init__(
+        self,
+        dataset,
+        explanatory: Sequence[str],
+        response: str,
+        shadow: Optional[str] = None,
+        cost: Optional[str] = None,
+        labda: Optional[int] = None,
+        *,
+        hierarchies: Mapping[str, Hierarchy] = None,
+        total_codes: Union[str, Mapping[str, str]] = None,
+        frequency: Optional[str] = None,
+        top_contributors: Sequence[str] = (),
+        lower_protection_level: Optional[str] = None,
+        upper_protection_level: Optional[str] = None,
+        status_indicator: Optional[str] = None,
+        status_markers: Optional[Mapping[str, str]] = None,
+        safety_rule: Union[str, Collection[str]] = (),
+        apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
+        suppress_method: Optional[str] = OPTIMAL,
+        suppress_method_args: Sequence[Any] = (),
+        **kwargs
+    ):
+        """
+        Initialize a TableData instance.
+
+        :param dataset: The dataset containing the table. This dataset should include totals.
+        :param explanatory: See Table.
+        :param response: See Table.
+        :param shadow: See Table.
+        :param cost: See Table.
+        :param labda: See Table.
+        :param total_codes: Codes within explanatory that are used for the totals.
+        :param frequency: Column containing number of contributors to this cell.
+        :param top_contributors: The columns containing top contributions for dominance rule.
+            The columns should be in the same order as they appear in the dataset.
+            The first of the these columns should describe the highest contribution,
+            the second column the second-highest contribution.
+        :param lower_protection_level: Column that denotes the level below which values are unsafe.
+        :param upper_protection_level: Column that denotes the level above which values are unsafe.
+        :param status_indicator: Column indicating the status of cells.
+        :param status_markers: The meaning of each status.
+            Should be dictionary mapping "SAFE", "UNSAFE" and "STATUS" to a code indicating status.
+        :param kwargs: See InputData
+        """
+
+        Table.__init__(self,
+                       explanatory=explanatory,
+                       response=response,
+                       shadow=shadow,
+                       cost=cost,
+                       labda=labda,
+                       safety_rule=safety_rule,
+                       apriori=apriori,
+                       suppress_method=suppress_method,
+                       suppress_method_args=suppress_method_args)
+
+        InputData.__init__(self, dataset, hierarchies=hierarchies, total_codes=total_codes, **kwargs)
+
+        if status_markers is None:
+            status_markers = DEFAULT_STATUS_MARKERS
+
+        self.lower_protection_level = lower_protection_level
+        self.upper_protection_level = upper_protection_level
+        self.frequency = frequency
+        self.top_contributors = top_contributors
+        self.status_indicator = status_indicator
+        self.status_markers = status_markers
+
+    def _write_metadata(self, file):
+        """Generates a metadata file for tabular data."""
+
+        file.write(f'\t<SEPARATOR> {self.separator}\n')
+
+        if self.status_indicator:
+            for status, marker in self.status_markers.items():
+                file.write(f'\t<{status}> {marker}\n')
+
+        for name, col in self._columns.items():
+            col.write_metadata(file, include_length=False)
+
+            if name in self.top_contributors:
+                file.write("<\tMAXSCORE>\n")
+            if name == self.lower_protection_level:
+                file.write('\t<LOWERPL>\n')
+            if name == self.upper_protection_level:
+                file.write('\t<UPPERPL>\n')
+            if name == self.frequency:
+                file.write('\t<FREQUENCY>\n')
+            if name == self.status_indicator:
+                file.write('\t<STATUS>\n')

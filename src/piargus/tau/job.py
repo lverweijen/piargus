@@ -2,11 +2,11 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional, Union, Mapping, Hashable, Iterable, Sequence, Any
 
-from . import TreeHierarchy
 from .batchwriter import BatchWriter
-from .helpers import slugify
-from .inputspec import InputData, TableData
-from .outputspec import Table, TreeRecode
+from ..helpers import slugify
+from ..inputspec import InputData, TableData
+from ..inputspec.hierarchy import TreeHierarchy
+from ..outputspec import Table
 
 
 class Job:
@@ -202,12 +202,6 @@ class Job:
                 tablename = f'{self.name}_{slugify(t_name)}'
                 default = self.directory / 'input' / f'{tablename}_apriori.hst'
                 table.apriori.to_hst(default)
-
-            for col, recode in table.recodes.items():
-                if isinstance(recode, TreeRecode) and recode.filepath is None:
-                    tablename = f'{self.name}_{slugify(t_name)}'
-                    default = self.directory / 'input' / f"{tablename}_{col}_recode.grc"
-                    recode.to_grc(default, length=self.input_data[col].code_length)
 
     def _setup_batch(self):
         with open(self.batch_filepath, 'w') as batch:

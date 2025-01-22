@@ -5,7 +5,7 @@ import pandas as pd
 
 from .apriori import Apriori
 from .safetyrule import make_safety_rule, SafetyRule
-from ..result.tableresult import TableResult
+from .tableresult import TableResult
 from ..constants import FREQUENCY_RESPONSE, OPTIMAL
 
 

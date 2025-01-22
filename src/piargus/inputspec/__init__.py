@@ -1,6 +1,4 @@
-from .inputdata import InputData
-from .microdata import MicroData
-from .tabledata import TableData
+from .inputdata import InputData, MicroData, TableData
 from .codelist import CodeList
 
 __all__ = [

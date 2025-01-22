@@ -152,7 +152,7 @@ class TreeHierarchy(Hierarchy):
     @property
     def code_length(self) -> int:
         if self._code_length is None:
-            codes = [descendant.code for descendant in self.root.iter_descendants()]
+            codes = [descendant.code for descendant in self.root.descendants]
             self._code_length = max(map(len, codes))
         return self._code_length
 
@@ -167,7 +167,7 @@ class TreeHierarchy(Hierarchy):
     @classmethod
     def from_hrc(cls, file, indent='@', total_code=DEFAULT_TOTAL_CODE):
         """Create hierarchy from a hrc-file."""
-        if isinstance(file, (str, Path)):
+        if isinstance(file, os.PathLike):
             with open(file) as reader:
                 hierarchy = cls.from_hrc(reader, indent, total_code)
                 hierarchy.filepath = Path(file)
@@ -262,7 +262,7 @@ class HRCSerializer:
 
     def to_hrc(self, root, file):
         indent, length = self.indent, self.length
-        for node, item in root.iter_descendants(with_item=True):
+        for node, item in root.descendants.preorder():
             file.write((item.depth - 1) * indent + str(node.identifier).rjust(length) + "\n")
 
 

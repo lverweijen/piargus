@@ -129,8 +129,8 @@ class TestHierarchy(TestCase):
         nh = hierarchy.create_node("Noord-Holland")
         nh.path.create("Haarlem")
 
-        result1 = [d.code for d in hierarchy.root.iter_leaves()]
-        result2 = [d.code for d in hierarchy.root.iter_descendants()]
+        result1 = [d.code for d in hierarchy.root.leaves]
+        result2 = [d.code for d in hierarchy.root.descendants]
         expected1 = ['Rotterdam', 'Den Haag', 'Haarlem']
         expected2 = ['Zuid-Holland', 'Rotterdam', 'Den Haag', 'Noord-Holland', 'Haarlem']
         self.assertCountEqual(expected1, result1)

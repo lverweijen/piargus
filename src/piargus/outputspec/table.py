@@ -6,7 +6,6 @@ import pandas as pd
 from .apriori import Apriori
 from .safetyrule import make_safety_rule, SafetyRule
 from ..result.tableresult import TableResult
-from .treerecode import TreeRecode
 from ..constants import FREQUENCY_RESPONSE, OPTIMAL
 
 
@@ -25,7 +24,7 @@ class Table:
         labda: int = None,
         safety_rule: Union[str, Collection[str], SafetyRule] = (),
         apriori: Union[Apriori, Iterable[Sequence[Any]]] = (),
-        recodes: Mapping[str, Union[int, TreeRecode]] = None,
+        recodes: Mapping[str, Union[int, os.PathLike]] = None,
         suppress_method: Optional[str] = OPTIMAL,
         suppress_method_args: Sequence = (),
     ):
@@ -57,6 +56,10 @@ class Table:
 
             See the Tau-Argus manual for details on those rules.
         :param apriori: Apriori file to change parameters.
+        :param recodes: Recoding files that should be applied by TauArgus
+            Note that it is also possible to recode in pandas by doing:
+            - `df[col].map({old1: A, old2: A})`
+            - `df[col].cut(boundaries)`
         :param suppress_method: Method to use for secondary suppression.
             Options are:
                 * `GHMITER` ("GH"): Hypercube
@@ -71,11 +74,7 @@ class Table:
         :param suppress_method_args: Parameters to pass to suppress_method.
         """
 
-        if recodes:
-            recodes = {col: (recoding if isinstance(recoding, (int, TreeRecode))
-                            else TreeRecode(recoding))
-                       for col, recoding in recodes.items()}
-        else:
+        if recodes is None:
             recodes = dict()
 
         self.explanatory = explanatory

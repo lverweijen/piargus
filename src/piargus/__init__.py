@@ -4,7 +4,7 @@ from .inputspec import InputData, MetaData, MicroData, TableData, CodeList
 from .inputspec.hierarchy import Hierarchy, FlatHierarchy, TreeHierarchy, \
     TreeHierarchyNode, Node, LevelHierarchy
 from .job import Job, JobSetupError
-from .outputspec import Table, Apriori, TreeRecode
+from .outputspec import Table, Apriori
 from .outputspec.safetyrule import *
 from .result import TauArgusException, ArgusReport, TableResult
 from .tauargus import TauArgus
@@ -17,7 +17,6 @@ __all__ = [
     "TauArgusException",
     "BatchWriter",
     "CodeList",
-    "TreeRecode",
     "Job",
     "JobSetupError",
 

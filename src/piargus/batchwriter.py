@@ -35,7 +35,7 @@ class BatchWriter:
 
     def open_metadata(self, metadata):
         """Write METADATA to batch file."""
-        metadata = getattr(metadata, "filepath_metadata", metadata)
+        metadata = getattr(metadata, "filepath", metadata)
         return self.write_command("OPENMETADATA", format_argument(metadata))
 
     def specify_table(

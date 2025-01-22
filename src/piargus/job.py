@@ -177,7 +177,7 @@ class Job:
     def _setup_metadata(self):
         name = f"{self.name}_{type(self.input_data).__name__.casefold()}"
         default = self.directory / 'input' / f"{name}.rda"
-        if not self.input_data.filepath_metadata:
+        if not self.input_data.metadata:
             self.input_data.write_metadata(default)
 
     def _setup_hierarchies(self):
@@ -218,7 +218,7 @@ class Job:
             else:
                 writer.open_microdata(self.input_data)
 
-            writer.open_metadata(self.input_data.filepath_metadata)
+            writer.open_metadata(self.input_data.metadata)
 
             for table in self.tables.values():
                 writer.specify_table(table.explanatory, table.response, table.shadow, table.cost,

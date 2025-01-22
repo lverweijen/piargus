@@ -22,6 +22,7 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
     def __init__(
         self,
         dataset,
+        metadata: os.PathLike = None,
         *,
         hierarchies: Dict[str, Hierarchy] = None,
         codelists: Dict[str, CodeList] = None,
@@ -32,6 +33,7 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
         Abstract class for input data. Either initialize MicroData or TableData.
 
         :param dataset: The dataset to make tables for.
+        :param metadata: If a metadata file is supplied, it will be used. All other parameters will be ignored.
         :param hierarchies: The hierarchies to use for categorial data in the dataset.
         :param codelists: Codelists (dicts) for categorical data in the dataset.
         :param column_lengths: For each column the length.
@@ -42,7 +44,7 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
         self._dataset = dataset
         self._columns: MutableMapping[str, InputColumn] = dict()
         self.filepath = None
-        self.filepath_metadata = None
+        self.metadata = metadata
 
         for col, data in dataset.items():
             self._columns[col] = InputColumn(data)
@@ -93,7 +95,7 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
         elif isinstance(path, os.PathLike):
             with open(path, "w", newline='') as writer:
                 self._write_metadata(writer)
-            self.filepath_metadata = Path(path)
+            self.metadata = Path(path)
         else:
             self._write_metadata(path)
 

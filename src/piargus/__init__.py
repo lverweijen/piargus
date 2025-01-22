@@ -1,6 +1,6 @@
 from .batchwriter import BatchWriter
 from .constants import *
-from .inputspec import InputData, MetaData, MicroData, TableData, CodeList
+from .inputspec import InputData, MicroData, TableData, CodeList
 from .inputspec.hierarchy import Hierarchy, FlatHierarchy, TreeHierarchy, \
     TreeHierarchyNode, Node, LevelHierarchy
 from .job import Job, JobSetupError
@@ -22,7 +22,6 @@ __all__ = [
 
     # Inputdata
     "InputData",
-    "MetaData",
     "MicroData",
     "TableData",
 

@@ -11,7 +11,6 @@ from pandas.core.dtypes.common import is_string_dtype, is_bool_dtype, is_numeric
 
 from .codelist import CodeList
 from .hierarchy import FlatHierarchy, Hierarchy, LevelHierarchy, TreeHierarchy
-from ..recode import Recoder, recode
 
 DEFAULT_COLUMN_LENGTH = 20
 
@@ -104,6 +103,7 @@ class InputData(Mapping, metaclass=abc.ABCMeta):
 
 
 class InputColumn:
+    """A single column of InputData."""
     def __init__(self, data: pd.Series):
         self._data = data
         self.recodable: bool = False
@@ -258,11 +258,3 @@ class InputColumn:
                     file.write(f"\t<HIERLEADSTRING> {indent}\n")
                 case unknown_hierarchy:
                     raise TypeError(f"Unsupported Hierarchy-type: {type(unknown_hierarchy)}")
-
-    def recode(self, recoder: Recoder) -> None:
-        """Recode data in this column using recoder.
-
-        This is done in place.
-        Some recoders may require hierarchy to be set first.
-        """
-        self._data = recode(self._data, recoder, self.hierarchy)

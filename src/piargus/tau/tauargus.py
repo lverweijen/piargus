@@ -1,8 +1,9 @@
 import re
 import subprocess
 import tempfile
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Union, Sequence
+from typing import Union
 
 from .argusreport import ArgusReport
 from .batchwriter import BatchWriter

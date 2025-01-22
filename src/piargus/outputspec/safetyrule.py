@@ -1,4 +1,5 @@
-from typing import Union, Collection, Sequence, Mapping, TypedDict
+from collections.abc import Collection, Sequence, Mapping
+from typing import Union, TypedDict
 
 
 def safety_rule(code, maximum=None, dummy=None):

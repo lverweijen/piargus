@@ -1,6 +1,7 @@
+from collections.abc import Mapping, Hashable, Iterable, Sequence
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional, Union, Mapping, Hashable, Iterable, Sequence, Any
+from typing import Optional, Union, Any
 
 from .batchwriter import BatchWriter
 from ..helpers import slugify
@@ -17,7 +18,7 @@ class Job:
     def __init__(
         self,
         input_data: InputData,
-        tables: Optional[Union[Mapping[Hashable, Table], Iterable[Table]]] = None,
+        tables: Optional[Table | Mapping[Hashable, Table] | Iterable[Table]] = None,
         *,
         linked_suppress_method: Optional[str] = None,
         linked_suppress_method_args: Sequence[Any] = (),
@@ -116,8 +117,10 @@ class Job:
         return self._tables
 
     @tables.setter
-    def tables(self, value):
-        if not isinstance(value, Mapping):
+    def tables(self, value: Table | Mapping[str, Table] | Sequence[Table]):
+        if isinstance(value, Table):
+            value = [value]
+        elif not isinstance(value, Mapping):
             value = {f"table-{t}": table for t, table in enumerate(value, 1)}
 
         self._tables = value

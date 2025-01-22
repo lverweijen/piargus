@@ -1,8 +1,9 @@
 import io
 import os
 import re
+from collections.abc import Sequence, Iterable
 from pathlib import Path
-from typing import Sequence, Optional, Iterable, Tuple
+from typing import Optional, Tuple
 
 import littletree
 from littletree.serializers import RowSerializer, RelationSerializer

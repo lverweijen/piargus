@@ -1,5 +1,5 @@
 import textwrap
-from typing import Sequence
+from collections.abc import Sequence
 
 SEP_MARKER = '--------------------'
 END_MARKER = "End of TauArgus run"

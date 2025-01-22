@@ -1,5 +1,6 @@
 import os
-from typing import Union, Optional, Sequence, Collection, Iterable, Any, Mapping
+from typing import Union, Optional, Any
+from collections.abc import Sequence, Collection, Iterable, Mapping
 
 import pandas as pd
 

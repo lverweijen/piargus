@@ -83,7 +83,7 @@ class Table:
         self.shadow = shadow
         self.cost = cost
         self.labda = labda
-        self.filepath_out = None
+        self.filepath_result = None
         self.safety_rule = safety_rule
         self.apriori = apriori
         self.recodes = recodes
@@ -128,7 +128,7 @@ class Table:
         else:
             response = self.response
 
-        df = pd.read_csv(self.filepath_out, index_col=self.explanatory)
+        df = pd.read_csv(self.filepath_result, index_col=self.explanatory)
         self._result = TableResult(df, response)
         return self._result
 

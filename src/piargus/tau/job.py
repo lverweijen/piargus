@@ -197,9 +197,9 @@ class Job:
 
     def _setup_tables(self):
         for t_name, table in self.tables.items():
-            if table.filepath_out is None:
+            if table.filepath_result is None:
                 tablename = f'{self.name}_{slugify(t_name)}'
-                table.filepath_out = self.directory / 'output' / f"{tablename}.csv"
+                table.filepath_result = self.directory / 'output' / f"{tablename}.csv"
 
             if table.apriori and table.apriori.filepath is None:
                 tablename = f'{self.name}_{slugify(t_name)}'
@@ -248,7 +248,7 @@ class Job:
                 writer.suppress(self.linked_suppress_method, 0, *self.linked_suppress_method_args)
 
             for t_index, table in enumerate(self.tables.values(), 1):
-                writer.write_table(t_index, 2, {"AS": True}, str(table.filepath_out))
+                writer.write_table(t_index, 2, {"AS": True}, str(table.filepath_result))
 
             if self.interactive:
                 writer.go_interactive()

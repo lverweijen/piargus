@@ -5,7 +5,7 @@ from .outputspec import Table, Apriori, TableResult
 from .outputspec.safetyrule import *
 from .tau import Job, JobSetupError, TauArgus, TauArgusException, ArgusReport, BatchWriter
 
-__version__ = "1.0.3"
+__version__ = "2.0.0"
 
 __all__ = [
     "Apriori",
@@ -17,6 +17,8 @@ __all__ = [
     "JobSetupError",
     "InputData",
     "TreeHierarchy",
+    "TreeHierarchyNode",
+    "Node",
     "Hierarchy",
     "Table",
     "SafetyRule",
